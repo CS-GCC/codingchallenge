@@ -1,6 +1,6 @@
-package domain;
+package codingchallenge.domain;
 
-import domain.subdomain.Position;
+import codingchallenge.domain.subdomain.Position;
 import org.springframework.data.annotation.Id;
 
 import java.util.Date;

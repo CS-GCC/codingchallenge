@@ -1,6 +1,9 @@
-package domain;
+package codingchallenge.domain;
 
+import codingchallenge.domain.subdomain.TimeStampPosition;
 import org.springframework.data.annotation.Id;
+
+import java.util.List;
 
 public class Contestant {
 
@@ -11,6 +14,8 @@ public class Contestant {
     private String email;
     private String gitRepository;
     private String herokuServer;
+    private List<TimeStampPosition> positions;
+    private boolean runPending;
 
     public Contestant() {
     }

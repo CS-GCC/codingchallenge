@@ -1,4 +1,4 @@
-package domain.subdomain;
+package codingchallenge.domain.subdomain;
 
 public class Score {
 

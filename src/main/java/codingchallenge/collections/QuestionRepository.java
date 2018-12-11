@@ -1,6 +1,6 @@
-package collections;
+package codingchallenge.collections;
 
-import domain.Question;
+import codingchallenge.domain.Question;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface QuestionRepository extends MongoRepository<Question, String> {

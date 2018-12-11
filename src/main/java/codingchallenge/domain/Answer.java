@@ -1,4 +1,4 @@
-package domain;
+package codingchallenge.domain;
 
 import org.springframework.data.annotation.Id;
 
@@ -10,6 +10,8 @@ public class Answer {
     private int testNumber;
     private boolean correct;
     private String contestant;
+    private int expected;
+    private int result;
     private double speed;
 
     public Answer() {
@@ -61,5 +63,21 @@ public class Answer {
 
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+
+    public int getExpected() {
+        return expected;
+    }
+
+    public void setExpected(int expected) {
+        this.expected = expected;
+    }
+
+    public int getResult() {
+        return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
     }
 }

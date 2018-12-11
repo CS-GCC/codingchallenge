@@ -1,4 +1,4 @@
-package domain;
+package codingchallenge.domain;
 
 import org.springframework.data.annotation.Id;
 
