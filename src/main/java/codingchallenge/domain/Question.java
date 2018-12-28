@@ -8,8 +8,17 @@ public class Question {
     private String id;
     private int questionNumber;
     private String questionText;
+    private String questionName;
+    private boolean active;
 
     public Question() {
+    }
+
+    public Question(int questionNumber, String questionText, String questionName, boolean active) {
+        this.questionNumber = questionNumber;
+        this.questionText = questionText;
+        this.questionName = questionName;
+        this.active = active;
     }
 
     public String getId() {
@@ -34,5 +43,21 @@ public class Question {
 
     public void setQuestionText(String questionText) {
         this.questionText = questionText;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getQuestionName() {
+        return questionName;
+    }
+
+    public void setQuestionName(String questionName) {
+        this.questionName = questionName;
     }
 }
