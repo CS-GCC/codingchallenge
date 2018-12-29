@@ -1,7 +1,7 @@
 package codingchallenge.controllers;
 
 import codingchallenge.domain.Question;
-import codingchallenge.services.QuestionService;
+import codingchallenge.services.interfaces.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

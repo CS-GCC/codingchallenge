@@ -1,6 +1,6 @@
 import codingchallenge.collections.QuestionRepository;
 import codingchallenge.domain.Question;
-import codingchallenge.services.QuestionService;
+import codingchallenge.services.impl.QuestionServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
@@ -23,7 +23,7 @@ public class QuestionServiceTest {
     private QuestionRepository questionRepository;
 
     @InjectMocks
-    private QuestionService questionService;
+    private QuestionServiceImpl questionService;
 
     @Test
     public void shouldReturnAllActiveQuestions() {

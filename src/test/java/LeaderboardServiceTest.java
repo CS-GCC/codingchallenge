@@ -1,9 +1,12 @@
 import codingchallenge.collections.ContestantRepository;
 import codingchallenge.collections.LeaderboardRepository;
+import codingchallenge.collections.TeamLeaderboardRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.subdomain.IndividualPosition;
-import codingchallenge.services.LeaderboardService;
+import codingchallenge.domain.subdomain.Position;
+import codingchallenge.domain.subdomain.TeamPosition;
+import codingchallenge.services.impl.LeaderboardServiceImpl;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Assert;
@@ -14,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,38 +30,41 @@ public class LeaderboardServiceTest {
     private LeaderboardRepository leaderboardRepository;
 
     @Mock
+    private TeamLeaderboardRepository teamLeaderboardRepository;
+
+    @Mock
     private ContestantRepository contestantRepository;
 
     @InjectMocks
-    private LeaderboardService leaderboardService;
+    private LeaderboardServiceImpl leaderboardService;
 
     private List<Contestant> contestants = Lists.newArrayList(
-            generateContestant("Kunal Wagle", "1"),
-            generateContestant("Rahul Kothare", "2"),
-            generateContestant("Lux Mahendran", "3"),
-            generateContestant("Search Term", "4"),
-            generateContestant("Search Keyword", "5")
+            generateContestant("Kunal Wagle", "1", "Imperial College London"),
+            generateContestant("Rahul Kothare", "2", "Kings College London"),
+            generateContestant("Lux Mahendran", "3", "University College London"),
+            generateContestant("Search Term", "4", "Imperial College London"),
+            generateContestant("Search Keyword", "5", "Oxford University")
     );
 
     @Test
-    public void shouldReturnLatestLeaderboard() {
-        Leaderboard<IndividualPosition> expected = new Leaderboard<>();
-        when(leaderboardRepository.findTopByOrderByCreatedDesc()).thenReturn(Optional.of(expected));
+    public void shouldReturnLatestIndividualLeaderboard() {
+        Leaderboard expected = new Leaderboard();
+        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(expected));
 
-        Leaderboard<IndividualPosition> actual = leaderboardService.getLatestIndividualLeaderboard();
+        Leaderboard actual = leaderboardService.getLatestIndividualLeaderboard();
 
         verify(contestantRepository, times(0)).findAllOrderedByName();
         Assert.assertEquals(expected, actual);
     }
 
     @Test
-    public void shouldGenerateBlankLeaderboardWhenNoneExist() {
-        List<IndividualPosition> expectedPositions = generateSearchablePositions();
+    public void shouldGenerateBlankIndividualLeaderboardWhenNoneExist() {
+        List<Position> expectedPositions = generateSearchablePositions();
 
-        when(leaderboardRepository.findTopByOrderByCreatedDesc()).thenReturn(Optional.empty());
+        when(leaderboardRepository.findById("123")).thenReturn(Optional.empty());
         when(contestantRepository.findAllOrderedByName()).thenReturn(contestants);
 
-        Leaderboard<IndividualPosition> actual = leaderboardService.getLatestIndividualLeaderboard();
+        Leaderboard actual = leaderboardService.getLatestIndividualLeaderboard();
 
         verify(contestantRepository, times(1)).findAllOrderedByName();
 
@@ -68,83 +73,208 @@ public class LeaderboardServiceTest {
     }
 
     @Test
-    public void shouldReturnCorrectlyFilteredLeaderboard() {
-        Leaderboard<IndividualPosition> returnedLeaderboard = new Leaderboard<>();
-        List<IndividualPosition> individualPositions = generateSearchablePositions();
+    public void shouldReturnCorrectlyFilteredIndividualLeaderboard() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> individualPositions = generateSearchablePositions();
         returnedLeaderboard.setPositions(individualPositions);
-        List<IndividualPosition> expectedPositions = Lists.newArrayList(
+        List<Position> expectedPositions = Lists.newArrayList(
                 individualPositions.get(3),
                 individualPositions.get(4)
         );
-        when(leaderboardRepository.findTopByOrderByCreatedDesc()).thenReturn(Optional.of(returnedLeaderboard));
+        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
 
-        Leaderboard<IndividualPosition> actual = leaderboardService.getFilteredLeaderboard("Search");
+        Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("Search");
 
         Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
 
     }
 
     @Test
-    public void shouldHaveCaseInsensitiveSearch() {
-        Leaderboard<IndividualPosition> returnedLeaderboard = new Leaderboard<>();
-        List<IndividualPosition> individualPositions = generateSearchablePositions();
+    public void shouldHaveCaseInsensitiveIndividualSearch() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> individualPositions = generateSearchablePositions();
         returnedLeaderboard.setPositions(individualPositions);
-        List<IndividualPosition> expectedPositions = Lists.newArrayList(
+        List<Position> expectedPositions = Lists.newArrayList(
                 individualPositions.get(3),
                 individualPositions.get(4)
         );
-        when(leaderboardRepository.findTopByOrderByCreatedDesc()).thenReturn(Optional.of(returnedLeaderboard));
+        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
 
-        Leaderboard<IndividualPosition> actual = leaderboardService.getFilteredLeaderboard("sEARCH");
-
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
-    }
-
-    @Test
-    public void shouldSearchByPosition() {
-        Leaderboard<IndividualPosition> returnedLeaderboard = new Leaderboard<>();
-        List<IndividualPosition> individualPositions = generateSearchablePositions();
-        returnedLeaderboard.setPositions(individualPositions);
-        List<IndividualPosition> expectedPositions = Lists.newArrayList(
-                individualPositions.get(3)
-        );
-        when(leaderboardRepository.findTopByOrderByCreatedDesc()).thenReturn(Optional.of(returnedLeaderboard));
-
-        Leaderboard<IndividualPosition> actual = leaderboardService.getFilteredLeaderboard("4");
+        Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("sEARCH");
 
         Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
     @Test
-    public void shouldWorkWithPartialSearchTerm() {
-        Leaderboard<IndividualPosition> returnedLeaderboard = new Leaderboard<>();
-        List<IndividualPosition> individualPositions = generateSearchablePositions();
+    public void shouldSearchByIndividualPosition() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> individualPositions = generateSearchablePositions();
         returnedLeaderboard.setPositions(individualPositions);
-        List<IndividualPosition> expectedPositions = Lists.newArrayList(
+        List<Position> expectedPositions = Lists.newArrayList(
                 individualPositions.get(3)
         );
-        when(leaderboardRepository.findTopByOrderByCreatedDesc()).thenReturn(Optional.of(returnedLeaderboard));
+        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
 
-        Leaderboard<IndividualPosition> actual = leaderboardService.getFilteredLeaderboard("ter");
+        Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("4");
 
         Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
-    private ArrayList<IndividualPosition> generateSearchablePositions() {
+    @Test
+    public void shouldWorkWithPartialIndividualSearchTerm() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> individualPositions = generateSearchablePositions();
+        returnedLeaderboard.setPositions(individualPositions);
+        List<Position> expectedPositions = Lists.newArrayList(
+                individualPositions.get(3)
+        );
+        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+
+        Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("ter");
+
+        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+    }
+
+    @Test
+    public void shouldReturnLatestTeamLeaderboard() {
+        Leaderboard expected = new Leaderboard();
+        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(expected));
+
+        Leaderboard actual = leaderboardService.getLatestTeamLeaderboard();
+
+        verify(contestantRepository, times(0)).findAllOrderedByName();
+        Assert.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void shouldGenerateBlankTeamLeaderboardWhenNoneExist() {
+        List<Position> expectedPositions = Lists.newArrayList(
+                new TeamPosition(
+                        1,
+                        "Imperial College London",
+                        Lists.newArrayList("Kunal Wagle", "Search Term")
+                ),
+                new TeamPosition(
+                        2,
+                        "Kings College London",
+                        Lists.newArrayList("Rahul Kothare")
+                ),
+                new TeamPosition(
+                        3,
+                        "University College London",
+                        Lists.newArrayList("Lux Mahendran")
+                ),
+                new TeamPosition(
+                        4,
+                        "Oxford University",
+                        Lists.newArrayList("Search Keyword")
+                )
+        );
+
+        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.empty());
+        when(contestantRepository.findAllOrderedByName()).thenReturn(contestants);
+
+        Leaderboard actual = leaderboardService.getLatestTeamLeaderboard();
+
+        verify(contestantRepository, times(1)).findAllOrderedByName();
+
+        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+
+    }
+
+    @Test
+    public void shouldReturnCorrectlyFilteredTeamLeaderboard() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> teamPositions = generateSearchableTeams();
+        returnedLeaderboard.setPositions(teamPositions);
+        List<Position> expectedPositions = Lists.newArrayList(
+                teamPositions.get(2),
+                teamPositions.get(3)
+        );
+        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+
+        Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("University");
+
+        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+
+    }
+
+    @Test
+    public void shouldHaveCaseInsensitiveTeamSearch() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> teamPositions = generateSearchableTeams();
+        returnedLeaderboard.setPositions(teamPositions);
+        List<Position> expectedPositions = Lists.newArrayList(
+                teamPositions.get(2),
+                teamPositions.get(3)
+        );
+        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+
+        Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("uNIVERSITY");
+
+        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+    }
+
+    @Test
+    public void shouldSearchByTeamPosition() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> teamPositions = generateSearchableTeams();
+        returnedLeaderboard.setPositions(teamPositions);
+        List<Position> expectedPositions = Lists.newArrayList(
+                teamPositions.get(2)
+        );
+        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+
+        Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("3");
+
+        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+    }
+
+    @Test
+    public void shouldWorkWithPartialTeamSearchTerm() {
+        Leaderboard returnedLeaderboard = new Leaderboard();
+        List<Position> teamPositions = generateSearchableTeams();
+        returnedLeaderboard.setPositions(teamPositions);
+        List<Position> expectedPositions = Lists.newArrayList(
+                teamPositions.get(3)
+        );
+        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+
+        Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("ox");
+
+        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+    }
+
+    private List<Position> generateSearchablePositions() {
         return Lists.newArrayList(
-                new IndividualPosition(1, contestants.get(0).getId(), contestants.get(0).getName(), contestants.get(0).getId()),
-                new IndividualPosition(2, contestants.get(1).getId(), contestants.get(1).getName(), contestants.get(1).getId()),
-                new IndividualPosition(3, contestants.get(2).getId(), contestants.get(2).getName(), contestants.get(2).getId()),
-                new IndividualPosition(4, contestants.get(3).getId(), contestants.get(3).getName(), contestants.get(3).getId()),
-                new IndividualPosition(5, contestants.get(4).getId(), contestants.get(4).getName(), contestants.get(4).getId())
+                new IndividualPosition(1, contestants.get(0).getId(), contestants.get(0).getName(), contestants.get
+                        (0).getId()),
+                new IndividualPosition(2, contestants.get(1).getId(), contestants.get(1).getName(), contestants.get
+                        (1).getId()),
+                new IndividualPosition(3, contestants.get(2).getId(), contestants.get(2).getName(), contestants.get
+                        (2).getId()),
+                new IndividualPosition(4, contestants.get(3).getId(), contestants.get(3).getName(), contestants.get
+                        (3).getId()),
+                new IndividualPosition(5, contestants.get(4).getId(), contestants.get(4).getName(), contestants.get
+                        (4).getId())
         );
     }
 
-    private Contestant generateContestant(String name, String id) {
+    private Contestant generateContestant(String name, String id, String teamName) {
         Contestant contestant = new Contestant();
         contestant.setName(name);
         contestant.setId(id);
+        contestant.setTeam(teamName);
         return contestant;
+    }
+
+    private List<Position> generateSearchableTeams() {
+        return Lists.newArrayList(
+                new TeamPosition(1, "Imperial College London"),
+                new TeamPosition(2, "Kings College London"),
+                new TeamPosition(3, "University College London"),
+                new TeamPosition(4, "Oxford University")
+        );
     }
 
 }

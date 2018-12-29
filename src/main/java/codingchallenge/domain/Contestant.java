@@ -20,6 +20,19 @@ public class Contestant {
     public Contestant() {
     }
 
+    public Contestant(String id, String name, String team, String email) {
+        this.id = id;
+        this.name = name;
+        this.team = team;
+        this.email = email;
+    }
+
+    public Contestant(String name, String team, String email) {
+        this.name = name;
+        this.team = team;
+        this.email = email;
+    }
+
     public String getId() {
         return id;
     }

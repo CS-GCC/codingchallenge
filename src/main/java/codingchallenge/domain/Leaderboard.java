@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class Leaderboard<T extends Position> {
+public class Leaderboard {
 
     @Id
     private String id;
     private Date timestamp;
-    private List<T> positions;
+    private List<Position> positions;
 
     public Leaderboard() {
         this.timestamp = new Date();
@@ -32,11 +32,11 @@ public class Leaderboard<T extends Position> {
         return timestamp;
     }
 
-    public List<T> getPositions() {
+    public List<Position> getPositions() {
         return positions;
     }
 
-    public void setPositions(List<T> positions) {
+    public void setPositions(List<Position> positions) {
         this.positions = positions;
     }
 }
