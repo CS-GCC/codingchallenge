@@ -31,7 +31,7 @@ public class ContestantController {
 
     @CrossOrigin
     @RequestMapping(path = "/contestant/{id}", method = RequestMethod.GET)
-    public Contestant getContestant(@RequestParam String id) {
+    public Contestant getContestant(@PathVariable String id) {
         return contestantService.getContestantById(id);
     }
 

@@ -1,3 +1,5 @@
+package codingchallenge.services;
+
 import codingchallenge.collections.ContestantRepository;
 import codingchallenge.collections.LeaderboardRepository;
 import codingchallenge.collections.TeamLeaderboardRepository;

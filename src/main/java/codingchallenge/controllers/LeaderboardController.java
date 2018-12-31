@@ -22,8 +22,8 @@ public class LeaderboardController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/leaderboard/search", method = RequestMethod.GET)
-    public Leaderboard filteredLeaderboard(@RequestParam String searchTerm) {
+    @RequestMapping(path = "/leaderboard/search/{searchTerm}", method = RequestMethod.GET)
+    public Leaderboard filteredLeaderboard(@PathVariable String searchTerm) {
         return leaderboardService.getFilteredIndividualLeaderboard(searchTerm);
     }
 
@@ -34,8 +34,8 @@ public class LeaderboardController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/teamleaderboard/search", method = RequestMethod.GET)
-    public Leaderboard filteredTeamLeaderboard(@RequestParam String searchTerm) {
+    @RequestMapping(path = "/teamleaderboard/search/{searchTerm}", method = RequestMethod.GET)
+    public Leaderboard filteredTeamLeaderboard(@PathVariable String searchTerm) {
         return leaderboardService.getFilteredTeamLeaderboard(searchTerm);
     }
 

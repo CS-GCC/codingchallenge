@@ -1,3 +1,5 @@
+package codingchallenge.services;
+
 import codingchallenge.collections.ContestantRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.services.impl.ContestantServiceImpl;

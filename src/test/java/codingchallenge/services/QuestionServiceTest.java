@@ -1,3 +1,5 @@
+package codingchallenge.services;
+
 import codingchallenge.collections.QuestionRepository;
 import codingchallenge.domain.Question;
 import codingchallenge.services.impl.QuestionServiceImpl;
