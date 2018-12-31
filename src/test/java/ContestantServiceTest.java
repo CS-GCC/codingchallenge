@@ -49,7 +49,7 @@ public class ContestantServiceTest {
                 new Contestant("Kunal Wagle", "Imperial College London", "an@email.com"),
                 new Contestant("Rahul Kothare", "Kings College London", "another@email.com")
         );
-        when(contestantRepository.findAllOrderedByName()).thenReturn(contestants);
+        when(contestantRepository.findAll()).thenReturn(contestants);
 
         List<Contestant> actualContestants = contestantService.getAllContestants();
 

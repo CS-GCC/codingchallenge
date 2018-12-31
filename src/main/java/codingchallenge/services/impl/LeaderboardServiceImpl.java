@@ -13,6 +13,7 @@ import com.google.common.collect.Multimaps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,16 +35,14 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     @Override
     public Leaderboard getLatestIndividualLeaderboard() {
-        Optional<Leaderboard> leaderboard = leaderboardRepository.findById("123");
+        Optional<Leaderboard> leaderboard = leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(new Date());
         return leaderboard.orElseGet(this::generatePlainLeaderboard);
-//        return leaderboardRepository.findTopByOrderByCreatedDesc();
     }
 
     @Override
     public Leaderboard getLatestTeamLeaderboard() {
-        Optional<Leaderboard> leaderboard = teamLeaderboardRepository.findById("123");
+        Optional<Leaderboard> leaderboard = teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(new Date());
         return leaderboard.orElseGet(this::generatePlainTeamLeaderboard);
-//        return teamLeaderboardRepository.findTopByOrderByCreatedDesc();
     }
 
     @Override
@@ -94,7 +93,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     private Leaderboard generatePlainLeaderboard() {
-        List<Contestant> contestants = contestantRepository.findAllOrderedByName();
+        List<Contestant> contestants = contestantRepository.findAll();
         int i = 1;
         Leaderboard newLeaderboard = new Leaderboard();
         for (Contestant contestant : contestants) {
@@ -107,7 +106,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     private Leaderboard generatePlainTeamLeaderboard() {
-        List<Contestant> contestants = contestantRepository.findAllOrderedByName();
+        List<Contestant> contestants = contestantRepository.findAll();
         Leaderboard newLeaderboard = new Leaderboard();
         Multimap<String, Contestant> teamMap =  Multimaps.index(contestants, Contestant::getTeam);
         int i = 1;

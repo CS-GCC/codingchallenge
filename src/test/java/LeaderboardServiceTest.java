@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -49,11 +50,11 @@ public class LeaderboardServiceTest {
     @Test
     public void shouldReturnLatestIndividualLeaderboard() {
         Leaderboard expected = new Leaderboard();
-        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(expected));
+        when(leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(expected));
 
         Leaderboard actual = leaderboardService.getLatestIndividualLeaderboard();
 
-        verify(contestantRepository, times(0)).findAllOrderedByName();
+        verify(contestantRepository, times(0)).findAll();
         Assert.assertEquals(expected, actual);
     }
 
@@ -61,14 +62,14 @@ public class LeaderboardServiceTest {
     public void shouldGenerateBlankIndividualLeaderboardWhenNoneExist() {
         List<Position> expectedPositions = generateSearchablePositions();
 
-        when(leaderboardRepository.findById("123")).thenReturn(Optional.empty());
-        when(contestantRepository.findAllOrderedByName()).thenReturn(contestants);
+        when(leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.empty());
+        when(contestantRepository.findAll()).thenReturn(contestants);
 
         Leaderboard actual = leaderboardService.getLatestIndividualLeaderboard();
 
-        verify(contestantRepository, times(1)).findAllOrderedByName();
+        verify(contestantRepository, times(1)).findAll();
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
 
     }
 
@@ -81,11 +82,11 @@ public class LeaderboardServiceTest {
                 individualPositions.get(3),
                 individualPositions.get(4)
         );
-        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("Search");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
 
     }
 
@@ -98,11 +99,11 @@ public class LeaderboardServiceTest {
                 individualPositions.get(3),
                 individualPositions.get(4)
         );
-        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("sEARCH");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
     @Test
@@ -113,11 +114,11 @@ public class LeaderboardServiceTest {
         List<Position> expectedPositions = Lists.newArrayList(
                 individualPositions.get(3)
         );
-        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("4");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
     @Test
@@ -128,21 +129,21 @@ public class LeaderboardServiceTest {
         List<Position> expectedPositions = Lists.newArrayList(
                 individualPositions.get(3)
         );
-        when(leaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredIndividualLeaderboard("ter");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
     @Test
     public void shouldReturnLatestTeamLeaderboard() {
         Leaderboard expected = new Leaderboard();
-        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(expected));
+        when(teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(expected));
 
         Leaderboard actual = leaderboardService.getLatestTeamLeaderboard();
 
-        verify(contestantRepository, times(0)).findAllOrderedByName();
+        verify(contestantRepository, times(0)).findAll();
         Assert.assertEquals(expected, actual);
     }
 
@@ -171,14 +172,14 @@ public class LeaderboardServiceTest {
                 )
         );
 
-        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.empty());
-        when(contestantRepository.findAllOrderedByName()).thenReturn(contestants);
+        when(teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.empty());
+        when(contestantRepository.findAll()).thenReturn(contestants);
 
         Leaderboard actual = leaderboardService.getLatestTeamLeaderboard();
 
-        verify(contestantRepository, times(1)).findAllOrderedByName();
+        verify(contestantRepository, times(1)).findAll();
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
 
     }
 
@@ -191,11 +192,11 @@ public class LeaderboardServiceTest {
                 teamPositions.get(2),
                 teamPositions.get(3)
         );
-        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("University");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
 
     }
 
@@ -208,11 +209,11 @@ public class LeaderboardServiceTest {
                 teamPositions.get(2),
                 teamPositions.get(3)
         );
-        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("uNIVERSITY");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
     @Test
@@ -223,11 +224,11 @@ public class LeaderboardServiceTest {
         List<Position> expectedPositions = Lists.newArrayList(
                 teamPositions.get(2)
         );
-        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("3");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
     @Test
@@ -238,11 +239,11 @@ public class LeaderboardServiceTest {
         List<Position> expectedPositions = Lists.newArrayList(
                 teamPositions.get(3)
         );
-        when(teamLeaderboardRepository.findById("123")).thenReturn(Optional.of(returnedLeaderboard));
+        when(teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(Mockito.any())).thenReturn(Optional.of(returnedLeaderboard));
 
         Leaderboard actual = leaderboardService.getFilteredTeamLeaderboard("ox");
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(expectedPositions, actual.getPositions()));
     }
 
     private List<Position> generateSearchablePositions() {

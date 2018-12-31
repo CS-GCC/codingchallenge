@@ -14,6 +14,4 @@ public interface ContestantService {
     List<Contestant> getAllContestants();
 
     Contestant getContestantById(String id);
-
-    List<Contestant> searchByNameOrTeam(String searchTerm);
 }

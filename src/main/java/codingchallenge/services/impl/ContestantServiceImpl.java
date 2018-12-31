@@ -26,18 +26,13 @@ public class ContestantServiceImpl implements ContestantService {
 
     @Override
     public List<Contestant> getAllContestants() {
-        return contestantRepository.findAllOrderedByName();
+        return contestantRepository.findAll();
     }
 
     @Override
     public Contestant getContestantById(String id) {
         Optional<Contestant> contestant = contestantRepository.findById(id);
         return contestant.orElse(null);
-    }
-
-    @Override
-    public List<Contestant> searchByNameOrTeam(String searchTerm) {
-        return null;
     }
 
 }
