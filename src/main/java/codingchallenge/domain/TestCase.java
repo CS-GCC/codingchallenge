@@ -1,17 +1,27 @@
 package codingchallenge.domain;
 
+import codingchallenge.domain.subdomain.Category;
 import org.springframework.data.annotation.Id;
 
-public class Test<T> {
+public class TestCase {
 
     @Id
     private String id;
     private int questionNumber;
     private int testNumber;
-    private T input;
+    private Category category;
+    private String input;
     private int output;
 
-    public Test() {
+    public TestCase() {
+    }
+
+    public TestCase(int questionNumber, int testNumber, Category category, String input, int output) {
+        this.questionNumber = questionNumber;
+        this.testNumber = testNumber;
+        this.category = category;
+        this.input = input;
+        this.output = output;
     }
 
     public String getId() {
@@ -38,11 +48,11 @@ public class Test<T> {
         this.testNumber = testNumber;
     }
 
-    public T getInput() {
+    public String getInput() {
         return input;
     }
 
-    public void setInput(T input) {
+    public void setInput(String input) {
         this.input = input;
     }
 
@@ -52,5 +62,13 @@ public class Test<T> {
 
     public void setOutput(int output) {
         this.output = output;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }
