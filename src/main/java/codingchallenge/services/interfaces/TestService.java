@@ -2,6 +2,7 @@ package codingchallenge.services.interfaces;
 
 import codingchallenge.domain.TestCase;
 import codingchallenge.domain.subdomain.Category;
+import codingchallenge.exceptions.NotEnoughTestsException;
 
 import java.util.List;
 
@@ -13,5 +14,6 @@ public interface TestService {
 
     List<TestCase> addMultipleTests(List<TestCase> testCases);
 
+    List<TestCase> obtainRandomisedTests(int questionNumber) throws NotEnoughTestsException;
 
 }

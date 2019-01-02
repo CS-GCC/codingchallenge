@@ -35,4 +35,9 @@ public class TestServiceImpl implements TestService {
         return testRepository.insert(testCases);
     }
 
+    @Override
+    public List<TestCase> obtainRandomisedTests(int questionNumber) {
+        return null;
+    }
+
 }

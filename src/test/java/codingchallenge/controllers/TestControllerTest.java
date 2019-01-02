@@ -2,6 +2,7 @@ package codingchallenge.controllers;
 
 import codingchallenge.domain.TestCase;
 import codingchallenge.domain.subdomain.Category;
+import codingchallenge.exceptions.NotEnoughTestsException;
 import codingchallenge.services.interfaces.TestService;
 import com.google.common.collect.Lists;
 import org.junit.Test;
@@ -70,6 +71,26 @@ public class TestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("[{\"id\":null,\"questionNumber\":1,\"testNumber\":1," +
                         "\"category\":\"SMALL\",\"input\":\"input\",\"output\":1}]"));
+    }
+
+    @Test
+    public void shouldObtainRandomisedTests() throws Exception {
+        when(testService.obtainRandomisedTests(1))
+                .thenReturn(testCases);
+
+        mockMvc.perform(get("/tests/run/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[{\"id\":null,\"questionNumber\":1,\"testNumber\":1," +
+                        "\"category\":\"SMALL\",\"input\":\"input\",\"output\":1}]"));
+    }
+
+    @Test
+    public void shouldHandleErrorGracefully() throws Exception {
+        when(testService.obtainRandomisedTests(1))
+                .thenThrow(new NotEnoughTestsException(Category.SMALL, 1));
+
+        mockMvc.perform(get("/tests/run/1"))
+                .andExpect(status().isInternalServerError());
     }
     
 
