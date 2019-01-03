@@ -13,5 +13,7 @@ public interface ContestantService {
 
     List<Contestant> getAllContestants();
 
+    List<String> getAllContestantIds();
+
     Contestant getContestantById(String id);
 }

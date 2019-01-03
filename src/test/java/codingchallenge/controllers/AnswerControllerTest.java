@@ -33,7 +33,7 @@ public class AnswerControllerTest {
                         "\t{\n" +
                         "\t\t\"questionNumber\": 1,\n" +
                         "\t\t\"testNumber\": 1,\n" +
-                        "\t\t\"correct\": true,\n" +
+                        "\t\t\"correct\": \"CORRECT\",\n" +
                         "\t\t\"contestant\": \"123\",\n" +
                         "\t\t\"speed\": 0.00162 \n" +
                         "\t}\n" +

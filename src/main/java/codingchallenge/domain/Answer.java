@@ -1,5 +1,6 @@
 package codingchallenge.domain;
 
+import codingchallenge.domain.subdomain.Correctness;
 import org.springframework.data.annotation.Id;
 
 public class Answer {
@@ -8,13 +9,22 @@ public class Answer {
     private String id;
     private int questionNumber;
     private int testNumber;
-    private boolean correct;
+    private Correctness correct;
     private String contestant;
     private int expected;
     private int result;
     private double speed;
 
     public Answer() {
+    }
+
+    public Answer(int questionNumber, int testNumber, Correctness correct,
+                  String contestant, double speed) {
+        this.questionNumber = questionNumber;
+        this.testNumber = testNumber;
+        this.correct = correct;
+        this.contestant = contestant;
+        this.speed = speed;
     }
 
     public String getId() {
@@ -41,11 +51,11 @@ public class Answer {
         this.testNumber = testNumber;
     }
 
-    public boolean isCorrect() {
+    public Correctness getCorrect() {
         return correct;
     }
 
-    public void setCorrect(boolean correct) {
+    public void setCorrect(Correctness correct) {
         this.correct = correct;
     }
 

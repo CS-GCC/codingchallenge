@@ -55,7 +55,8 @@ public class ContestantServiceTest {
 
         List<Contestant> actualContestants = contestantService.getAllContestants();
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(contestants, actualContestants));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(contestants,
+                actualContestants));
     }
 
     @Test
@@ -66,6 +67,21 @@ public class ContestantServiceTest {
         Contestant actualContestant = contestantService.getContestantById("1");
 
         Assert.assertEquals(contestant, actualContestant);
+    }
+
+    @Test
+    public void shouldGetCorrectContestantIds() {
+        List<Contestant> contestants = Lists.newArrayList(
+                new Contestant("123", "Kunal Wagle", "Imperial College London",
+                        "an@email.com"),
+                new Contestant("456", "Rahul Kothare", "Kings College London",
+                        "another@email.com")
+        );
+        when(contestantRepository.findAll()).thenReturn(contestants);
+
+        List<String> actual = contestantService.getAllContestantIds();
+
+        Assert.assertTrue(CollectionUtils.isEqualCollection(Lists.newArrayList("123", "456"), actual));
     }
 
 }

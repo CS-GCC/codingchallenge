@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ContestantServiceImpl implements ContestantService {
@@ -27,6 +28,11 @@ public class ContestantServiceImpl implements ContestantService {
     @Override
     public List<Contestant> getAllContestants() {
         return contestantRepository.findAll();
+    }
+
+    @Override
+    public List<String> getAllContestantIds() {
+        return contestantRepository.findAll().stream().map(Contestant::getId).collect(Collectors.toList());
     }
 
     @Override

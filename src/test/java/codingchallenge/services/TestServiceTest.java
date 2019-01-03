@@ -65,7 +65,7 @@ public class TestServiceTest {
     }
 
     @Test
-    public void shouldObtain100RandomTests() throws NotEnoughTestsException {
+    public void shouldObtainCorrectNumberRandomTests() throws NotEnoughTestsException {
         List<TestCase> small = blankTestCases(Category.SMALL, 100);
         List<TestCase> medium = blankTestCases(Category.MEDIUM, 100);
         List<TestCase> large = blankTestCases(Category.LARGE, 100);
@@ -79,12 +79,12 @@ public class TestServiceTest {
 
         List<TestCase> actual = testService.obtainRandomisedTests(1);
 
-        Assert.assertEquals(100, actual.size());
-        Assert.assertEquals(75,
+        Assert.assertEquals(66, actual.size());
+        Assert.assertEquals(50,
                 actual.stream().filter(t -> t.getCategory().equals(Category.SMALL)).collect(Collectors.toList()).size());
-        Assert.assertEquals(15,
-                actual.stream().filter(t -> t.getCategory().equals(Category.MEDIUM)).collect(Collectors.toList()).size());
         Assert.assertEquals(10,
+                actual.stream().filter(t -> t.getCategory().equals(Category.MEDIUM)).collect(Collectors.toList()).size());
+        Assert.assertEquals(6,
                 actual.stream().filter(t -> t.getCategory().equals(Category.LARGE)).collect(Collectors.toList()).size());
     }
 
@@ -119,9 +119,9 @@ public class TestServiceTest {
                 .distinct()
                 .collect(Collectors.toList());
 
-        Assert.assertEquals(75, distinctSmall.size());
-        Assert.assertEquals(15, distinctMedium.size());
-        Assert.assertEquals(10, distinctLarge.size());
+        Assert.assertEquals(50, distinctSmall.size());
+        Assert.assertEquals(10, distinctMedium.size());
+        Assert.assertEquals(6, distinctLarge.size());
     }
 
     @Test(expected = NotEnoughTestsException.class)
@@ -181,7 +181,7 @@ public class TestServiceTest {
 
         List<TestCase> actual = testService.obtainRandomisedTests(1);
 
-        for (int i=1; i<100; i++) {
+        for (int i=1; i<66; i++) {
             Assert.assertEquals(i, actual.get(i-1).getTestNumber());
         }
     }
