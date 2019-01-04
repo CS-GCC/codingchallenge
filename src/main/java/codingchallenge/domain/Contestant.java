@@ -1,9 +1,11 @@
 package codingchallenge.domain;
 
 import codingchallenge.domain.subdomain.TimeStampPosition;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Contestant {
 
@@ -79,5 +81,41 @@ public class Contestant {
 
     public void setHerokuServer(String herokuServer) {
         this.herokuServer = herokuServer;
+    }
+
+    public List<TimeStampPosition> getPositions() {
+        return positions;
+    }
+
+    public void setPositions(List<TimeStampPosition> positions) {
+        this.positions = positions;
+    }
+
+    public boolean isRunPending() {
+        return runPending;
+    }
+
+    public void setRunPending(boolean runPending) {
+        this.runPending = runPending;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contestant that = (Contestant) o;
+        return runPending == that.runPending &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(team, that.team) &&
+                Objects.equals(email, that.email) &&
+                Objects.equals(gitRepository, that.gitRepository) &&
+                Objects.equals(herokuServer, that.herokuServer) &&
+                CollectionUtils.isEqualCollection(positions, that.positions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, team, email, gitRepository, herokuServer, positions, runPending);
     }
 }

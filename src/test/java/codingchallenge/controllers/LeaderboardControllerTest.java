@@ -86,9 +86,11 @@ public class LeaderboardControllerTest {
         when(leaderboardService.getFilteredTeamLeaderboard("123")).thenReturn(
                 leaderboard
         );
-        String expectedResult = "{\"id\":null,\"timestamp\":\"1970-01-18T21:30:54.762+0000\"," +
-                "\"positions\":[{\"total\":0.0,\"scores\":null,\"position\":1,\"contestants\":null," +
-                "\"teamName\":\"Imperial College London\"}]}";
+        String expectedResult = "{\"id\":null,\"timestamp\":\"1970-01-18T21" +
+                ":30:54.762+0000\",\"positions\":[{\"total\":0.0," +
+                "\"scores\":null,\"position\":1,\"contestants\":null," +
+                "\"questionTotals\":null,\"teamName\":\"Imperial College " +
+                "London\"}]}";
 
         this.mockMvc.perform(get("/teamleaderboard/search/123"))
                 .andExpect(status().isOk())

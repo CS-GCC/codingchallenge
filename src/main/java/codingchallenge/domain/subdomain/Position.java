@@ -34,4 +34,16 @@ public class Position {
     public int getPosition() {
         return position;
     }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 }

@@ -12,5 +12,7 @@ public interface QuestionService {
 
     List<Question> allQuestions();
 
+    int activeQuestionCount();
+
     Question addQuestion(Question question);
 }

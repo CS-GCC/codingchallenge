@@ -1,6 +1,8 @@
 package codingchallenge.services.interfaces;
 
 import codingchallenge.domain.Contestant;
+import codingchallenge.domain.Leaderboard;
+import codingchallenge.exceptions.ContestantNotFoundException;
 
 import java.util.List;
 
@@ -15,5 +17,10 @@ public interface ContestantService {
 
     List<String> getAllContestantIds();
 
-    Contestant getContestantById(String id);
+    Contestant getContestantById(String id) throws ContestantNotFoundException;
+
+    void generateTimeStampedPositions(Leaderboard leaderboard);
+
+    List<String> getContestantNames(List<String> contestantIds);
+
 }

@@ -33,11 +33,11 @@ public class QuestionServiceTest {
                 new Question(1, "Question Text", "Question 1", true),
                 new Question(2, "Question Text", "Question 2", true)
         );
-        when(questionRepository.findQuestionsByActive()).thenReturn(questions);
+        when(questionRepository.findQuestionsByActiveTrue()).thenReturn(questions);
 
         List<Question> actual = questionService.activeQuestions();
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(questions, actual));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(questions, actual));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class QuestionServiceTest {
 
         List<Question> actual = questionService.allQuestions();
 
-        Assert.assertEquals(true, CollectionUtils.isEqualCollection(questions, actual));
+        Assert.assertTrue(CollectionUtils.isEqualCollection(questions, actual));
     }
 
     @Test

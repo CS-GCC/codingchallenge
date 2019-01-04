@@ -42,23 +42,29 @@ public class ContestantControllerTest {
 
         mockMvc.perform(get("/challenge/participants"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("[{\"id\":null,\"name\":\"Kunal Wagle\",\"team\":\"Imperial College " +
-                        "London\",\"email\":\"test@email.com\",\"gitRepository\":null,\"herokuServer\":null}]"));
+                .andExpect(content().string("[{\"id\":null,\"name\":\"Kunal " +
+                        "Wagle\",\"team\":\"Imperial College London\"," +
+                        "\"email\":\"test@email.com\",\"gitRepository\":null," +
+                        "\"herokuServer\":null,\"positions\":null," +
+                        "\"runPending\":false}]"));
     }
 
     @Test
-    public void shouldGetAllQuestions() throws Exception {
+    public void shouldGetContestantById() throws Exception {
 
         when(contestantService.getContestantById("123")).thenReturn(contestants.get(0));
 
         mockMvc.perform(get("/contestant/123"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"id\":null,\"name\":\"Kunal Wagle\",\"team\":\"Imperial College " +
-                        "London\",\"email\":\"test@email.com\",\"gitRepository\":null,\"herokuServer\":null}"));
+                .andExpect(content().string("{\"id\":null,\"name\":\"Kunal " +
+                        "Wagle\",\"team\":\"Imperial College London\"," +
+                        "\"email\":\"test@email.com\",\"gitRepository\":null," +
+                        "\"herokuServer\":null,\"positions\":null," +
+                        "\"runPending\":false}"));
     }
 
     @Test
-    public void shouldAddQuestion() throws Exception {
+    public void shouldAddContestants() throws Exception {
 
         when(contestantService.addContestants(any())).thenReturn(contestants);
 
@@ -67,7 +73,10 @@ public class ContestantControllerTest {
                         "\"email\":\"test@email.com\",\"gitRepository\":null,\"herokuServer\":null}]")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string("[{\"id\":null,\"name\":\"Kunal Wagle\",\"team\":\"Imperial College " +
-                        "London\",\"email\":\"test@email.com\",\"gitRepository\":null,\"herokuServer\":null}]"));
+                .andExpect(content().string("[{\"id\":null,\"name\":\"Kunal " +
+                        "Wagle\",\"team\":\"Imperial College London\"," +
+                        "\"email\":\"test@email.com\",\"gitRepository\":null," +
+                        "\"herokuServer\":null,\"positions\":null," +
+                        "\"runPending\":false}]"));
     }
 }

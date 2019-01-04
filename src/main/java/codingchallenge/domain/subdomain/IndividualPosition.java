@@ -34,7 +34,9 @@ public class IndividualPosition extends Position {
         IndividualPosition that = (IndividualPosition) o;
         return getName().equals(that.getName()) &&
                 getContestantId().equals(that.getContestantId()) &&
-                getContestant().equals(that.getContestant());
+                getContestant().equals(that.getContestant()) &&
+                getTotal() == that.getTotal() &&
+                getPosition() == that.getPosition();
     }
 
     @Override

@@ -20,12 +20,17 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<Question> activeQuestions() {
-        return questionRepository.findQuestionsByActive();
+        return questionRepository.findQuestionsByActiveTrue();
     }
 
     @Override
     public List<Question> allQuestions() {
         return questionRepository.findAll();
+    }
+
+    @Override
+    public int activeQuestionCount() {
+        return questionRepository.countQuestionsByActiveTrue();
     }
 
     @Override
