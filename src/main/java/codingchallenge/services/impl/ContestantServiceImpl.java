@@ -9,6 +9,8 @@ import codingchallenge.domain.subdomain.TimeStampPosition;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.ContestantService;
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,9 @@ import java.util.stream.Collectors;
 public class ContestantServiceImpl implements ContestantService {
 
     private final ContestantRepository contestantRepository;
+
+    private final Logger logger =
+            LoggerFactory.getLogger(ContestantServiceImpl.class);
 
     @Autowired
     public ContestantServiceImpl(ContestantRepository contestantRepository) {
@@ -69,9 +74,10 @@ public class ContestantServiceImpl implements ContestantService {
                 timeStampPositions.add(new TimeStampPosition(position, timestamp));
                 contestantRepository.save(contestant);
             } catch (ContestantNotFoundException e) {
-                e.printStackTrace();
+                logger.error("Contestant not found", e);
             }
         }
+        logger.info("Generated time stamped positions");
     }
 
     @Override

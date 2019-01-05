@@ -6,6 +6,8 @@ import codingchallenge.domain.subdomain.Correctness;
 import codingchallenge.services.interfaces.AnswerService;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,9 @@ import java.util.List;
 public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerRepository answerRepository;
+
+    private final Logger logger =
+            LoggerFactory.getLogger(AnswerServiceImpl.class);
 
     @Autowired
     public AnswerServiceImpl(AnswerRepository answerRepository) {
@@ -27,6 +32,8 @@ public class AnswerServiceImpl implements AnswerService {
                                                       List<Answer> answers) {
         answerRepository.deleteAnswersByContestantAndQuestionNumber(contestant, questionNumber);
         answerRepository.insert(answers);
+        logger.info("Added answers for contestant " + contestant + " for " +
+                "question " + questionNumber);
     }
 
     @Override

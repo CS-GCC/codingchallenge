@@ -15,6 +15,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,9 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     private final LeaderboardRepository leaderboardRepository;
     private final TeamLeaderboardRepository teamLeaderboardRepository;
     private final ContestantService contestantService;
+
+    private final Logger logger =
+            LoggerFactory.getLogger(LeaderboardServiceImpl.class);
 
     @Autowired
     public LeaderboardServiceImpl(LeaderboardRepository leaderboardRepository, TeamLeaderboardRepository
@@ -80,6 +85,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     public Leaderboard generateLeaderboard(Multimap<String, Score> scoreMultimap) throws ContestantNotFoundException {
         List<Position> positions = Lists.newArrayList();
         for (String contestantId : scoreMultimap.keySet()) {
+            logger.debug("Generating position for " + contestantId);
             Collection<Score> scores = scoreMultimap.get(contestantId);
             Contestant contestant =
                     contestantService.getContestantById(contestantId);
@@ -89,10 +95,12 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             position.setTotal(scores.stream().mapToDouble(Score::getTotal).sum());
             positions.add(position);
         }
+        logger.debug("Sorting individual positions");
         sortPositions(positions);
         Leaderboard leaderboard = new Leaderboard(new Date());
         leaderboard.setPositions(positions);
         leaderboardRepository.insert(leaderboard);
+        logger.info("New individual leaderboard generated and inserted");
         return leaderboard;
     }
 
@@ -105,6 +113,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         Leaderboard leaderboard = new Leaderboard(individualLeaderboard.getTimestamp());
         Multimap<String, Contestant> teams = getAllTeams();
         for (String team : teams.keySet()) {
+            logger.debug("Generating team position for " + team);
             Collection<Contestant> contestants = teams.get(team);
             List<String> contestantIds =
                     contestants.stream().map(Contestant::getId).collect(Collectors.toList());
@@ -116,6 +125,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                     individualPositions.stream().filter(p -> contestantIds.contains(((IndividualPosition) p).getContestantId())).sorted(Comparator.comparingDouble(Position::getTotal).reversed()).collect(Collectors.toList());
             teamPositions = teamPositions.subList(0,
                     Math.min(contestants.size(), 20));
+            logger.debug("Limited number of positions in team to 20");
             double total =
                     teamPositions.stream().mapToDouble(Position::getTotal).sum();
             Map<Integer, Double> map = Maps.newHashMap();
@@ -130,6 +140,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             }
             teamPosition.setTotal(total);
             teamPosition.setQuestionTotals(map);
+            logger.debug("Finding names for team " + team + "contestants");
             List<String> filteredContestantIds =
                     teamPositions.stream().map(p -> ((IndividualPosition) p).getContestantId()).collect(Collectors.toList());
             List<String> contestantNames =
@@ -140,6 +151,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         sortPositions(positions);
         leaderboard.setPositions(positions);
         teamLeaderboardRepository.insert(leaderboard);
+        logger.info("Generated and inserted new team leaderboard");
     }
 
     private boolean searchPredicate(String searchTerm, IndividualPosition individualPosition) {
@@ -171,6 +183,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             newLeaderboard.getPositions().add(individualPosition);
             i++;
         }
+        logger.info("Created blank individual leaderboard");
         return newLeaderboard;
     }
 
@@ -184,6 +197,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             newLeaderboard.getPositions().add(teamPosition);
             i++;
         }
+        logger.info("Created blank team leaderboard");
         return newLeaderboard;
     }
 

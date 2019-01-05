@@ -4,6 +4,8 @@ import codingchallenge.domain.TestCase;
 import codingchallenge.domain.subdomain.Category;
 import codingchallenge.exceptions.NotEnoughTestsException;
 import codingchallenge.services.interfaces.TestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,8 @@ import java.util.List;
 public class TestController {
 
     private final TestService testService;
+
+    private final Logger logger = LoggerFactory.getLogger(TestController.class);
 
     @Autowired
     public TestController(TestService testService) {
@@ -45,6 +49,7 @@ public class TestController {
         try {
             return testService.obtainRandomisedTests(question);
         } catch (NotEnoughTestsException e) {
+            logger.error("Not enough tests were found.", e);
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "Not Enough Tests for Category: " + e.getCategory() + ", Question Number: " + e.getQuestionNumber(), e);
         }

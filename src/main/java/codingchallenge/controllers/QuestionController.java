@@ -2,6 +2,8 @@ package codingchallenge.controllers;
 
 import codingchallenge.domain.Question;
 import codingchallenge.services.interfaces.QuestionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +13,9 @@ import java.util.List;
 public class QuestionController {
 
     private final QuestionService questionService;
+
+    private final Logger logger =
+            LoggerFactory.getLogger(QuestionController.class);
 
     @Autowired
     public QuestionController(QuestionService questionService) {
@@ -32,6 +37,7 @@ public class QuestionController {
     @CrossOrigin
     @RequestMapping(path = "question", method = RequestMethod.POST)
     public Question addQuestion(@RequestBody Question question) {
+        logger.info("Adding a new question");
         return questionService.addQuestion(question);
     }
 
