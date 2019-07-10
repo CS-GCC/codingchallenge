@@ -1,4 +1,5 @@
 language: java
+before_install: mvn deploy:deploy-file -DgroupId=com.creditsuisse.codingchallenge -DartifactId=common -Dversion=1.0.0 -Durl=file:./local-maven-repo/ -DrepositoryId=local-maven-repo -DupdateReleaseInfo=true -Dfile=./local-maven-repo/common-1.0.0.jar
 deploy:
   provider: heroku
   api_key:
