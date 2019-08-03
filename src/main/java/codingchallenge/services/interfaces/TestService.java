@@ -1,5 +1,6 @@
 package codingchallenge.services.interfaces;
 
+import codingchallenge.domain.Contestant;
 import codingchallenge.domain.TestCase;
 import codingchallenge.domain.subdomain.Category;
 import codingchallenge.exceptions.NotEnoughTestsException;
@@ -16,4 +17,5 @@ public interface TestService {
 
     List<TestCase> obtainRandomisedTests(int questionNumber) throws NotEnoughTestsException;
 
+    Contestant registerTravis(String id, String uuid);
 }

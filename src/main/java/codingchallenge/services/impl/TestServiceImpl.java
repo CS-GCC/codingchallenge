@@ -1,9 +1,14 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.TestRepository;
+import codingchallenge.collections.TravisRepository;
+import codingchallenge.domain.Contestant;
 import codingchallenge.domain.TestCase;
+import codingchallenge.domain.TravisUUID;
 import codingchallenge.domain.subdomain.Category;
+import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.exceptions.NotEnoughTestsException;
+import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,15 +16,22 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class TestServiceImpl implements TestService {
 
     private final TestRepository testRepository;
+    private final TravisRepository travisRepository;
+    private final ContestantService contestantService;
 
     @Autowired
-    public TestServiceImpl(TestRepository testRepository) {
+    public TestServiceImpl(TestRepository testRepository,
+                           TravisRepository travisRepository,
+                           ContestantService contestantService) {
         this.testRepository = testRepository;
+        this.travisRepository = travisRepository;
+        this.contestantService = contestantService;
     }
 
 
@@ -55,6 +67,18 @@ public class TestServiceImpl implements TestService {
         }
         renumberTestCases(testCases);
         return testCases;
+    }
+
+    @Override
+    public Contestant registerTravis(String id, String uuid) {
+        TravisUUID travisUUID = new TravisUUID(id, UUID.fromString(uuid));
+        travisRepository.insert(travisUUID);
+        try {
+            return contestantService.getContestantById(id);
+        } catch (ContestantNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void renumberTestCases(List<TestCase> testCases) {

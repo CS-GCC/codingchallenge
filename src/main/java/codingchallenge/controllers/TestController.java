@@ -1,5 +1,6 @@
 package codingchallenge.controllers;
 
+import codingchallenge.domain.Contestant;
 import codingchallenge.domain.TestCase;
 import codingchallenge.domain.subdomain.Category;
 import codingchallenge.exceptions.NotEnoughTestsException;
@@ -29,6 +30,14 @@ public class TestController {
     @RequestMapping(path = "/tests/category/{category}/question/{question}", method = RequestMethod.GET)
     public List<TestCase> testsForCategoryAndQuestion(@PathVariable Category category, @PathVariable int question) {
         return testService.testsForCategoryAndQuestion(category, question);
+    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/challenge/registerTravis/{id}/{uuid}", method =
+            RequestMethod.GET)
+    public Contestant testsForCategoryAndQuestion(@PathVariable String id,
+                                                  @PathVariable String uuid) {
+        return testService.registerTravis(id, uuid);
     }
 
     @CrossOrigin
