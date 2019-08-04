@@ -18,7 +18,7 @@
     <repositories>
         <repository>
             <id>local-maven-repo</id>
-            <url>file:${project.basedir}/local-maven-repo</url>
+            <url>target</url>
         </repository>
     </repositories>
 
@@ -32,7 +32,7 @@
             <artifactId>common</artifactId>
             <version>3.1.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/local-maven-repo/common-3.1.4.jar</systemPath>
+            <systemPath>${project.basedir}/target/common-3.1.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
