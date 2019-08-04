@@ -29,7 +29,9 @@
         <dependency>
             <groupId>com.creditsuisse.codingchallenge</groupId>
             <artifactId>common</artifactId>
-            <version>2.2.0</version>
+            <version>3.1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/local-maven-repo/common-3.1.0.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
