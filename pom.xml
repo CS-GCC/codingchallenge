@@ -18,7 +18,7 @@
     <repositories>
         <repository>
             <id>local-maven-repo</id>
-            <url>target</url>
+            <url>file:${project.basedir}/local-maven-repo</url>
         </repository>
     </repositories>
 
@@ -31,8 +31,6 @@
             <groupId>com.creditsuisse.codingchallenge</groupId>
             <artifactId>common</artifactId>
             <version>3.1.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/target/common-3.1.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -86,24 +84,9 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/dependency/</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>2.0.8</version>
             </plugin>
         </plugins>
     </build>
