@@ -6,7 +6,8 @@
 
     <groupId>com.creditsuisse.codingchallenge</groupId>
     <artifactId>CodingChallenge</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -29,9 +30,9 @@
         <dependency>
             <groupId>com.creditsuisse.codingchallenge</groupId>
             <artifactId>common</artifactId>
-            <version>3.1.0</version>
+            <version>3.1.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/local-maven-repo/common-3.1.0.jar</systemPath>
+            <systemPath>${project.basedir}/local-maven-repo/common-3.1.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
