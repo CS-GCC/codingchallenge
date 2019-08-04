@@ -31,6 +31,8 @@
             <groupId>com.creditsuisse.codingchallenge</groupId>
             <artifactId>common</artifactId>
             <version>3.1.4</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/local-maven-repo/common-3.1.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -87,6 +89,11 @@
                 <groupId>com.heroku.sdk</groupId>
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>2.0.8</version>
+                <configuration>
+                    <includes>
+                        <include>local-maven-repo</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
