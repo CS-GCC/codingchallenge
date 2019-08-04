@@ -1,6 +1,5 @@
 package codingchallenge.services.impl;
 
-import codingchallenge.ServiceProperties;
 import codingchallenge.collections.ContestantRepository;
 import codingchallenge.collections.TeamRepository;
 import codingchallenge.domain.*;
@@ -8,6 +7,7 @@ import codingchallenge.domain.subdomain.IndividualPosition;
 import codingchallenge.domain.subdomain.Position;
 import codingchallenge.domain.subdomain.TeamPosition;
 import codingchallenge.exceptions.ContestantNotFoundException;
+import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.FactsService;
 import codingchallenge.services.interfaces.LeaderboardService;

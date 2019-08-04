@@ -1,12 +1,12 @@
 package codingchallenge.engines.implementations;
 
-import codingchallenge.ServiceProperties;
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.subdomain.Score;
 import codingchallenge.engines.interfaces.RunAll;
 import codingchallenge.engines.interfaces.ScoreCalculation;
 import codingchallenge.exceptions.ContestantNotFoundException;
+import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.LeaderboardService;
 import codingchallenge.services.interfaces.TeamService;
@@ -27,7 +27,6 @@ public class RunAllImpl implements RunAll {
     private final ScoreCalculation scoreCalculation;
     private final LeaderboardService leaderboardService;
     private final ContestantService contestantService;
-    private final TeamService teamService;
 
     private final ServiceProperties serviceProperties;
 
@@ -35,12 +34,10 @@ public class RunAllImpl implements RunAll {
     public RunAllImpl(ScoreCalculation scoreCalculation,
                       LeaderboardService leaderboardService,
                       ContestantService contestantService,
-                      TeamService teamService,
                       ServiceProperties serviceProperties) {
         this.scoreCalculation = scoreCalculation;
         this.leaderboardService = leaderboardService;
         this.contestantService = contestantService;
-        this.teamService = teamService;
         this.serviceProperties = serviceProperties;
     }
 
