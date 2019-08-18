@@ -30,14 +30,14 @@ public class ContestantController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "challenge/addnames", method = RequestMethod.POST)
+    @RequestMapping(path = "/challenge/addnames", method = RequestMethod.POST)
     public List<Contestant> addContestants(@RequestBody List<Contestant> contestants) {
         logger.info("Adding " + contestants.size() + " contestants");
         return contestantService.addContestants(contestants, true);
     }
 
     @CrossOrigin
-    @RequestMapping(path = "challenge/addname", method = RequestMethod.POST)
+    @RequestMapping(path = "/challenge/addname", method = RequestMethod.POST)
     public Contestant addContestant(@RequestBody Contestant contestant) {
         logger.info("Adding 1 contestants");
         return contestantService.addContestants(Lists.newArrayList(contestant),
@@ -45,7 +45,8 @@ public class ContestantController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "challenge/participants", method = RequestMethod.GET)
+    @RequestMapping(path = "/challenge/participants", method =
+            RequestMethod.GET)
     public List<Contestant> getAllContestants() {
         return contestantService.getAllContestants();
     }

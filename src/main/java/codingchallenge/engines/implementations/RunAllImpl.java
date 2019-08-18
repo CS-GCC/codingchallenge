@@ -62,7 +62,5 @@ public class RunAllImpl implements RunAll {
                     scores.get(s)));
         }
         return leaderboardService.generateLeaderboard(scoreMultimap);
-
-        //TODO: Remove stream from calculation
     }
 }

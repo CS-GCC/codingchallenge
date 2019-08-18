@@ -35,7 +35,7 @@ public class QuestionController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "question", method = RequestMethod.POST)
+    @RequestMapping(path = "/question", method = RequestMethod.POST)
     public Question addQuestion(@RequestBody Question question) {
         logger.info("Adding a new question");
         return questionService.addQuestion(question);
