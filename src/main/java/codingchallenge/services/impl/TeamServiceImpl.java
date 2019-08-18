@@ -4,10 +4,7 @@ import codingchallenge.collections.TeamRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.Team;
-import codingchallenge.domain.subdomain.Position;
-import codingchallenge.domain.subdomain.Registration;
-import codingchallenge.domain.subdomain.TeamPosition;
-import codingchallenge.domain.subdomain.TimeStampPosition;
+import codingchallenge.domain.subdomain.*;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.TeamService;
 import com.google.common.collect.Lists;
@@ -83,6 +80,11 @@ public class TeamServiceImpl implements TeamService {
                         timestamp));
             }
         }
+    }
+
+    @Override
+    public List<Team> addTeams(List<Team> teams) {
+        return teamRepository.insert(teams);
     }
 
     @Override
