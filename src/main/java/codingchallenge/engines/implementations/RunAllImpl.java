@@ -51,14 +51,18 @@ public class RunAllImpl implements RunAll {
     public Leaderboard runContestants(List<Contestant> contestants) throws ContestantNotFoundException {
         Multimap<String, Score> scoreMultimap = ArrayListMultimap.create();
         int numberOfQuestions = serviceProperties.getNumberOfQuestions();
+        List<String> contestantIds =
+                contestants.stream().map(Contestant::getId).collect(Collectors.toList());
         for (int i=1; i<=numberOfQuestions; i++) {
             Map<String, Score> scores =
                     scoreCalculation.calculateScores(
-                            contestants.stream().map(Contestant::getId).collect(Collectors.toList()),
+                            contestantIds,
                             i);
             scores.keySet().forEach(s -> scoreMultimap.put(s,
                     scores.get(s)));
         }
         return leaderboardService.generateLeaderboard(scoreMultimap);
+
+        //TODO: Remove stream from calculation
     }
 }
