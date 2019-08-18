@@ -6,6 +6,7 @@ import codingchallenge.collections.TeamRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.Team;
+import codingchallenge.domain.Type;
 import codingchallenge.domain.subdomain.IndividualPosition;
 import codingchallenge.domain.subdomain.Position;
 import codingchallenge.domain.subdomain.Score;
@@ -166,6 +167,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         sortPositions(positions);
         Leaderboard leaderboard = new Leaderboard(new Date());
         leaderboard.setPositions(positions);
+        leaderboard.setType(Type.INDIVIDUAL);
         logger.info("New individual leaderboard generated and inserted");
         return leaderboard;
     }
@@ -214,6 +216,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             teamPosition.setContestants(filteredContestantIds);
             positions.add(teamPosition);
         }
+        leaderboard.setType(Type.TEAM);
         sortPositions(positions);
         leaderboard.setPositions(positions);
         logger.info("Generated new team leaderboard");
@@ -280,6 +283,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             newLeaderboard.getPositions().add(individualPosition);
             i++;
         }
+        newLeaderboard.setType(Type.INDIVIDUAL);
         logger.info("Created blank individual leaderboard");
         return newLeaderboard;
     }
@@ -298,6 +302,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             newLeaderboard.getPositions().add(teamPosition);
             i++;
         }
+        newLeaderboard.setType(Type.TEAM);
         logger.info("Created blank team leaderboard");
         return newLeaderboard;
     }

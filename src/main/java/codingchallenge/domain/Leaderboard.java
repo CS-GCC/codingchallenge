@@ -15,6 +15,7 @@ public class Leaderboard {
     private String id;
     private Date timestamp;
     private List<Position> positions;
+    private Type type;
 
     public Leaderboard() {
         this.timestamp = new Date();
@@ -40,6 +41,14 @@ public class Leaderboard {
 
     public void setPositions(List<Position> positions) {
         this.positions = positions;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     @Override
