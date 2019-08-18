@@ -1,7 +1,6 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.LeaderboardRepository;
-import codingchallenge.collections.TeamLeaderboardRepository;
 import codingchallenge.collections.TeamRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.Leaderboard;
@@ -30,7 +29,6 @@ import java.util.stream.Collectors;
 public class LeaderboardServiceImpl implements LeaderboardService {
 
     private final LeaderboardRepository leaderboardRepository;
-    private final TeamLeaderboardRepository teamLeaderboardRepository;
     private final ContestantService contestantService;
     private final TeamRepository teamRepository;
 
@@ -39,12 +37,10 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     @Autowired
     public LeaderboardServiceImpl(LeaderboardRepository leaderboardRepository
-            , TeamLeaderboardRepository
-                                          teamLeaderboardRepository,
+            ,
                                   ContestantService contestantService,
                                   TeamRepository teamRepository) {
         this.leaderboardRepository = leaderboardRepository;
-        this.teamLeaderboardRepository = teamLeaderboardRepository;
         this.contestantService = contestantService;
         this.teamRepository = teamRepository;
     }
@@ -76,7 +72,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public Leaderboard getTeamLeaderboard() {
         Optional<Leaderboard> leaderboardOptional =
-                teamLeaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(new Date());
+                leaderboardRepository.findTopByTimestampBeforeAndTypeOrderByTimestampDesc(new Date(), Type.TEAM);
         return leaderboardOptional.orElseGet(this::generatePlainTeamLeaderboard);
     }
 
@@ -109,7 +105,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public Leaderboard getLeaderboard() {
         Optional<Leaderboard> leaderboardOptional =
-                leaderboardRepository.findTopByTimestampBeforeOrderByTimestampDesc(new Date());
+                leaderboardRepository.findTopByTimestampBeforeAndTypeOrderByTimestampDesc(new Date(), Type.INDIVIDUAL);
         return leaderboardOptional.orElseGet(this::generatePlainLeaderboard);
     }
 
@@ -230,7 +226,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     @Override
     public void saveTeamLeaderboard(Leaderboard leaderboard) {
-        teamLeaderboardRepository.insert(leaderboard);
+        leaderboardRepository.insert(leaderboard);
     }
 
     @Override
