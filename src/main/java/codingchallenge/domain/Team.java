@@ -8,6 +8,10 @@ public class Team extends Contestant {
 
     private List<Registration> registeredContestants;
 
+    public Team() {
+        super();
+    }
+
     public Team(String id, String name, String team,
                 List<Registration> registeredContestants) {
         super(id, name, team);
