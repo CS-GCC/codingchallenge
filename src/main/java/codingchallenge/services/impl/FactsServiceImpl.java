@@ -8,10 +8,7 @@ import codingchallenge.domain.subdomain.Position;
 import codingchallenge.domain.subdomain.TeamPosition;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.ServiceProperties;
-import codingchallenge.services.interfaces.ContestantService;
-import codingchallenge.services.interfaces.FactsService;
-import codingchallenge.services.interfaces.LeaderboardService;
-import codingchallenge.services.interfaces.TeamService;
+import codingchallenge.services.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +23,7 @@ public class FactsServiceImpl implements FactsService {
     private final ContestantService contestantService;
     private final ServiceProperties serviceProperties;
     private final TeamService teamService;
+    private final ArticleService articleService;
     private final ContestantRepository contestantRepository;
     private final TeamRepository teamRepository;
 
@@ -33,11 +31,12 @@ public class FactsServiceImpl implements FactsService {
     public FactsServiceImpl(LeaderboardService leaderboardService,
                             ContestantService contestantService,
                             ServiceProperties serviceProperties,
-                            TeamService teamService, ContestantRepository contestantRepository, TeamRepository teamRepository) {
+                            TeamService teamService, ArticleService articleService, ContestantRepository contestantRepository, TeamRepository teamRepository) {
         this.leaderboardService = leaderboardService;
         this.contestantService = contestantService;
         this.serviceProperties = serviceProperties;
         this.teamService = teamService;
+        this.articleService = articleService;
         this.contestantRepository = contestantRepository;
         this.teamRepository = teamRepository;
     }
@@ -48,7 +47,9 @@ public class FactsServiceImpl implements FactsService {
                 getIndividualContestants(serviceProperties.getContestants());
         List<Contestant> universityContestants =
                 getUniversityContestants(serviceProperties.getUniversities());
-        return new RegionFacts(individualContestants, universityContestants);
+        List<Headline> headlines = articleService.getLatestArticles(0, 5);
+        return new RegionFacts(individualContestants, universityContestants,
+                headlines);
     }
 
     @Override
