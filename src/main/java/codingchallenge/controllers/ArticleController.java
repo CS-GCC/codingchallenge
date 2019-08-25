@@ -23,7 +23,7 @@ public class ArticleController {
     @CrossOrigin
     @RequestMapping(path = "/news/headlines", method = RequestMethod.GET)
     public List<Headline> getHeadlines(@RequestParam("from") int from,
-                                       @RequestParam("limit") int limit) {
+                                      @RequestParam("limit") int limit) {
         return articleService.getLatestArticles(from, limit);
     }
 

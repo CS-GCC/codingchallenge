@@ -12,6 +12,8 @@ public class ServiceProperties {
     private int contestants;
     private int universities;
     private Region region;
+    private String startDate;
+    private String endDate;
 
     public int getNumberOfQuestions() {
         return numberOfQuestions;
@@ -43,5 +45,21 @@ public class ServiceProperties {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }
