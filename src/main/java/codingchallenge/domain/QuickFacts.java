@@ -1,16 +1,20 @@
 package codingchallenge.domain;
 
+import codingchallenge.domain.subdomain.Region;
+
 public class QuickFacts {
 
+    private Region region;
     private long numberOfContestants;
     private String leadingIndividual;
     private String leadingTeam;
 
     public QuickFacts(long numberOfContestants, String leadingIndividual,
-                      String leadingTeam) {
+                      String leadingTeam, Region region) {
         this.numberOfContestants = numberOfContestants;
         this.leadingIndividual = leadingIndividual;
         this.leadingTeam = leadingTeam;
+        this.region = region;
     }
 
     public long getNumberOfContestants() {
@@ -35,5 +39,13 @@ public class QuickFacts {
 
     public void setLeadingTeam(String leadingTeam) {
         this.leadingTeam = leadingTeam;
+    }
+
+    public Region getRegion() {
+        return region;
+    }
+
+    public void setRegion(Region region) {
+        this.region = region;
     }
 }

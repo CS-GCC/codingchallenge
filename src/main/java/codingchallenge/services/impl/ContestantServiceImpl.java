@@ -70,7 +70,7 @@ public class ContestantServiceImpl implements ContestantService {
 
     @Override
     public void generateTimeStampedPositions(Leaderboard leaderboard) {
-        List<Position> positions = leaderboard.getPositions();
+        List<Position> positions = leaderboard.getContestants();
         Date timestamp = leaderboard.getTimestamp();
         for (Position pos : positions) {
             IndividualPosition position = (IndividualPosition) pos;

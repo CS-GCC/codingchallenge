@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -47,7 +46,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public void generateTimeStampedPositions(Leaderboard teamLeaderboard) {
-        List<Position> positions = teamLeaderboard.getPositions();
+        List<Position> positions = teamLeaderboard.getContestants();
         Date timestamp = teamLeaderboard.getTimestamp();
         for (Position pos : positions) {
             TeamPosition position = (TeamPosition) pos;

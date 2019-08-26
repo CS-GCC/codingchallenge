@@ -63,7 +63,7 @@ public class FactsServiceImpl implements FactsService {
                 ((TeamPosition) universityPositions.get(0)).getTeamName();
 
         return new QuickFacts(numberOfContestants, contestant,
-                universityPosition);
+                universityPosition, serviceProperties.getRegion());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class FactsServiceImpl implements FactsService {
     private List<Position> getUniversityPositions(int numberOfUniversities) {
         Leaderboard teamLeaderboard =
                 leaderboardService.getLatestTeamLeaderboard(0, numberOfUniversities);
-        return teamLeaderboard.getPositions();
+        return teamLeaderboard.getContestants();
     }
 
     private List<Contestant> getUniversityContestants(int numberOfUniversities) {
@@ -116,7 +116,7 @@ public class FactsServiceImpl implements FactsService {
         Leaderboard leaderboard =
                 leaderboardService.getLatestIndividualLeaderboard(0, numberOfIndividuals);
         List<Position> individualPositions =
-                leaderboard.getPositions();
+                leaderboard.getContestants();
         List<String> contestantIds = individualPositions.stream().map(
                 pos -> ((IndividualPosition) pos).getContestantId()
         ).collect(Collectors.toList());

@@ -48,8 +48,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public Leaderboard getLatestIndividualLeaderboard(int from, int limit) {
         Leaderboard leaderboard = getLeaderboard();
-        leaderboard.setPositions(leaderboard
-                .getPositions()
+        leaderboard.setContestants(leaderboard
+                .getContestants()
                 .stream()
                 .skip(from)
                 .limit(limit)
@@ -60,8 +60,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public Leaderboard getLatestTeamLeaderboard(int from, int limit) {
         Leaderboard leaderboard = getTeamLeaderboard();
-        leaderboard.setPositions(leaderboard
-                .getPositions()
+        leaderboard.setContestants(leaderboard
+                .getContestants()
                 .stream()
                 .skip(from)
                 .limit(limit)
@@ -79,7 +79,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public TeamPosition getLatestPositionForTeam(String teamId) {
         Leaderboard leaderboard = getTeamLeaderboard();
-        List<Position> positions = leaderboard.getPositions();
+        List<Position> positions = leaderboard.getContestants();
         for (Position position : positions) {
             TeamPosition pos = (TeamPosition) position;
             if (pos.getTeamId().equals(teamId)) {
@@ -92,7 +92,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public IndividualPosition getLatestPositionForIndividual(String id) {
         Leaderboard leaderboard = getLeaderboard();
-        List<Position> positions = leaderboard.getPositions();
+        List<Position> positions = leaderboard.getContestants();
         for (Position position : positions) {
             IndividualPosition pos = (IndividualPosition) position;
             if (pos.getContestantId().equals(id)) {
@@ -114,8 +114,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                                                         int from, int limit) {
         Leaderboard leaderboard = getLatestIndividualLeaderboard(from, limit);
 
-        leaderboard.setPositions(
-                leaderboard.getPositions()
+        leaderboard.setContestants(
+                leaderboard.getContestants()
                         .stream()
                         .filter(pos -> searchPredicate(searchTerm,
                                 (IndividualPosition) pos))
@@ -132,8 +132,8 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             , int limit) {
         Leaderboard leaderboard = getLatestTeamLeaderboard(from, limit);
 
-        leaderboard.setPositions(
-                leaderboard.getPositions()
+        leaderboard.setContestants(
+                leaderboard.getContestants()
                         .stream()
                         .filter(pos -> teamSearchPredicate(searchTerm,
                                 (TeamPosition) pos))
@@ -162,7 +162,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         logger.debug("Sorting individual positions");
         sortPositions(positions);
         Leaderboard leaderboard = new Leaderboard(new Date());
-        leaderboard.setPositions(positions);
+        leaderboard.setContestants(positions);
         leaderboard.setType(Type.INDIVIDUAL);
         logger.info("New individual leaderboard generated and inserted");
         return leaderboard;
@@ -173,7 +173,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                                                int numberOfQuestions) throws ContestantNotFoundException {
         List<Position> positions = Lists.newArrayList();
         List<Position> individualPositions =
-                individualLeaderboard.getPositions();
+                individualLeaderboard.getContestants();
         Leaderboard leaderboard =
                 new Leaderboard(individualLeaderboard.getTimestamp());
         Multimap<String, Contestant> teams = getAllTeams();
@@ -214,7 +214,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         }
         leaderboard.setType(Type.TEAM);
         sortPositions(positions);
-        leaderboard.setPositions(positions);
+        leaderboard.setContestants(positions);
         logger.info("Generated new team leaderboard");
         return leaderboard;
     }
@@ -232,7 +232,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public int positionWithinTeam(String teamId, String contestantId) {
         Leaderboard leaderboard = getTeamLeaderboard();
-        List<Position> positions = leaderboard.getPositions();
+        List<Position> positions = leaderboard.getContestants();
         TeamPosition position = null;
         for (Position pos : positions) {
             if (((TeamPosition) pos).getTeamId().equals(teamId)) {
@@ -276,7 +276,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             IndividualPosition individualPosition =
                     new IndividualPosition(i, contestant.getId(),
                             contestant.getName(), contestant.getId());
-            newLeaderboard.getPositions().add(individualPosition);
+            newLeaderboard.getContestants().add(individualPosition);
             i++;
         }
         newLeaderboard.setType(Type.INDIVIDUAL);
@@ -295,7 +295,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                     getTeamNameById(team),
                     team,
                     contestantStrings);
-            newLeaderboard.getPositions().add(teamPosition);
+            newLeaderboard.getContestants().add(teamPosition);
             i++;
         }
         newLeaderboard.setType(Type.TEAM);

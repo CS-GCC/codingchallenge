@@ -14,7 +14,7 @@ public class Article {
     private String author;
     private Date timestamp;
     private String imageUrl;
-    private String content;
+    private String body;
     private String prettyPrintedTime;
 
     public Article() {
@@ -84,11 +84,11 @@ public class Article {
         this.imageUrl = imageUrl;
     }
 
-    public String getContent() {
-        return content;
+    public String getBody() {
+        return body;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setBody(String body) {
+        this.body = body;
     }
 }

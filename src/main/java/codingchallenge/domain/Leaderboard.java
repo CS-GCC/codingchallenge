@@ -14,17 +14,17 @@ public class Leaderboard {
     @Id
     private String id;
     private Date timestamp;
-    private List<Position> positions;
+    private List<Position> contestants;
     private Type type;
 
     public Leaderboard() {
         this.timestamp = new Date();
-        this.positions = new ArrayList<>();
+        this.contestants = new ArrayList<>();
     }
 
     public Leaderboard(Date timestamp) {
         this.timestamp = timestamp;
-        this.positions = new ArrayList<>();
+        this.contestants = new ArrayList<>();
     }
 
     public String getId() {
@@ -35,12 +35,12 @@ public class Leaderboard {
         return timestamp;
     }
 
-    public List<Position> getPositions() {
-        return positions;
+    public List<Position> getContestants() {
+        return contestants;
     }
 
-    public void setPositions(List<Position> positions) {
-        this.positions = positions;
+    public void setContestants(List<Position> contestants) {
+        this.contestants = contestants;
     }
 
     public Type getType() {
@@ -58,11 +58,11 @@ public class Leaderboard {
         Leaderboard that = (Leaderboard) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(timestamp, that.timestamp) &&
-                CollectionUtils.isEqualCollection(positions, that.positions);
+                CollectionUtils.isEqualCollection(contestants, that.contestants);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, timestamp, positions);
+        return Objects.hash(id, timestamp, contestants);
     }
 }
