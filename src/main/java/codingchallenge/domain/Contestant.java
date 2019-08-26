@@ -13,6 +13,7 @@ public class Contestant {
     @Id
     private String id;
     private String globalId;
+    private int graduationYear;
     private String name;
     private String team;
     private String teamId;
@@ -100,5 +101,13 @@ public class Contestant {
 
     public Position latestPosition() {
         return positions.get(positions.size()-1);
+    }
+
+    public int getGraduationYear() {
+        return graduationYear;
+    }
+
+    public void setGraduationYear(int graduationYear) {
+        this.graduationYear = graduationYear;
     }
 }

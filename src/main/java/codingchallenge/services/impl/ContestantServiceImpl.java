@@ -64,6 +64,11 @@ public class ContestantServiceImpl implements ContestantService {
     }
 
     @Override
+    public List<Contestant> getContestantsByTeam(String id) {
+        return contestantRepository.findContestantsByTeamId(id);
+    }
+
+    @Override
     public void generateTimeStampedPositions(Leaderboard leaderboard) {
         List<Position> positions = leaderboard.getPositions();
         Date timestamp = leaderboard.getTimestamp();

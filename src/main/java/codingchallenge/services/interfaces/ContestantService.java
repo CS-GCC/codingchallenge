@@ -20,6 +20,8 @@ public interface ContestantService {
 
     Contestant getContestantById(String id) throws ContestantNotFoundException;
 
+    List<Contestant> getContestantsByTeam(String id);
+
     void generateTimeStampedPositions(Leaderboard leaderboard);
 
     List<String> getContestantNames(List<String> contestantIds);
