@@ -2,9 +2,11 @@ package codingchallenge.services;
 
 import codingchallenge.domain.subdomain.Region;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
+@Primary
 @ConfigurationProperties("service")
 public class ServiceProperties {
 
