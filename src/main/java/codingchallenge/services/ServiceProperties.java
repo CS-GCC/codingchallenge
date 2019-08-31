@@ -16,6 +16,7 @@ public class ServiceProperties {
     private Region region;
     private String startDate;
     private String endDate;
+    private boolean stubbed;
 
     public int getNumberOfQuestions() {
         return numberOfQuestions;
@@ -63,5 +64,13 @@ public class ServiceProperties {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public boolean isStubbed() {
+        return stubbed;
+    }
+
+    public void setStubbed(boolean stubbed) {
+        this.stubbed = stubbed;
     }
 }

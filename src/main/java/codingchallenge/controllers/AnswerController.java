@@ -1,6 +1,7 @@
 package codingchallenge.controllers;
 
 import codingchallenge.domain.Answer;
+import codingchallenge.domain.Contestant;
 import codingchallenge.services.interfaces.AnswerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class AnswerController {
@@ -24,11 +26,18 @@ public class AnswerController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/answer/question/{question}/contestant/{contestant}")
+    @RequestMapping(path = "/answer/contestant/{uuid}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void updateAnswersForContestant(@RequestBody List<Answer> answers, @PathVariable int question, @PathVariable String contestant) {
-        this.answerService.updateAnswersForContestantAndQuestion(contestant, question, answers);
-        logger.info("Updated answers for question " + question + " for " +
-                "contestant " + contestant);
+    public void updateAnswersForContestant(@RequestBody List<Answer> answers,
+                                           @PathVariable String uuid) {
+        this.answerService.updateAnswersForUUID(uuid, answers);
+        logger.info("Updated answers for UUID " + uuid);
     }
+
+    @CrossOrigin
+    @RequestMapping(path = "/answer/contestants")
+    public void retrieveAnswersForContestants(@RequestBody Set<String> contestants) {
+        answerService.getAnswersForContestants(contestants);
+    }
+
 }

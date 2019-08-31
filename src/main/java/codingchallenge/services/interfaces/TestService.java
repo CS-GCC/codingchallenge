@@ -6,6 +6,7 @@ import codingchallenge.domain.subdomain.Category;
 import codingchallenge.exceptions.NotEnoughTestsException;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface TestService {
 
@@ -18,4 +19,6 @@ public interface TestService {
     List<TestCase> obtainRandomisedTests(int questionNumber) throws NotEnoughTestsException;
 
     Contestant registerTravis(String id, String uuid);
+
+    List<UUID> getUUIDs();
 }

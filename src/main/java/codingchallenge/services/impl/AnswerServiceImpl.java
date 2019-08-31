@@ -1,7 +1,9 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.AnswerRepository;
+import codingchallenge.collections.TravisRepository;
 import codingchallenge.domain.Answer;
+import codingchallenge.domain.TravisUUID;
 import codingchallenge.domain.subdomain.Correctness;
 import codingchallenge.services.interfaces.AnswerService;
 import com.google.common.collect.ArrayListMultimap;
@@ -12,28 +14,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerRepository answerRepository;
+    private final TravisRepository travisRepository;
 
     private final Logger logger =
             LoggerFactory.getLogger(AnswerServiceImpl.class);
 
     @Autowired
-    public AnswerServiceImpl(AnswerRepository answerRepository) {
+    public AnswerServiceImpl(AnswerRepository answerRepository,
+                             TravisRepository travisRepository) {
         this.answerRepository = answerRepository;
+        this.travisRepository = travisRepository;
     }
 
     @Override
-    public void updateAnswersForContestantAndQuestion(String contestant,
-                                                      int questionNumber,
-                                                      List<Answer> answers) {
-        answerRepository.deleteAnswersByContestantAndQuestionNumber(contestant, questionNumber);
-        answerRepository.insert(answers);
-        logger.info("Added answers for contestant " + contestant + " for " +
-                "question " + questionNumber);
+    public void updateAnswersForUUID(String uuid, List<Answer> answers) {
+        UUID travisUUID = UUID.fromString(uuid);
+        Optional<TravisUUID> contestantCode =
+                travisRepository.findByUuid(travisUUID);
+        if (contestantCode.isPresent()) {
+            String contestant = contestantCode.get().getContestantId();
+            for (Answer answer : answers) {
+                answer.setContestant(contestant);
+            }
+            answerRepository.deleteAnswersByContestant(contestant);
+            answerRepository.insert(answers);
+            return;
+        }
+        logger.info("UUID given is invalid. No action taken.");
     }
 
     @Override
@@ -46,5 +61,10 @@ public class AnswerServiceImpl implements AnswerService {
         multimap.putAll(Correctness.CORRECT,
                 answerRepository.findAllByQuestionNumberAndTestNumberAndCorrectOrderBySpeedAsc(questionNumber, testNumber, Correctness.CORRECT));
         return multimap;
+    }
+
+    @Override
+    public List<Answer> getAnswersForContestants(Set<String> contestants) {
+        return answerRepository.findAllByContestantIn(contestants);
     }
 }

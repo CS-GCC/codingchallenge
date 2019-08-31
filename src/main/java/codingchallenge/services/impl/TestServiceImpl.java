@@ -8,8 +8,10 @@ import codingchallenge.domain.TravisUUID;
 import codingchallenge.domain.subdomain.Category;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.exceptions.NotEnoughTestsException;
+import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.TestService;
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TestServiceImpl implements TestService {
@@ -24,14 +27,17 @@ public class TestServiceImpl implements TestService {
     private final TestRepository testRepository;
     private final TravisRepository travisRepository;
     private final ContestantService contestantService;
+    private final ServiceProperties serviceProperties;
 
     @Autowired
     public TestServiceImpl(TestRepository testRepository,
                            TravisRepository travisRepository,
-                           ContestantService contestantService) {
+                           ContestantService contestantService,
+                           ServiceProperties serviceProperties) {
         this.testRepository = testRepository;
         this.travisRepository = travisRepository;
         this.contestantService = contestantService;
+        this.serviceProperties = serviceProperties;
     }
 
 
@@ -79,6 +85,15 @@ public class TestServiceImpl implements TestService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public List<UUID> getUUIDs() {
+        if (serviceProperties.isStubbed()) {
+            List<TravisUUID> travisUUIDS = travisRepository.findAll();
+            return travisUUIDS.stream().map(TravisUUID::getUuid).collect(Collectors.toList());
+        }
+        return Lists.newArrayList();
     }
 
     private void renumberTestCases(List<TestCase> testCases) {

@@ -5,12 +5,13 @@ import codingchallenge.domain.subdomain.Correctness;
 import com.google.common.collect.Multimap;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AnswerService {
 
-    void updateAnswersForContestantAndQuestion(String contestant,
-                                               int questionNumber,
-                                               List<Answer> answers);
+    void updateAnswersForUUID(String contestant, List<Answer> answers);
 
     Multimap<Correctness, Answer> getAnswersForQuestionAndTest(int questionNumber, int testNumber);
+
+    List<Answer> getAnswersForContestants(Set<String> contestants);
 }

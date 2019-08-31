@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 public class TestController {
@@ -38,6 +39,12 @@ public class TestController {
     public Contestant testsForCategoryAndQuestion(@PathVariable String id,
                                                   @PathVariable String uuid) {
         return testService.registerTravis(id, uuid);
+    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/challenge/uuids", method = RequestMethod.GET)
+    public List<UUID> getUuids() {
+        return testService.getUUIDs();
     }
 
     @CrossOrigin
