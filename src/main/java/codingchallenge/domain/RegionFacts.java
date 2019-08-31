@@ -1,7 +1,6 @@
 package codingchallenge.domain;
 
 import codingchallenge.domain.subdomain.Position;
-import javafx.geometry.Pos;
 
 import java.util.List;
 
