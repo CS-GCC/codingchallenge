@@ -41,6 +41,7 @@ public class Runner {
     @Scheduled(initialDelay = 60000, fixedDelay = 600000)
     public void runner() throws ContestantNotFoundException {
         logger.info("Beginning new run. Current time: " + new Date());
+        long startTime = System.currentTimeMillis();
         if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
             Leaderboard leaderboard = runAll.runAll();
             Leaderboard universityLeaderboard =
@@ -55,7 +56,8 @@ public class Runner {
         } else {
             logger.info("Run not needed. Challenge status is not in bounds");
         }
-        logger.info("Run completed successfully");
+        long endTime = System.currentTimeMillis();
+        logger.info("Run completed successfully in " + ((endTime - startTime)/60000.0) + " minutes.");
 
     }
 
