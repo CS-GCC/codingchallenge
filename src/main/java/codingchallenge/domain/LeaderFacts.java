@@ -8,6 +8,9 @@ public class LeaderFacts {
     private List<Contestant> universityLeaderboard;
     private List<Answer> answers;
 
+    public LeaderFacts() {
+    }
+
     public LeaderFacts(List<Contestant> individualLeaderboard,
                        List<Contestant> universityLeaderboard,
                        List<Answer> answers) {

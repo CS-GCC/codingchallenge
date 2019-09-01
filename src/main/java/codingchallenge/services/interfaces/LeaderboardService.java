@@ -7,6 +7,8 @@ import codingchallenge.domain.subdomain.TeamPosition;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import com.google.common.collect.Multimap;
 
+import java.util.List;
+
 /**
  * Created by kunalwagle on 29/12/2018.
  */
@@ -40,4 +42,6 @@ public interface LeaderboardService {
     TeamPosition getLatestPositionForTeam(String teamId);
 
     IndividualPosition getLatestPositionForIndividual(String id);
+
+    double getContestantTotals(List<String> ids);
 }

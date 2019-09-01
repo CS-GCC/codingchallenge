@@ -247,6 +247,11 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         return contestants.indexOf(contestantId);
     }
 
+    @Override
+    public double getContestantTotals(List<String> ids) {
+        return ids.stream().map(this::getLatestPositionForIndividual).mapToDouble(IndividualPosition::getTotal).sum();
+    }
+
     private boolean searchPredicate(String searchTerm,
                                     IndividualPosition individualPosition) {
 

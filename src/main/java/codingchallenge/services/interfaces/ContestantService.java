@@ -29,5 +29,4 @@ public interface ContestantService {
     List<Contestant> getContestantsById(List<String> ids);
 
     long getNumberOfContestants();
-
 }

@@ -5,6 +5,7 @@ import codingchallenge.domain.ContestantStats;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.FactsService;
+import codingchallenge.services.interfaces.LeaderboardService;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,15 +19,18 @@ public class ContestantController {
 
     private final ContestantService contestantService;
     private final FactsService factsService;
+    private final LeaderboardService leaderboardService;
 
     private final Logger logger =
             LoggerFactory.getLogger(ContestantController.class);
 
     @Autowired
     public ContestantController(ContestantService contestantService,
-                                FactsService factsService) {
+                                FactsService factsService,
+                                LeaderboardService leaderboardService) {
         this.contestantService = contestantService;
         this.factsService = factsService;
+        this.leaderboardService = leaderboardService;
     }
 
     @CrossOrigin
@@ -71,5 +75,12 @@ public class ContestantController {
         logger.info("Received request for stats for contestant with id " + id);
         return factsService.getStatsForContestant(id);
     }
+
+    @CrossOrigin
+    @RequestMapping(path = "/contestants/total", method = RequestMethod.GET)
+    public double getContestantTotals(@RequestParam("ids") List<String> ids) {
+        return leaderboardService.getContestantTotals(ids);
+    }
+
 
 }
