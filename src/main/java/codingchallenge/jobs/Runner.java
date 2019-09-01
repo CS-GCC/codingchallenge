@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 public class Runner {
 
@@ -38,7 +40,7 @@ public class Runner {
 
     @Scheduled(initialDelay = 60000, fixedDelay = 600000)
     public void runner() throws ContestantNotFoundException {
-        logger.info("Beginning new run");
+        logger.info("Beginning new run. Current time: " + new Date());
         if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
             Leaderboard leaderboard = runAll.runAll();
             Leaderboard universityLeaderboard =
