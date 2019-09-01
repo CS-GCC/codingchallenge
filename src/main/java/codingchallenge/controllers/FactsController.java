@@ -1,5 +1,6 @@
 package codingchallenge.controllers;
 
+import codingchallenge.domain.LeaderFacts;
 import codingchallenge.domain.QuickFacts;
 import codingchallenge.domain.RegionFacts;
 import codingchallenge.services.interfaces.FactsService;
@@ -29,6 +30,12 @@ public class FactsController {
     @RequestMapping(path = "/facts/region", method = RequestMethod.GET)
     public RegionFacts getRegionFacts() {
         return factsService.getRegionFacts();
+    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/facts/leader", method = RequestMethod.GET)
+    public LeaderFacts getLeaderFacts() {
+        return factsService.getLeaderFacts();
     }
 
 
