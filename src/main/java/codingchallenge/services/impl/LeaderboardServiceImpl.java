@@ -318,7 +318,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     private String getTeamNameById(String id) {
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()) {
-            return team.get().getTeam();
+            return team.get().getName();
         }
         return "";
     }

@@ -10,6 +10,8 @@ public class Score {
     private int timedOut;
     private double total;
 
+    public Score() {}
+
     public Score(int questionNumber) {
         this.questionNumber = questionNumber;
     }

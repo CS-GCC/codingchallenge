@@ -14,6 +14,9 @@ public class TeamPosition extends Position {
     private String teamName;
     private String teamId;
 
+    public TeamPosition() {
+    }
+
     public TeamPosition(int position, String teamName, String teamId) {
         super(position);
         this.teamName = teamName;

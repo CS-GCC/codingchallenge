@@ -7,6 +7,9 @@ public class TravisUUID {
     private String contestantId;
     private UUID uuid;
 
+    public TravisUUID() {
+    }
+
     public TravisUUID(String contestantId, UUID uuid) {
         this.contestantId = contestantId;
         this.uuid = uuid;

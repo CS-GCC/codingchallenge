@@ -7,6 +7,9 @@ public class TimeStampPosition extends Position {
 
     private Date timestamp;
 
+    public TimeStampPosition() {
+    }
+
     public TimeStampPosition(Position position, Date timestamp) {
         super(position.getTotal(), position.getScores(), position.getPosition());
         this.timestamp = timestamp;

@@ -8,6 +8,9 @@ public class IndividualPosition extends Position {
     private String name;
     private String contestantId;
 
+    public IndividualPosition() {
+    }
+
     public IndividualPosition(int position, String contestant, String name, String contestantId) {
         super(position);
         this.contestant = contestant;

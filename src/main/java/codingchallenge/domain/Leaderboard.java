@@ -16,6 +16,7 @@ public class Leaderboard {
     private Date timestamp;
     private List<Position> contestants;
     private Type type;
+    private int totalContestants;
 
     public Leaderboard() {
         this.timestamp = new Date();
@@ -41,6 +42,7 @@ public class Leaderboard {
 
     public void setContestants(List<Position> contestants) {
         this.contestants = contestants;
+        this.totalContestants = contestants.size();
     }
 
     public Type getType() {
@@ -64,5 +66,9 @@ public class Leaderboard {
     @Override
     public int hashCode() {
         return Objects.hash(id, timestamp, contestants);
+    }
+
+    public int getTotalContestants() {
+        return totalContestants;
     }
 }
