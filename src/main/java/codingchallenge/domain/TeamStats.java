@@ -18,6 +18,7 @@ public class TeamStats {
     public TeamStats(Team team, Region region) {
         this.id = team.getId();
         this.name = team.getName();
+        this.totalContestants = team.getRegisteredContestants().size();
         this.position = team.latestPosition().getPosition();
         this.total = team.latestPosition().getTotal();
         this.region = region;

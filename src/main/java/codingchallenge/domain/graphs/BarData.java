@@ -1,5 +1,7 @@
 package codingchallenge.domain.graphs;
 
+import java.text.DecimalFormat;
+
 public class BarData {
 
     private int year;
@@ -19,12 +21,12 @@ public class BarData {
     public BarData(int year, double q1, double q2, double q3, double q4, double q5,
                    double q6) {
         this.year = year;
-        Q1 = q1;
-        Q2 = q2;
-        Q3 = q3;
-        Q4 = q4;
-        Q5 = q5;
-        Q6 = q6;
+        Q1 = round(q1);
+        Q2 = round(q2);
+        Q3 = round(q3);
+        Q4 = round(q4);
+        Q5 = round(q5);
+        Q6 = round(q6);
     }
 
     public int getYear() {
@@ -129,5 +131,11 @@ public class BarData {
 
     public void setQ6Color(String q6Color) {
         Q6Color = q6Color;
+    }
+
+    private static double round(double val) {
+        val = val*100;
+        val = Math.round(val);
+        return val /100;
     }
 }

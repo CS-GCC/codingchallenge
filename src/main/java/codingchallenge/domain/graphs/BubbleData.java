@@ -11,7 +11,7 @@ public class BubbleData {
     public BubbleData(String name, List<BubbleData> children, double value) {
         this.name = name;
         this.children = children;
-        this.value = value;
+        this.value = round(value);
     }
 
     public BubbleData(String name, List<BubbleData> children) {
@@ -46,5 +46,11 @@ public class BubbleData {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    private static double round(double val) {
+        val = val*100;
+        val = Math.round(val);
+        return val /100;
     }
 }

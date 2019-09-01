@@ -128,9 +128,10 @@ public class GraphServiceImpl implements GraphService {
             List<BubbleData> breakdown =
                     contestantPositions
                             .stream()
-                            .map(c -> new BubbleData(c.getName(), getScoreForQuestion(c, finalI)))
+                            .map(c -> new BubbleData(c.getName(),
+                                    round(getScoreForQuestion(c, finalI))))
                             .collect(Collectors.toList());
-            questionBubbles.add(new BubbleData("Question " + i+1, breakdown));
+            questionBubbles.add(new BubbleData("Question " + i, breakdown));
         }
         BubbleData data = new BubbleData("Test Results", questionBubbles);
         return new BubbleGraph(data);
@@ -172,5 +173,11 @@ public class GraphServiceImpl implements GraphService {
         Optional<Score> score =
                 scores.stream().filter(s -> s.getQuestionNumber() == questionNumber).findFirst();
         return score.map(Score::getTotal).orElse(0.0);
+    }
+
+    private static double round(double val) {
+        val = val*100;
+        val = Math.round(val);
+        return val /100;
     }
 }
