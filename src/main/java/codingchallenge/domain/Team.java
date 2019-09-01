@@ -1,6 +1,7 @@
 package codingchallenge.domain;
 
 import codingchallenge.domain.subdomain.Registration;
+import com.google.common.collect.Lists;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class Team extends Contestant {
 
     public Team() {
         super();
+        this.registeredContestants = Lists.newArrayList();
     }
 
     public Team(String id, String name, String team,
