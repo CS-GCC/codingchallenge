@@ -10,7 +10,7 @@ public class Coordinates {
     private int y;
 
     public Coordinates(TimeStampPosition position) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         x = dateFormat.format(position.getTimestamp());
         y = position.getPosition();
     }

@@ -244,7 +244,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             return -1;
         }
         List<String> contestants = position.getContestants();
-        return contestants.indexOf(contestantId);
+        return contestants.indexOf(contestantId) + 1;
     }
 
     @Override

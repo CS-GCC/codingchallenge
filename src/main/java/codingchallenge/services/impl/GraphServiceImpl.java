@@ -137,17 +137,22 @@ public class GraphServiceImpl implements GraphService {
     }
 
     private PosGraph getPosGraph(List<TimeStampPosition> positions) {
-        List<Coordinates> coordinates =
+        Map<String, List<Coordinates>> coordinateMap =
                 positions
                         .stream()
                         .map(Coordinates::new)
-                        .collect(Collectors.toList());
+                        .collect(groupingBy(Coordinates::getX));
+        List<Coordinates> coordinates = Lists.newArrayList();
+        for (Map.Entry<String, List<Coordinates>> entry : coordinateMap.entrySet()) {
+            List<Coordinates> value = entry.getValue();
+            coordinates.add(value.get(value.size()-1));
+        }
         Optional<Coordinates> maxOptional =
                 coordinates.stream().max(Comparator.comparingInt(Coordinates::getY));
         Optional<Coordinates> minOptional =
                 coordinates.stream().min(Comparator.comparingInt(Coordinates::getY));
-        int min = minOptional.get().getY();
-        int max = maxOptional.get().getY();
+        int min = maxOptional.get().getY();
+        int max = minOptional.get().getY();
         return new PosGraph(max, min, Collections.singletonList(new PosData(
                 "Positions", coordinates)));
     }
