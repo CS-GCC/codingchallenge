@@ -249,7 +249,13 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     @Override
     public double getContestantTotals(List<String> ids) {
-        return ids.stream().map(this::getLatestPositionForIndividual).filter(Objects::nonNull).mapToDouble(IndividualPosition::getTotal).sum();
+        return ids.stream()
+                .map(contestantService::getContestantIdForGlobalId)
+                .filter(Objects::nonNull)
+                .map(this::getLatestPositionForIndividual)
+                .filter(Objects::nonNull)
+                .mapToDouble(IndividualPosition::getTotal)
+                .sum();
     }
 
     private boolean searchPredicate(String searchTerm,

@@ -103,4 +103,11 @@ public class ContestantServiceImpl implements ContestantService {
         return contestantRepository.count();
     }
 
+    @Override
+    public String getContestantIdForGlobalId(String id) {
+        Optional<Contestant> contestantOptional =
+                contestantRepository.findContestantByGlobalId(id);
+        return contestantOptional.map(Contestant::getId).orElse(null);
+    }
+
 }
