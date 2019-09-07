@@ -7,6 +7,8 @@ public class IndividualPosition extends Position {
     private String contestant;
     private String name;
     private String contestantId;
+    private String teamName;
+    private String teamId;
 
     public IndividualPosition() {
     }
@@ -45,5 +47,21 @@ public class IndividualPosition extends Position {
     @Override
     public int hashCode() {
         return Objects.hashCode(getContestant(), getName(), getContestantId());
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 }

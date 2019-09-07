@@ -155,10 +155,12 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             Collection<Score> scores = scoreMultimap.get(contestantId);
             Contestant contestant =
                     contestantService.getContestantById(contestantId);
-            Position position = new IndividualPosition(-1, contestantId,
+            IndividualPosition position = new IndividualPosition(-1, contestantId,
                     contestant.getName(), contestantId);
             position.setScores(Lists.newArrayList(scores));
             position.setTotal(scores.stream().mapToDouble(Score::getTotal).sum());
+            position.setTeamId(contestant.getTeamId());
+            position.setTeamName(contestant.getTeam());
             positions.add(position);
         }
         logger.debug("Sorting individual positions");
