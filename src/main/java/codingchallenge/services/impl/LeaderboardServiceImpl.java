@@ -48,6 +48,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public Leaderboard getLatestIndividualLeaderboard(int from, int limit) {
         Leaderboard leaderboard = getLeaderboard();
+        leaderboard.setTotalContestants(leaderboard.getContestants().size());
         leaderboard.setContestants(leaderboard
                 .getContestants()
                 .stream()
@@ -60,6 +61,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public Leaderboard getLatestTeamLeaderboard(int from, int limit) {
         Leaderboard leaderboard = getTeamLeaderboard();
+        leaderboard.setTotalContestants(leaderboard.getContestants().size());
         leaderboard.setContestants(leaderboard
                 .getContestants()
                 .stream()

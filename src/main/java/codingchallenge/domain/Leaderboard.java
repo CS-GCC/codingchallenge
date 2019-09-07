@@ -42,7 +42,6 @@ public class Leaderboard {
 
     public void setContestants(List<Position> contestants) {
         this.contestants = contestants;
-        this.totalContestants = contestants.size();
     }
 
     public Type getType() {
@@ -51,6 +50,10 @@ public class Leaderboard {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public void setTotalContestants(int totalContestants) {
+        this.totalContestants = totalContestants;
     }
 
     @Override
