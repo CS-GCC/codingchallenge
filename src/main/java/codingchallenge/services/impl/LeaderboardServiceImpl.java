@@ -194,7 +194,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             List<Position> teamPositions =
                     individualPositions.stream().filter(p -> contestantIds.contains(((IndividualPosition) p).getContestantId())).sorted(Comparator.comparingDouble(Position::getTotal).reversed()).collect(Collectors.toList());
             teamPositions = teamPositions.subList(0,
-                    Math.min(Math.min(0, contestants.size()), 20));
+                    Math.min(contestants.size(), 20));
             logger.debug("Limited number of positions in team to 20");
             double total =
                     teamPositions.stream().mapToDouble(Position::getTotal).sum();
