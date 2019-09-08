@@ -146,8 +146,10 @@ public class GraphServiceImpl implements GraphService {
         List<Coordinates> coordinates = Lists.newArrayList();
         for (Map.Entry<String, List<Coordinates>> entry : coordinateMap.entrySet()) {
             List<Coordinates> value = entry.getValue();
-            coordinates.add(value.get(value.size()-1));
+            coordinates.add(value.stream().min(Comparator.comparingInt(Coordinates::getY)).get());
         }
+        coordinates =
+                coordinates.stream().sorted(Comparator.comparing(Coordinates::getX)).collect(Collectors.toList());
         Optional<Coordinates> maxOptional =
                 coordinates.stream().max(Comparator.comparingInt(Coordinates::getY));
         Optional<Coordinates> minOptional =

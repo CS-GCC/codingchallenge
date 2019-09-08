@@ -72,10 +72,10 @@ public class FactsServiceImpl implements FactsService {
 
     @Override
     public LeaderFacts getLeaderFacts() {
-        List<Contestant> individualContestants =
-                getIndividualContestants(serviceProperties.getContestants());
         List<Contestant> universityContestants =
                 getUniversityContestants(serviceProperties.getUniversities());
+        List<Contestant> individualContestants =
+                getIndividualContestants(serviceProperties.getContestants());
         Set<String> contestants = Sets.newHashSet();
         contestants.addAll(individualContestants.stream().map(Contestant::getId).collect(Collectors.toSet()));
         contestants.addAll(universityContestants.stream().map(Contestant::getId).collect(Collectors.toSet()));
