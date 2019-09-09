@@ -78,6 +78,7 @@ public class TeamServiceImpl implements TeamService {
                 }
                 registrations.add(new Registration(contestant.getId(),
                         timestamp));
+                teamRepository.save(team);
             }
         }
     }

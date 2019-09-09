@@ -38,10 +38,11 @@ public class ContestantServiceImpl implements ContestantService {
     @Override
     public List<Contestant> addContestants(List<Contestant> contestants,
                                            boolean addToTeam) {
+        contestants = contestantRepository.insert(contestants);
         if (addToTeam) {
             teamService.addToTeams(contestants);
         }
-        return contestantRepository.insert(contestants);
+        return contestants;
     }
 
     @Override
