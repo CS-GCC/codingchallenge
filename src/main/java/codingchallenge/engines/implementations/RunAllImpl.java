@@ -12,6 +12,8 @@ import codingchallenge.services.interfaces.LeaderboardService;
 import codingchallenge.services.interfaces.TeamService;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class RunAllImpl implements RunAll {
     private final ContestantService contestantService;
 
     private final ServiceProperties serviceProperties;
+
+    private final Logger logger = LoggerFactory.getLogger(RunAll.class);
 
     @Autowired
     public RunAllImpl(ScoreCalculation scoreCalculation,
@@ -53,6 +57,7 @@ public class RunAllImpl implements RunAll {
         int numberOfQuestions = serviceProperties.getNumberOfQuestions();
         List<String> contestantIds =
                 contestants.stream().map(Contestant::getId).collect(Collectors.toList());
+        logger.info("Running contestants: Obtained contestant IDs");
         for (int i=1; i<=numberOfQuestions; i++) {
             Map<String, Score> scores =
                     scoreCalculation.calculateScores(
@@ -60,6 +65,7 @@ public class RunAllImpl implements RunAll {
                             i);
             scores.keySet().forEach(s -> scoreMultimap.put(s,
                     scores.get(s)));
+            logger.info("Completed calculation for question " + i);
         }
         return leaderboardService.generateLeaderboard(scoreMultimap);
     }

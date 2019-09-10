@@ -8,6 +8,8 @@ import codingchallenge.engines.interfaces.ScoreCalculation;
 import codingchallenge.services.interfaces.AnswerService;
 import codingchallenge.services.interfaces.ContestantService;
 import com.google.common.collect.Multimap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -18,11 +20,12 @@ import java.util.Map;
 @Service
 public class ScoreCalculationImpl implements ScoreCalculation {
 
-    private final ContestantService contestantService;
     private final AnswerService answerService;
 
-    public ScoreCalculationImpl(ContestantService contestantService, AnswerService answerService) {
-        this.contestantService = contestantService;
+    private final Logger logger =
+            LoggerFactory.getLogger(ScoreCalculation.class);
+
+    public ScoreCalculationImpl(AnswerService answerService) {
         this.answerService = answerService;
     }
 
@@ -39,6 +42,8 @@ public class ScoreCalculationImpl implements ScoreCalculation {
             updateCorrectAnswers(scoreMap, answers.get(Correctness.CORRECT), highScore, speedScoreFactor);
             updateIncorrectAnswers(scoreMap, answers.get(Correctness.INCORRECT));
             updateTimedOutAnswers(scoreMap, answers.get(Correctness.TIMED_OUT));
+            logger.info("Completed for question " + questionNumber + ", test " +
+                    "number " + i);
         }
         return scoreMap;
     }
