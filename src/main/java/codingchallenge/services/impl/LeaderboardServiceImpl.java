@@ -1,11 +1,7 @@
 package codingchallenge.services.impl;
 
-import codingchallenge.collections.LeaderboardRepository;
-import codingchallenge.collections.TeamRepository;
-import codingchallenge.domain.Contestant;
-import codingchallenge.domain.Leaderboard;
-import codingchallenge.domain.Team;
-import codingchallenge.domain.Type;
+import codingchallenge.collections.*;
+import codingchallenge.domain.*;
 import codingchallenge.domain.subdomain.IndividualPosition;
 import codingchallenge.domain.subdomain.Position;
 import codingchallenge.domain.subdomain.Score;
@@ -25,10 +21,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("ALL")
 @Service
 public class LeaderboardServiceImpl implements LeaderboardService {
 
     private final LeaderboardRepository leaderboardRepository;
+    private final IndividualPositionRepository individualPositionRepository;
+    private final TeamPositionRepository teamPositionRepository;
+    private final QuickFindRepository quickFindRepository;
     private final ContestantService contestantService;
     private final TeamRepository teamRepository;
 
@@ -38,229 +38,294 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Autowired
     public LeaderboardServiceImpl(LeaderboardRepository leaderboardRepository
             ,
-                                  ContestantService contestantService,
+                                  IndividualPositionRepository individualPositionRepository, TeamPositionRepository teamPositionRepository, QuickFindRepository quickFindRepository, ContestantService contestantService,
                                   TeamRepository teamRepository) {
         this.leaderboardRepository = leaderboardRepository;
+        this.individualPositionRepository = individualPositionRepository;
+        this.teamPositionRepository = teamPositionRepository;
+        this.quickFindRepository = quickFindRepository;
         this.contestantService = contestantService;
         this.teamRepository = teamRepository;
     }
 
     @Override
-    public Leaderboard getLatestIndividualLeaderboard(int from, int limit) {
+    public LeaderboardDTO getLatestIndividualLeaderboard(int from, int limit) {
         Leaderboard leaderboard = getLeaderboard();
-        leaderboard.setTotalContestants(leaderboard.getContestants().size());
-        leaderboard.setContestants(leaderboard
-                .getContestants()
-                .stream()
-                .skip(from)
-                .limit(limit)
-                .collect(Collectors.toList()));
-        return leaderboard;
+        String leaderboardId = leaderboard.getId();
+        List<IndividualPosition> individualPositions = Lists.newArrayList();
+        if (leaderboardId != null) {
+            individualPositions = individualPositionRepository
+                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(leaderboardId, from, from+limit);
+        }
+        return new LeaderboardDTO(leaderboard, individualPositions);
     }
 
     @Override
-    public Leaderboard getLatestTeamLeaderboard(int from, int limit) {
+    public LeaderboardDTO getLatestTeamLeaderboard(int from, int limit) {
         Leaderboard leaderboard = getTeamLeaderboard();
-        leaderboard.setTotalContestants(leaderboard.getContestants().size());
-        leaderboard.setContestants(leaderboard
-                .getContestants()
-                .stream()
-                .skip(from)
-                .limit(limit)
-                .collect(Collectors.toList()));
-        return leaderboard;
+        String leaderboardId = leaderboard.getId();
+        List<TeamPosition> teamPositions = Lists.newArrayList();
+        if (leaderboardId != null) {
+            teamPositions = teamPositionRepository
+                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(leaderboardId, from, from+limit);
+        }
+        return new LeaderboardDTO(leaderboard, teamPositions);
     }
 
     @Override
     public Leaderboard getTeamLeaderboard() {
-        Optional<Leaderboard> leaderboardOptional =
-                leaderboardRepository.findTopByTimestampBeforeAndTypeOrderByTimestampDesc(new Date(), Type.TEAM);
-        return leaderboardOptional.orElseGet(this::generatePlainTeamLeaderboard);
+        String leaderboardId = teamLeaderboardId();
+        if (leaderboardId == null) {
+            return generatePlainTeamLeaderboard();
+        }
+        return leaderboardRepository.findById(leaderboardId).get();
     }
 
     @Override
     public TeamPosition getLatestPositionForTeam(String teamId) {
-        Leaderboard leaderboard = getTeamLeaderboard();
-        List<Position> positions = leaderboard.getContestants();
-        for (Position position : positions) {
-            TeamPosition pos = (TeamPosition) position;
-            if (pos.getTeamId().equals(teamId)) {
-                return pos;
-            }
-        }
-        return null;
+        String leaderboardId = teamLeaderboardId();
+        Optional<TeamPosition> teamPosition =
+                teamPositionRepository.findByLeaderboardIdAndTeamId(leaderboardId, teamId);
+        return teamPosition.orElse(null);
     }
 
     @Override
     public IndividualPosition getLatestPositionForIndividual(String id) {
-        Leaderboard leaderboard = getLeaderboard();
-        List<Position> positions = leaderboard.getContestants();
-        for (Position position : positions) {
-            IndividualPosition pos = (IndividualPosition) position;
-            if (pos.getContestantId().equals(id)) {
-                return pos;
-            }
-        }
-        return null;
+        String leaderboardId = individualLeaderboardId();
+        Optional<IndividualPosition> individualPosition =
+                individualPositionRepository.findByLeaderboardIdAndContestantId(leaderboardId, id);
+        return individualPosition.orElse(null);
+    }
+
+    @Override
+    public List<IndividualPosition> getLatestIndividualPositionsForTeam(String id) {
+        String leaderboardId = individualLeaderboardId();
+        return individualPositionRepository.findAllByLeaderboardIdAndTeamIdOrderByTotalDesc(leaderboardId, id);
     }
 
     @Override
     public Leaderboard getLeaderboard() {
-        Optional<Leaderboard> leaderboardOptional =
-                leaderboardRepository.findTopByTimestampBeforeAndTypeOrderByTimestampDesc(new Date(), Type.INDIVIDUAL);
-        return leaderboardOptional.orElseGet(this::generatePlainLeaderboard);
+        String leaderboardId = individualLeaderboardId();
+        if (leaderboardId == null) {
+            return generatePlainLeaderboard();
+        }
+        return leaderboardRepository.findById(leaderboardId).get();
     }
 
     @Override
-    public Leaderboard getFilteredIndividualLeaderboard(String searchTerm,
+    public LeaderboardDTO getFilteredIndividualLeaderboard(String searchTerm,
                                                         int from, int limit) {
-        Leaderboard leaderboard = getLatestIndividualLeaderboard(from, limit);
+//        Leaderboard leaderboard = getLatestIndividualLeaderboard(from, limit);
+//
+//        leaderboard.setContestants(
+//                leaderboard.getContestants()
+//                        .stream()
+//                        .filter(pos -> searchPredicate(searchTerm,
+//                                (IndividualPosition) pos))
+//                        .skip(from)
+//                        .limit(limit)
+//                        .collect(Collectors.toList())
+//        );
 
-        leaderboard.setContestants(
-                leaderboard.getContestants()
-                        .stream()
-                        .filter(pos -> searchPredicate(searchTerm,
-                                (IndividualPosition) pos))
-                        .skip(from)
-                        .limit(limit)
-                        .collect(Collectors.toList())
-        );
-
-        return leaderboard;
+        return getLatestIndividualLeaderboard(from, limit);
     }
 
     @Override
-    public Leaderboard getFilteredTeamLeaderboard(String searchTerm, int from
+    public LeaderboardDTO getFilteredTeamLeaderboard(String searchTerm, int from
             , int limit) {
-        Leaderboard leaderboard = getLatestTeamLeaderboard(from, limit);
+//        Leaderboard leaderboard = getLatestTeamLeaderboard(from, limit);
+//
+//        leaderboard.setContestants(
+//                leaderboard.getContestants()
+//                        .stream()
+//                        .filter(pos -> teamSearchPredicate(searchTerm,
+//                                (TeamPosition) pos))
+//                        .skip(from)
+//                        .limit(limit)
+//                        .collect(Collectors.toList())
+//        );
 
-        leaderboard.setContestants(
-                leaderboard.getContestants()
-                        .stream()
-                        .filter(pos -> teamSearchPredicate(searchTerm,
-                                (TeamPosition) pos))
-                        .skip(from)
-                        .limit(limit)
-                        .collect(Collectors.toList())
-        );
-
-        return leaderboard;
+        return getLatestTeamLeaderboard(from, limit);
     }
 
     @Override
-    public Leaderboard generateLeaderboard(Multimap<String, Score> scoreMultimap) throws ContestantNotFoundException {
-        List<Position> positions = Lists.newArrayList();
+    public String generateLeaderboard(Multimap<String, Score> scoreMultimap) throws ContestantNotFoundException {
+        Date timestamp = new Date();
+        Leaderboard leaderboard = new Leaderboard(timestamp);
+        leaderboard.setType(Type.INDIVIDUAL);
+        leaderboard.setTotalContestants(scoreMultimap.size());
+        leaderboard = leaderboardRepository.insert(leaderboard);
+        String id = leaderboard.getId();
+        logger.info("New individual leaderboard generated and inserted with " +
+                "id " + id);
+        List<IndividualPosition> positions = Lists.newArrayList();
         for (String contestantId : scoreMultimap.keySet()) {
-            logger.debug("Generating position for " + contestantId);
+            logger.info("Generating position for " + contestantId);
             Collection<Score> scores = scoreMultimap.get(contestantId);
             Contestant contestant =
                     contestantService.getContestantById(contestantId);
             IndividualPosition position = new IndividualPosition(-1, contestantId,
                     contestant.getName(), contestantId);
+            position.setLeaderboardId(id);
             position.setScores(Lists.newArrayList(scores));
             position.setTotal(scores.stream().mapToDouble(Score::getTotal).sum());
             position.setTeamId(contestant.getTeamId());
             position.setTeamName(contestant.getTeam());
+            position.setTimestamp(timestamp);
+            position.setGlobalId(contestant.getGlobalId());
             positions.add(position);
         }
-        logger.debug("Sorting individual positions");
+        logger.info("Sorting individual positions");
         sortPositions(positions);
-        Leaderboard leaderboard = new Leaderboard(new Date());
-        leaderboard.setContestants(positions);
-        leaderboard.setType(Type.INDIVIDUAL);
-        logger.info("New individual leaderboard generated and inserted");
-        return leaderboard;
+        individualPositionRepository.insert(positions);
+        logger.info("Inserted individual positions");
+        return id;
     }
 
     @Override
-    public Leaderboard generateTeamLeaderboard(Leaderboard individualLeaderboard,
+    public String generateTeamLeaderboard(String individualLeaderboard,
                                                int numberOfQuestions) throws ContestantNotFoundException {
-        List<Position> positions = Lists.newArrayList();
-        List<Position> individualPositions =
-                individualLeaderboard.getContestants();
-        Leaderboard leaderboard =
-                new Leaderboard(individualLeaderboard.getTimestamp());
-        Multimap<String, Contestant> teams = getAllTeams();
+        List<TeamPosition> positions = Lists.newArrayList();
+        List<IndividualPosition> individualPositions =
+                individualPositionRepository.findAllByLeaderboardId(individualLeaderboard);
+        Date timestamp = new Date();
+        Multimap<String, IndividualPosition> teams =
+                Multimaps.index(individualPositions,
+                        IndividualPosition::getTeamId);
+        Leaderboard leaderboard = new Leaderboard(timestamp);
+        leaderboard.setType(Type.TEAM);
+        leaderboard.setTotalContestants(teams.size());
+        leaderboard = leaderboardRepository.insert(leaderboard);
+        String id = leaderboard.getId();
+        logger.info("New team leaderboard generated and inserted with " +
+                "id " + id);
         for (String team : teams.keySet()) {
             logger.debug("Generating team position for " + team);
-            Collection<Contestant> contestants = teams.get(team);
-            List<String> contestantIds =
-                    contestants.stream().map(Contestant::getId).collect(Collectors.toList());
+            List<IndividualPosition> contestants =
+                    teams.get(team)
+                            .stream()
+                            .sorted(Comparator.comparingDouble(Position::getTotal).reversed())
+                            .limit(20)
+                            .collect(Collectors.toList());
             TeamPosition teamPosition = new TeamPosition(
                     -1,
-                    getTeamNameById(team),
+                    contestants.get(0).getTeamName(),
                     team
             );
-            List<Position> teamPositions =
-                    individualPositions.stream().filter(p -> contestantIds.contains(((IndividualPosition) p).getContestantId())).sorted(Comparator.comparingDouble(Position::getTotal).reversed()).collect(Collectors.toList());
-            if (teamPositions.size() > 20) {
-                teamPositions = teamPositions.subList(0, 20);
-            }
             logger.debug("Limited number of positions in team to 20");
             double total =
-                    teamPositions.stream().mapToDouble(Position::getTotal).sum();
+                    contestants.stream().mapToDouble(Position::getTotal).sum();
             Map<Integer, Double> map = Maps.newHashMap();
             for (int i = 1; i <= numberOfQuestions; i++) {
                 int index = i;
                 map.put(
                         i,
-                        teamPositions.stream().mapToDouble(pos ->
+                        contestants.stream().mapToDouble(pos ->
                                 pos.getScores().stream().filter(s -> s.getQuestionNumber() == index).findFirst().get().getTotal()
                         ).sum()
                 );
             }
             teamPosition.setTotal(total);
             teamPosition.setQuestionTotals(map);
-            logger.debug("Finding names for team " + team + "contestants");
-            List<String> filteredContestantIds =
-                    teamPositions.stream().map(p -> ((IndividualPosition) p).getContestantId()).collect(Collectors.toList());
-            teamPosition.setContestants(filteredContestantIds);
+            teamPosition.setTimestamp(timestamp);
+            teamPosition.setLeaderboardId(id);
             positions.add(teamPosition);
         }
-        leaderboard.setType(Type.TEAM);
+        logger.info("Sorting team positions");
         sortPositions(positions);
-        leaderboard.setContestants(positions);
-        logger.info("Generated new team leaderboard");
-        return leaderboard;
-    }
-
-    @Override
-    public void saveLeaderboard(Leaderboard leaderboard) {
-        leaderboardRepository.insert(leaderboard);
-    }
-
-    @Override
-    public void saveTeamLeaderboard(Leaderboard leaderboard) {
-        leaderboardRepository.insert(leaderboard);
+        teamPositionRepository.insert(positions);
+        logger.info("Generated team positions");
+        return id;
     }
 
     @Override
     public int positionWithinTeam(String teamId, String contestantId) {
-        Leaderboard leaderboard = getTeamLeaderboard();
-        List<Position> positions = leaderboard.getContestants();
-        TeamPosition position = null;
-        for (Position pos : positions) {
-            if (((TeamPosition) pos).getTeamId().equals(teamId)) {
-                position = (TeamPosition) pos;
-                break;
+        String leaderboard = teamLeaderboardId();
+        List<IndividualPosition> positions =
+                individualPositionRepository.findAllByLeaderboardIdAndTeamIdOrderByTotalDesc(leaderboard, teamId);
+        for (int i=0; i<positions.size(); i++) {
+            if (positions.get(i).getContestantId().equals(contestantId)) {
+                return i+1;
             }
         }
-        if (position == null) {
-            return -1;
-        }
-        List<String> contestants = position.getContestants();
-        return contestants.indexOf(contestantId) + 1;
+        return -1;
     }
 
     @Override
-    public double getContestantTotals(List<String> ids) {
-        return ids.stream()
-                .map(contestantService::getContestantIdForGlobalId)
-                .filter(Objects::nonNull)
-                .map(this::getLatestPositionForIndividual)
-                .filter(Objects::nonNull)
-                .mapToDouble(IndividualPosition::getTotal)
-                .sum();
+    public TotalMap getContestantTotals(List<String> ids) {
+        String leaderboard = individualLeaderboardId();
+        List<IndividualPosition> positions =
+                individualPositionRepository.findAllByLeaderboardIdAndGlobalIdIsIn(leaderboard, ids);
+        Map<String, Double> map = Maps.newHashMap();
+        for (IndividualPosition position : positions) {
+            map.put(position.getGlobalId(), position.getTotal());
+        }
+        TotalMap totalMap = new TotalMap();
+        totalMap.setTotals(map);
+        return totalMap;
+    }
+
+    @Override
+    public String individualLeaderboardId() {
+        List<QuickFind> quickFinds = quickFindRepository.findAll();
+        if (quickFinds.isEmpty()) {
+            return null;
+        }
+        return quickFinds.get(0).getIndividualLeaderboard();
+    }
+
+    @Override
+    public String teamLeaderboardId() {
+        List<QuickFind> quickFinds = quickFindRepository.findAll();
+        if (quickFinds.isEmpty()) {
+            return null;
+        }
+        return quickFinds.get(0).getTeamLeaderboard();
+    }
+
+    @Override
+    public String leadingIndividual() {
+        String id = individualLeaderboardId();
+        IndividualPosition individualPosition =
+                individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, 2).get(0);
+        return individualPosition.getName();
+    }
+
+    @Override
+    public String leadingTeam() {
+        String id = teamLeaderboardId();
+        TeamPosition teamPosition =
+                teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, 2).get(0);
+        return teamPosition.getTeamName();
+    }
+
+    @Override
+    public List<TeamPosition> getTopTeams(int numberOfUniversities) {
+        String id = teamLeaderboardId();
+        return teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, numberOfUniversities + 1);
+    }
+
+    @Override
+    public List<IndividualPosition> getTopIndividuals(int numberOfIndividuals) {
+        String id = individualLeaderboardId();
+        return individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, numberOfIndividuals + 1);
+
+    }
+
+    @Override
+    public List<IndividualPosition> getPositionsForIndividual(String id) {
+        return individualPositionRepository.findAllByContestantId(id);
+    }
+
+    @Override
+    public List<TeamPosition> getPositionsForTeam(String id) {
+        return teamPositionRepository.findAllByTeamId(id);
+    }
+
+    @Override
+    public List<IndividualPosition> getTeamContestantsLatestPosition(List<String> ids) {
+        String id = individualLeaderboardId();
+        return individualPositionRepository.findAllByLeaderboardIdAndContestantIdIn(id, ids);
     }
 
     private boolean searchPredicate(String searchTerm,
@@ -285,35 +350,14 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     private Leaderboard generatePlainLeaderboard() {
-        List<Contestant> contestants = contestantService.getAllContestants();
-        int i = 1;
-        Leaderboard newLeaderboard = new Leaderboard();
-        for (Contestant contestant : contestants) {
-            IndividualPosition individualPosition =
-                    new IndividualPosition(i, contestant.getId(),
-                            contestant.getName(), contestant.getId());
-            newLeaderboard.getContestants().add(individualPosition);
-            i++;
-        }
+        Leaderboard newLeaderboard = new Leaderboard(new Date());
         newLeaderboard.setType(Type.INDIVIDUAL);
         logger.info("Created blank individual leaderboard");
         return newLeaderboard;
     }
 
     private Leaderboard generatePlainTeamLeaderboard() {
-        Leaderboard newLeaderboard = new Leaderboard();
-        Multimap<String, Contestant> teamMap = getAllTeams();
-        int i = 1;
-        for (String team : teamMap.keySet()) {
-            List<String> contestantStrings =
-                    teamMap.get(team).stream().map(Contestant::getName).collect(Collectors.toList());
-            TeamPosition teamPosition = new TeamPosition(i,
-                    getTeamNameById(team),
-                    team,
-                    contestantStrings);
-            newLeaderboard.getContestants().add(teamPosition);
-            i++;
-        }
+        Leaderboard newLeaderboard = new Leaderboard(new Date());
         newLeaderboard.setType(Type.TEAM);
         logger.info("Created blank team leaderboard");
         return newLeaderboard;
@@ -324,7 +368,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         return Multimaps.index(contestants, Contestant::getTeamId);
     }
 
-    private void sortPositions(List<Position> positions) {
+    private void sortPositions(List<? extends Position> positions) {
         positions.sort(Comparator.comparingDouble(Position::getTotal).reversed());
         for (int i = 0; i < positions.size(); i++) {
             positions.get(i).setPosition(i + 1);

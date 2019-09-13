@@ -40,67 +40,9 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public String getTeamNameById(String id) throws ContestantNotFoundException {
-        return getTeamById(id).getName();
-    }
-
-    @Override
-    public void generateTimeStampedPositions(Leaderboard teamLeaderboard) {
-        List<Position> positions = teamLeaderboard.getContestants();
-        Date timestamp = teamLeaderboard.getTimestamp();
-        for (Position pos : positions) {
-            TeamPosition position = (TeamPosition) pos;
-            try {
-                Team team =
-                        getTeamById(position.getTeamId());
-                TimestampPositionGenerator.addTimeStampPosition(team,
-                        position, timestamp);
-                teamRepository.save(team);
-            } catch (ContestantNotFoundException e) {
-                logger.error("Contestant not found", e);
-            }
-        }
-        logger.info("Generated time stamped positions");
-    }
-
-    @Override
-    public void addToTeams(List<Contestant> contestants) {
-        Date timestamp = new Date();
-        for (Contestant contestant : contestants) {
-            Optional<Team> teamOptional =
-                    teamRepository.findById(contestant.getTeamId());
-            if (teamOptional.isPresent()) {
-                Team team = teamOptional.get();
-                List<Registration> registrations = team.getRegisteredContestants();
-                if (registrations == null) {
-                    registrations = Lists.newArrayList();
-                    team.setRegisteredContestants(registrations);
-                }
-                registrations.add(new Registration(contestant.getId(),
-                        timestamp));
-                teamRepository.save(team);
-            }
-        }
-    }
-
-    @Override
     public List<Team> addTeams(List<Team> teams) {
         return teamRepository.insert(teams);
     }
 
-    @Override
-    public List<Team> findByIdNotIn(List<String> ids) {
-        return teamRepository.findByIdNotIn(ids);
-    }
-
-    @Override
-    public int getTeamPosition(String teamId) {
-        Optional<Team> teamOptional = teamRepository.findById(teamId);
-        if (!teamOptional.isPresent()) {
-            return -1;
-        }
-        List<TimeStampPosition> positions = teamOptional.get().getPositions();
-        return positions.get(positions.size()-1).getPosition();
-    }
 
 }

@@ -23,25 +23,19 @@ import java.util.stream.Collectors;
 public class ContestantServiceImpl implements ContestantService {
 
     private final ContestantRepository contestantRepository;
-    private final TeamService teamService;
 
     private final Logger logger =
             LoggerFactory.getLogger(ContestantServiceImpl.class);
 
     @Autowired
-    public ContestantServiceImpl(ContestantRepository contestantRepository,
-                                 TeamService teamService) {
+    public ContestantServiceImpl(ContestantRepository contestantRepository) {
         this.contestantRepository = contestantRepository;
-        this.teamService = teamService;
     }
 
     @Override
     public List<Contestant> addContestants(List<Contestant> contestants,
                                            boolean addToTeam) {
         contestants = contestantRepository.insert(contestants);
-        if (addToTeam) {
-            teamService.addToTeams(contestants);
-        }
         return contestants;
     }
 
@@ -67,25 +61,6 @@ public class ContestantServiceImpl implements ContestantService {
     @Override
     public List<Contestant> getContestantsByTeam(String id) {
         return contestantRepository.findContestantsByTeamId(id);
-    }
-
-    @Override
-    public void generateTimeStampedPositions(Leaderboard leaderboard) {
-        List<Position> positions = leaderboard.getContestants();
-        Date timestamp = leaderboard.getTimestamp();
-        for (Position pos : positions) {
-            IndividualPosition position = (IndividualPosition) pos;
-            try {
-                Contestant contestant =
-                        getContestantById(position.getContestantId());
-                TimestampPositionGenerator.addTimeStampPosition(contestant,
-                        position, timestamp);
-                contestantRepository.save(contestant);
-            } catch (ContestantNotFoundException e) {
-                logger.error("Contestant not found", e);
-            }
-        }
-        logger.info("Generated time stamped positions");
     }
 
     @Override

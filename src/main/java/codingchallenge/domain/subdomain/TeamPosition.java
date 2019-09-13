@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class TeamPosition extends Position {
 
-    private List<String> contestants;
     private Map<Integer, Double> questionTotals;
     private String teamName;
     private String teamId;
@@ -28,16 +27,7 @@ public class TeamPosition extends Position {
         super(position);
         this.teamName = teamName;
         this.teamId = teamId;
-        this.contestants = contestants;
         this.questionTotals = new HashMap<>();
-    }
-
-    public List<String> getContestants() {
-        return contestants;
-    }
-
-    public void setContestants(List<String> contestants) {
-        this.contestants = contestants;
     }
 
     public String getTeamName() {
@@ -70,8 +60,6 @@ public class TeamPosition extends Position {
         if (o == null || getClass() != o.getClass()) return false;
         TeamPosition that = (TeamPosition) o;
         return getTeamName().equals(that.getTeamName()) &&
-                CollectionUtils.isEqualCollection(getContestants(),
-                        that.getContestants()) &&
                 getTotal() == that.getTotal() &&
                 getPosition() == that.getPosition() &&
                 getQuestionTotals().equals(that.getQuestionTotals())
@@ -80,7 +68,7 @@ public class TeamPosition extends Position {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getTeamName(), getContestants());
+        return Objects.hashCode(getTeamName());
     }
 
 }

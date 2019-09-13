@@ -19,14 +19,10 @@ public class ContestantStats {
     private Region region;
 
     public ContestantStats(String id, String name, String team,
-                           Position position,
                            Region region) {
         this.id = id;
         this.name = name;
         this.team = team;
-        this.position = position.getPosition();
-        this.scores = position.getScores();
-        this.total = position.getTotal();
         this.region = region;
     }
 
@@ -35,7 +31,6 @@ public class ContestantStats {
                 contestant.getId(),
                 contestant.getName(),
                 contestant.getTeam(),
-                contestant.getPositions().get(contestant.getPositions().size()-1),
                 region
         );
     }

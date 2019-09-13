@@ -2,6 +2,7 @@ package codingchallenge.controllers;
 
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.ContestantStats;
+import codingchallenge.domain.TotalMap;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.FactsService;
@@ -78,7 +79,7 @@ public class ContestantController {
 
     @CrossOrigin
     @RequestMapping(path = "/contestants/total", method = RequestMethod.GET)
-    public double getContestantTotals(@RequestParam("ids") List<String> ids) {
+    public TotalMap getContestantTotals(@RequestParam("ids") List<String> ids) {
         return leaderboardService.getContestantTotals(ids);
     }
 

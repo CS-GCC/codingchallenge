@@ -1,12 +1,19 @@
 package codingchallenge.domain.subdomain;
 
+import org.springframework.data.annotation.Id;
+
+import java.util.Date;
 import java.util.List;
 
 public class Position {
 
+    @Id
+    private String id;
+    private String leaderboardId;
     private double total;
     private List<Score> scores;
     private int position;
+    private Date timestamp;
 
     public Position() {
     }
@@ -45,5 +52,29 @@ public class Position {
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLeaderboardId() {
+        return leaderboardId;
+    }
+
+    public void setLeaderboardId(String leaderboardId) {
+        this.leaderboardId = leaderboardId;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

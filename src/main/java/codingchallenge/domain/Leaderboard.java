@@ -1,12 +1,8 @@
 package codingchallenge.domain;
 
-import codingchallenge.domain.subdomain.Position;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.annotation.Id;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 public class Leaderboard {
@@ -14,18 +10,15 @@ public class Leaderboard {
     @Id
     private String id;
     private Date timestamp;
-    private List<Position> contestants;
     private Type type;
     private int totalContestants;
 
     public Leaderboard() {
         this.timestamp = new Date();
-        this.contestants = new ArrayList<>();
     }
 
     public Leaderboard(Date timestamp) {
         this.timestamp = timestamp;
-        this.contestants = new ArrayList<>();
     }
 
     public String getId() {
@@ -34,14 +27,6 @@ public class Leaderboard {
 
     public Date getTimestamp() {
         return timestamp;
-    }
-
-    public List<Position> getContestants() {
-        return contestants;
-    }
-
-    public void setContestants(List<Position> contestants) {
-        this.contestants = contestants;
     }
 
     public Type getType() {
@@ -62,13 +47,12 @@ public class Leaderboard {
         if (o == null || getClass() != o.getClass()) return false;
         Leaderboard that = (Leaderboard) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(timestamp, that.timestamp) &&
-                CollectionUtils.isEqualCollection(contestants, that.contestants);
+                Objects.equals(timestamp, that.timestamp);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, timestamp, contestants);
+        return Objects.hash(id, timestamp);
     }
 
     public int getTotalContestants() {

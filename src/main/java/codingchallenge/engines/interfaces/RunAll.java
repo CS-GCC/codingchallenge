@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface RunAll {
 
-    Leaderboard runAll() throws ContestantNotFoundException;
-    Leaderboard runContestants(List<Contestant> contestants) throws ContestantNotFoundException;
+    String runAll() throws ContestantNotFoundException;
+    String runContestants(List<Contestant> contestants) throws ContestantNotFoundException;
 
 }

@@ -7,13 +7,15 @@ public class IndividualPosition extends Position {
     private String contestant;
     private String name;
     private String contestantId;
+    private String globalId;
     private String teamName;
     private String teamId;
 
     public IndividualPosition() {
     }
 
-    public IndividualPosition(int position, String contestant, String name, String contestantId) {
+    public IndividualPosition(int position, String contestant, String name,
+                              String contestantId) {
         super(position);
         this.contestant = contestant;
         this.name = name;
@@ -63,5 +65,13 @@ public class IndividualPosition extends Position {
 
     public void setTeamId(String teamId) {
         this.teamId = teamId;
+    }
+
+    public String getGlobalId() {
+        return globalId;
+    }
+
+    public void setGlobalId(String globalId) {
+        this.globalId = globalId;
     }
 }

@@ -1,6 +1,7 @@
 package codingchallenge.controllers;
 
 import codingchallenge.domain.Leaderboard;
+import codingchallenge.domain.LeaderboardDTO;
 import codingchallenge.services.interfaces.LeaderboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,14 +20,15 @@ public class LeaderboardController {
 
     @CrossOrigin
     @RequestMapping(path = "/leaderboard", method = RequestMethod.GET)
-    public Leaderboard latestLeaderboard(@RequestParam("from") int from,
-                                         @RequestParam("limit") int limit) {
+    public LeaderboardDTO latestLeaderboard(@RequestParam("from") int from,
+                                            @RequestParam("limit") int limit) {
         return leaderboardService.getLatestIndividualLeaderboard(from, limit);
     }
 
     @CrossOrigin
     @RequestMapping(path = "/leaderboard/search/{searchTerm}", method = RequestMethod.GET)
-    public Leaderboard filteredLeaderboard(@PathVariable String searchTerm, @RequestParam("from") int from,
+    public LeaderboardDTO filteredLeaderboard(@PathVariable String searchTerm,
+                                 @RequestParam("from") int from,
                                            @RequestParam("limit") int limit) {
         return leaderboardService.getFilteredIndividualLeaderboard(searchTerm
                 , from, limit);
@@ -34,14 +36,15 @@ public class LeaderboardController {
 
     @CrossOrigin
     @RequestMapping(path = "/teamleaderboard", method = RequestMethod.GET)
-    public Leaderboard latestTeamLeaderboard(@RequestParam("from") int from,
+    public LeaderboardDTO latestTeamLeaderboard(@RequestParam("from") int from,
                                              @RequestParam("limit") int limit) {
         return leaderboardService.getLatestTeamLeaderboard(from, limit);
     }
 
     @CrossOrigin
     @RequestMapping(path = "/teamleaderboard/search/{searchTerm}", method = RequestMethod.GET)
-    public Leaderboard filteredTeamLeaderboard(@PathVariable String searchTerm, @RequestParam("from") int from,
+    public LeaderboardDTO filteredTeamLeaderboard(@PathVariable String searchTerm,
+                                     @RequestParam("from") int from,
                                                @RequestParam("limit") int limit) {
         return leaderboardService.getFilteredTeamLeaderboard(searchTerm,
                 from, limit);

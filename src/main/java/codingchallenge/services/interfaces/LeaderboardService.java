@@ -1,7 +1,10 @@
 package codingchallenge.services.interfaces;
 
 import codingchallenge.domain.Leaderboard;
+import codingchallenge.domain.LeaderboardDTO;
+import codingchallenge.domain.TotalMap;
 import codingchallenge.domain.subdomain.IndividualPosition;
+import codingchallenge.domain.subdomain.Position;
 import codingchallenge.domain.subdomain.Score;
 import codingchallenge.domain.subdomain.TeamPosition;
 import codingchallenge.exceptions.ContestantNotFoundException;
@@ -14,24 +17,20 @@ import java.util.List;
  */
 public interface LeaderboardService {
 
-    Leaderboard getLatestIndividualLeaderboard(int from, int limit);
+    LeaderboardDTO getLatestIndividualLeaderboard(int from, int limit);
 
-    Leaderboard getLatestTeamLeaderboard(int from, int limit);
+    LeaderboardDTO getLatestTeamLeaderboard(int from, int limit);
 
-    Leaderboard getFilteredIndividualLeaderboard(String searchTerm, int from,
+    LeaderboardDTO getFilteredIndividualLeaderboard(String searchTerm, int from,
                                                  int limit);
 
-    Leaderboard getFilteredTeamLeaderboard(String searchTerm, int from,
+    LeaderboardDTO getFilteredTeamLeaderboard(String searchTerm, int from,
                                            int limit);
 
-    Leaderboard generateLeaderboard(Multimap<String, Score> scoreMultimap) throws ContestantNotFoundException;
+    String generateLeaderboard(Multimap<String, Score> scoreMultimap) throws ContestantNotFoundException;
 
-    Leaderboard generateTeamLeaderboard(Leaderboard leaderboard,
+    String generateTeamLeaderboard(String leaderboard,
                                         int numberOfQuestions) throws ContestantNotFoundException;
-
-    void saveLeaderboard(Leaderboard leaderboard);
-
-    void saveTeamLeaderboard(Leaderboard leaderboard);
 
     int positionWithinTeam(String teamId, String contestantId);
 
@@ -43,5 +42,25 @@ public interface LeaderboardService {
 
     IndividualPosition getLatestPositionForIndividual(String id);
 
-    double getContestantTotals(List<String> ids);
+    List<IndividualPosition> getLatestIndividualPositionsForTeam(String id);
+
+    TotalMap getContestantTotals(List<String> ids);
+
+    String individualLeaderboardId();
+
+    String teamLeaderboardId();
+
+    String leadingIndividual();
+
+    String leadingTeam();
+
+    List<TeamPosition> getTopTeams(int numberOfUniversities);
+
+    List<IndividualPosition> getTopIndividuals(int numberOfIndividuals);
+
+    List<IndividualPosition> getPositionsForIndividual(String id);
+
+    List<TeamPosition> getPositionsForTeam(String id);
+
+    List<IndividualPosition> getTeamContestantsLatestPosition(List<String> ids);
 }

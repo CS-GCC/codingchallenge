@@ -1,11 +1,7 @@
 package codingchallenge.domain;
 
-import codingchallenge.domain.subdomain.Position;
-import codingchallenge.domain.subdomain.TimeStampPosition;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.annotation.Id;
 
-import java.util.List;
 import java.util.Objects;
 
 public class Contestant {
@@ -17,7 +13,6 @@ public class Contestant {
     private String name;
     private String team;
     private String teamId;
-    private List<TimeStampPosition> positions;
 
     public Contestant() {
     }
@@ -59,14 +54,6 @@ public class Contestant {
         this.team = team;
     }
 
-    public List<TimeStampPosition> getPositions() {
-        return positions;
-    }
-
-    public void setPositions(List<TimeStampPosition> positions) {
-        this.positions = positions;
-    }
-
     public String getGlobalId() {
         return globalId;
     }
@@ -90,17 +77,12 @@ public class Contestant {
         Contestant that = (Contestant) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
-                Objects.equals(team, that.team) &&
-                CollectionUtils.isEqualCollection(positions, that.positions);
+                Objects.equals(team, that.team);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, team, positions);
-    }
-
-    public Position latestPosition() {
-        return positions.get(positions.size()-1);
+        return Objects.hash(id, name, team);
     }
 
     public int getGraduationYear() {

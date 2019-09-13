@@ -2,6 +2,7 @@ package codingchallenge.domain;
 
 import codingchallenge.domain.subdomain.IndividualPosition;
 import codingchallenge.domain.subdomain.Region;
+import codingchallenge.domain.subdomain.TeamPosition;
 
 import java.util.List;
 
@@ -15,12 +16,11 @@ public class TeamStats {
     private int totalContestants;
     private Region region;
 
-    public TeamStats(Team team, Region region) {
+    public TeamStats(TeamPosition team, Region region) {
         this.id = team.getId();
-        this.name = team.getName();
-        this.totalContestants = team.getRegisteredContestants().size();
-        this.position = team.latestPosition().getPosition();
-        this.total = team.latestPosition().getTotal();
+        this.name = team.getTeamName();
+        this.total = team.getTotal();
+        this.position = team.getPosition();
         this.region = region;
     }
 

@@ -43,16 +43,11 @@ public class Runner {
         logger.info("Beginning new run. Current time: " + new Date());
         long startTime = System.currentTimeMillis();
         if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
-            Leaderboard leaderboard = runAll.runAll();
-            Leaderboard universityLeaderboard =
+            String leaderboard = runAll.runAll();
+            logger.info("Generated individual leaderboard with id " + leaderboard);
+            String universityLeaderboard =
                     leaderboardService.generateTeamLeaderboard(leaderboard, 6);
-            logger.info("Generated leaderboards");
-            leaderboardService.saveLeaderboard(leaderboard);
-            leaderboardService.saveTeamLeaderboard(universityLeaderboard);
-            logger.info("Saved leaderboards");
-            contestantService.generateTimeStampedPositions(leaderboard);
-            teamService.generateTimeStampedPositions(universityLeaderboard);
-            logger.info("Generated time stamped positions");
+            logger.info("Generated university leaderboard with id " + universityLeaderboard);
         } else {
             logger.info("Run not needed. Challenge status is not in bounds");
         }

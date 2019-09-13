@@ -1,6 +1,6 @@
 package codingchallenge.domain.graphs;
 
-import codingchallenge.domain.subdomain.TimeStampPosition;
+import codingchallenge.domain.subdomain.Position;
 
 import java.text.SimpleDateFormat;
 
@@ -9,7 +9,7 @@ public class Coordinates {
     private String x;
     private int y;
 
-    public Coordinates(TimeStampPosition position) {
+    public Coordinates(Position position) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         x = dateFormat.format(position.getTimestamp());
         y = position.getPosition();

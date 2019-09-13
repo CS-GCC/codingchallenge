@@ -1,14 +1,12 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.domain.Contestant;
-import codingchallenge.domain.Team;
 import codingchallenge.domain.graphs.*;
 import codingchallenge.domain.subdomain.*;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.GraphService;
 import codingchallenge.services.interfaces.LeaderboardService;
-import codingchallenge.services.interfaces.TeamService;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,28 +20,24 @@ import static java.util.stream.Collectors.groupingBy;
 public class GraphServiceImpl implements GraphService {
 
     private final ContestantService contestantService;
-    private final TeamService teamService;
     private final LeaderboardService leaderboardService;
 
     @Autowired
     public GraphServiceImpl(ContestantService contestantService,
-                            TeamService teamService,
                             LeaderboardService leaderboardService) {
         this.contestantService = contestantService;
-        this.teamService = teamService;
         this.leaderboardService = leaderboardService;
     }
 
     @Override
-    public PosGraph individualPositionGraph(String id) throws ContestantNotFoundException {
-        Contestant contestant = contestantService.getContestantById(id);
-        return getPosGraph(contestant.getPositions());
+    public PosGraph individualPositionGraph(String id) {
+        return getPosGraph(leaderboardService.getPositionsForIndividual(id));
     }
 
     @Override
-    public BubbleGraph individualBubbleGraph(String id) throws ContestantNotFoundException {
-        Contestant contestant = contestantService.getContestantById(id);
-        TimeStampPosition latest = getLatestPosition(contestant);
+    public BubbleGraph individualBubbleGraph(String id) {
+        IndividualPosition latest =
+                leaderboardService.getLatestPositionForIndividual(id);
         if (latest == null) {
             return null;
         }
@@ -71,9 +65,8 @@ public class GraphServiceImpl implements GraphService {
     }
 
     @Override
-    public PosGraph teamPositionGraph(String id) throws ContestantNotFoundException {
-        Team team = teamService.getTeamById(id);
-        return getPosGraph(team.getPositions());
+    public PosGraph teamPositionGraph(String id) {
+        return getPosGraph(leaderboardService.getPositionsForTeam(id));
     }
 
 
@@ -87,25 +80,25 @@ public class GraphServiceImpl implements GraphService {
         for (Map.Entry<Integer, List<Contestant>> gradYear :
                 graduationYearGroups.entrySet()) {
             List<Contestant> contestants = gradYear.getValue();
-            List<TimeStampPosition> timeStampPositions =
-                    contestants.stream().map(this::getLatestPosition).collect(Collectors.toList());
+            List<IndividualPosition> positions =
+                    leaderboardService.getTeamContestantsLatestPosition(contestants.stream().map(Contestant::getId).collect(Collectors.toList()));
             double q1 =
-                    timeStampPositions.stream().mapToDouble(t -> getScoreForQuestion(t,
+                    positions.stream().mapToDouble(t -> getScoreForQuestion(t,
                             1)).sum();
             double q2 =
-                    timeStampPositions.stream().mapToDouble(t -> getScoreForQuestion(t,
+                    positions.stream().mapToDouble(t -> getScoreForQuestion(t,
                             2)).sum();
             double q3 =
-                    timeStampPositions.stream().mapToDouble(t -> getScoreForQuestion(t,
+                    positions.stream().mapToDouble(t -> getScoreForQuestion(t,
                             3)).sum();
             double q4 =
-                    timeStampPositions.stream().mapToDouble(t -> getScoreForQuestion(t,
+                    positions.stream().mapToDouble(t -> getScoreForQuestion(t,
                             4)).sum();
             double q5 =
-                    timeStampPositions.stream().mapToDouble(t -> getScoreForQuestion(t,
+                    positions.stream().mapToDouble(t -> getScoreForQuestion(t,
                             5)).sum();
             double q6 =
-                    timeStampPositions.stream().mapToDouble(t -> getScoreForQuestion(t,
+                    positions.stream().mapToDouble(t -> getScoreForQuestion(t,
                             6)).sum();
             BarData barData = new BarData(gradYear.getKey(), q1, q2, q3, q4,
                     q5, q6);
@@ -116,12 +109,8 @@ public class GraphServiceImpl implements GraphService {
 
     @Override
     public BubbleGraph teamBubbleGraph(String id) {
-        TeamPosition position = leaderboardService.getLatestPositionForTeam(id);
-        if (position == null) {
-            return null;
-        }
         List<IndividualPosition> contestantPositions =
-                position.getContestants().stream().map(leaderboardService::getLatestPositionForIndividual).collect(Collectors.toList());
+                leaderboardService.getLatestIndividualPositionsForTeam(id);
         List<BubbleData> questionBubbles = Lists.newArrayList();
         for (int i=1; i<=6; i++) {
             int finalI = i;
@@ -137,7 +126,7 @@ public class GraphServiceImpl implements GraphService {
         return new BubbleGraph(data);
     }
 
-    private PosGraph getPosGraph(List<TimeStampPosition> positions) {
+    private PosGraph getPosGraph(List<? extends Position> positions) {
         Map<String, List<Coordinates>> coordinateMap =
                 positions
                         .stream()
@@ -158,15 +147,6 @@ public class GraphServiceImpl implements GraphService {
         int max = minOptional.get().getY();
         return new PosGraph(max, min, Collections.singletonList(new PosData(
                 "Positions", coordinates)));
-    }
-
-    private TimeStampPosition getLatestPosition(Contestant contestant) {
-        List<TimeStampPosition> positions = contestant.getPositions();
-        if (positions.isEmpty()) {
-            return null;
-        }
-        return
-                positions.get(positions.size() - 1);
     }
 
     private double getScoreForQuestion(Position position,

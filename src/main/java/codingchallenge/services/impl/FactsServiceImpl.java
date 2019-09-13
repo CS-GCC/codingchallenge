@@ -1,6 +1,7 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.ContestantRepository;
+import codingchallenge.collections.TeamPositionRepository;
 import codingchallenge.collections.TeamRepository;
 import codingchallenge.domain.*;
 import codingchallenge.domain.subdomain.IndividualPosition;
@@ -9,6 +10,7 @@ import codingchallenge.domain.subdomain.TeamPosition;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.*;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,6 @@ public class FactsServiceImpl implements FactsService {
     private final LeaderboardService leaderboardService;
     private final ContestantService contestantService;
     private final ServiceProperties serviceProperties;
-    private final TeamService teamService;
     private final ArticleService articleService;
     private final ContestantRepository contestantRepository;
     private final TeamRepository teamRepository;
@@ -34,11 +35,10 @@ public class FactsServiceImpl implements FactsService {
     public FactsServiceImpl(LeaderboardService leaderboardService,
                             ContestantService contestantService,
                             ServiceProperties serviceProperties,
-                            TeamService teamService, ArticleService articleService, ContestantRepository contestantRepository, TeamRepository teamRepository, AnswerService answerService) {
+                            ArticleService articleService, ContestantRepository contestantRepository, TeamRepository teamRepository, AnswerService answerService) {
         this.leaderboardService = leaderboardService;
         this.contestantService = contestantService;
         this.serviceProperties = serviceProperties;
-        this.teamService = teamService;
         this.articleService = articleService;
         this.contestantRepository = contestantRepository;
         this.teamRepository = teamRepository;
@@ -47,10 +47,10 @@ public class FactsServiceImpl implements FactsService {
 
     @Override
     public RegionFacts getRegionFacts() {
-        List<Position> individualContestants =
-                getIndividualPositions(serviceProperties.getContestants());
-        List<Position> universityContestants =
-                getUniversityPositions(serviceProperties.getUniversities());
+        List<IndividualPosition> individualContestants =
+                getIndividualPositions(5);
+        List<TeamPosition> universityContestants =
+                getUniversityPositions(5);
         List<Headline> headlines = articleService.getLatestArticles(0, 5);
         return new RegionFacts(individualContestants, universityContestants,
                 headlines);
@@ -59,15 +59,8 @@ public class FactsServiceImpl implements FactsService {
     @Override
     public QuickFacts getQuickFacts() {
         long numberOfContestants = contestantService.getNumberOfContestants();
-        List<Contestant> contestants = getIndividualContestants(1);
-        List<Position> universityPositions = getUniversityPositions(1);
-        String contestant = contestants.isEmpty() ? null :
-                contestants.get(0).getName();
-        String universityPosition = universityPositions.isEmpty() ? null :
-                ((TeamPosition) universityPositions.get(0)).getTeamName();
-
-        return new QuickFacts(numberOfContestants, contestant,
-                universityPosition, serviceProperties.getRegion());
+        return new QuickFacts(numberOfContestants, leaderboardService.leadingIndividual(),
+                leaderboardService.leadingTeam(), serviceProperties.getRegion());
     }
 
     @Override
@@ -91,14 +84,14 @@ public class FactsServiceImpl implements FactsService {
         if (!teamOptional.isPresent()) {
             throw new ContestantNotFoundException(teamId);
         }
-        Team team = teamOptional.get();
-        TeamStats teamStats = new TeamStats(team,
-                serviceProperties.getRegion());
         TeamPosition teamPosition =
                 leaderboardService.getLatestPositionForTeam(teamId);
+        TeamStats teamStats = new TeamStats(teamPosition,
+                serviceProperties.getRegion());
         List<IndividualPosition> individualPositions =
-                teamPosition.getContestants().stream().map(leaderboardService::getLatestPositionForIndividual).collect(Collectors.toList());
-        teamStats.setContestants(individualPositions);
+                leaderboardService.getLatestIndividualPositionsForTeam(teamId);
+        teamStats.setTotalContestants(individualPositions.size());
+        teamStats.setContestants(individualPositions.stream().limit(20).collect(Collectors.toList()));
         return teamStats;
     }
 
@@ -111,38 +104,35 @@ public class FactsServiceImpl implements FactsService {
         Contestant contestant = contestantOptional.get();
         ContestantStats contestantStats = new ContestantStats(contestant,
                 serviceProperties.getRegion());
+        contestantStats.setPosition(leaderboardService.getLatestPositionForIndividual(contestant.getId()).getPosition());
         contestantStats.setPositionWithinTeam(leaderboardService.positionWithinTeam(contestant.getTeamId(), contestant.getId()));
-        contestantStats.setTeamPosition(teamService.getTeamPosition(contestant.getTeamId()));
+        contestantStats.setTeamPosition(leaderboardService.getLatestPositionForTeam(contestant.getTeamId()).getPosition());
         return contestantStats;
     }
 
-    private List<Position> getUniversityPositions(int numberOfUniversities) {
-        Leaderboard teamLeaderboard =
-                leaderboardService.getLatestTeamLeaderboard(0, numberOfUniversities);
-        return teamLeaderboard.getContestants();
+    private List<TeamPosition> getUniversityPositions(int numberOfUniversities) {
+        return leaderboardService.getTopTeams(numberOfUniversities);
     }
 
     private List<Contestant> getUniversityContestants(int numberOfUniversities) {
-        List<Position> teamPositions =
+        List<TeamPosition> teamPositions =
                 getUniversityPositions(numberOfUniversities);
-        List<String> teamContestantIds = teamPositions.stream().map(
-                pos -> ((TeamPosition) pos).getContestants()
-        ).flatMap(List::stream).collect(Collectors.toList());
+        List<String> teamContestantIds = Lists.newArrayList();
+        for (TeamPosition pos : teamPositions) {
+            teamContestantIds.addAll(leaderboardService.getLatestIndividualPositionsForTeam(pos.getTeamId()).stream().limit(20).map(IndividualPosition::getContestantId).collect(Collectors.toList()));
+        }
         return contestantService.getContestantsById(teamContestantIds);
     }
 
-    private List<Position> getIndividualPositions(int numberOfIndividuals) {
-        Leaderboard leaderboard =
-                leaderboardService.getLatestIndividualLeaderboard(0, numberOfIndividuals);
-        return
-                leaderboard.getContestants();
+    private List<IndividualPosition> getIndividualPositions(int numberOfIndividuals) {
+        return leaderboardService.getTopIndividuals(numberOfIndividuals);
     }
 
     private List<Contestant> getIndividualContestants(int numberOfIndividuals) {
-        List<Position> individualPositions =
+        List<IndividualPosition> individualPositions =
                 getIndividualPositions(numberOfIndividuals);
         List<String> contestantIds = individualPositions.stream().map(
-                pos -> ((IndividualPosition) pos).getContestantId()
+                IndividualPosition::getContestantId
         ).collect(Collectors.toList());
         return contestantService.getContestantsById(contestantIds);
     }

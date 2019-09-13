@@ -11,6 +11,7 @@ import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.LeaderboardService;
 import codingchallenge.services.interfaces.TeamService;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,26 +50,53 @@ public class RunAllImpl implements RunAll {
 
 
     @Override
-    public Leaderboard runAll() throws ContestantNotFoundException {
+    public String runAll() throws ContestantNotFoundException {
         return runContestants(contestantService.getAllContestants());
     }
 
     @Override
-    public Leaderboard runContestants(List<Contestant> contestants) throws ContestantNotFoundException {
+    public String runContestants(List<Contestant> contestants) throws ContestantNotFoundException {
         Multimap<String, Score> scoreMultimap = ArrayListMultimap.create();
         int numberOfQuestions = serviceProperties.getNumberOfQuestions();
         List<String> contestantIds =
                 contestants.stream().map(Contestant::getId).collect(Collectors.toList());
         logger.info("Running contestants: Obtained contestant IDs");
-        for (int i=1; i<=numberOfQuestions; i++) {
-            Map<String, Score> scores =
-                    scoreCalculation.calculateScores(
-                            contestantIds,
-                            i);
-            scores.keySet().forEach(s -> scoreMultimap.put(s,
+
+        try {
+            ExecutorService es = Executors.newFixedThreadPool(6);
+            List<Callable<Map<String, Score>>> questions = Lists.newArrayList();
+            for (int i = 1; i <= numberOfQuestions; i++) {
+                questions.add(new Calculator(i, contestantIds));
+            }
+            List<Future<Map<String, Score>>> futures = es.invokeAll(questions);
+            for (Future<Map<String, Score>> future : futures) {
+                Map<String, Score> scores = future.get();
+                scores.keySet().forEach(s -> scoreMultimap.put(s,
                     scores.get(s)));
-            logger.info("Completed calculation for question " + i);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Through an interrupted exception in the threading",
+                    e);
         }
+
         return leaderboardService.generateLeaderboard(scoreMultimap);
+    }
+
+    private class Calculator implements Callable<Map<String, Score>> {
+
+        int questionNumber;
+        List<String> contestantIds;
+
+        Calculator(int questionNumber, List<String> contestantIds) {
+            this.questionNumber = questionNumber;
+            this.contestantIds = new ArrayList<>(contestantIds);
+        }
+
+        @Override
+        public Map<String, Score> call() {
+            return scoreCalculation.calculateScores(
+                    contestantIds,
+                    questionNumber);
+        }
     }
 }

@@ -1,36 +1,38 @@
 package codingchallenge.domain;
 
+import codingchallenge.domain.subdomain.IndividualPosition;
 import codingchallenge.domain.subdomain.Position;
+import codingchallenge.domain.subdomain.TeamPosition;
 
 import java.util.List;
 
 public class RegionFacts {
 
-    private List<Position> individualLeaderboard;
-    private List<Position> universityLeaderboard;
+    private List<IndividualPosition> individualLeaderboard;
+    private List<TeamPosition> universityLeaderboard;
     private List<Headline> headlines;
 
-    public RegionFacts(List<Position> contestants,
-                       List<Position> universityContestants,
+    public RegionFacts(List<IndividualPosition> contestants,
+                       List<TeamPosition> universityContestants,
                        List<Headline> headlines) {
         this.individualLeaderboard = contestants;
         this.universityLeaderboard = universityContestants;
         this.headlines = headlines;
     }
 
-    public List<Position> getIndividualLeaderboard() {
+    public List<IndividualPosition> getIndividualLeaderboard() {
         return individualLeaderboard;
     }
 
-    public void setIndividualLeaderboard(List<Position> individualLeaderboard) {
+    public void setIndividualLeaderboard(List<IndividualPosition> individualLeaderboard) {
         this.individualLeaderboard = individualLeaderboard;
     }
 
-    public List<Position> getUniversityLeaderboard() {
+    public List<TeamPosition> getUniversityLeaderboard() {
         return universityLeaderboard;
     }
 
-    public void setUniversityLeaderboard(List<Position> universityLeaderboard) {
+    public void setUniversityLeaderboard(List<TeamPosition> universityLeaderboard) {
         this.universityLeaderboard = universityLeaderboard;
     }
 
