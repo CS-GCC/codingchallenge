@@ -21,20 +21,15 @@ public class Runner {
 
     private final RunAll runAll;
     private final LeaderboardService leaderboardService;
-    private final ContestantService contestantService;
-    private final TeamService teamService;
     private final ChallengeInBounds challengeInBounds;
 
     private final Logger logger = LoggerFactory.getLogger(Runner.class);
 
     @Autowired
     public Runner(RunAll runAll, LeaderboardService leaderboardService,
-                  ContestantService contestantService, TeamService teamService,
                   ChallengeInBounds challengeInBounds) {
         this.runAll = runAll;
         this.leaderboardService = leaderboardService;
-        this.contestantService = contestantService;
-        this.teamService = teamService;
         this.challengeInBounds = challengeInBounds;
     }
 

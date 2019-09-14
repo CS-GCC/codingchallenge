@@ -13,6 +13,7 @@ public class Position {
     private double total;
     private List<Score> scores;
     private int position;
+    private int pos;
     private Date timestamp;
 
     public Position() {
@@ -22,6 +23,7 @@ public class Position {
         this.total = 0.0;
         this.scores = null;
         this.position = position;
+        this.pos = position;
     }
 
     public Position(double total, List<Score> scores, int position) {
@@ -52,6 +54,7 @@ public class Position {
 
     public void setPosition(int position) {
         this.position = position;
+        this.pos = position;
     }
 
     public String getId() {
@@ -76,5 +79,9 @@ public class Position {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getPos() {
+        return pos;
     }
 }

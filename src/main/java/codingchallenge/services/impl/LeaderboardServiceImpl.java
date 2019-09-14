@@ -55,7 +55,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         List<IndividualPosition> individualPositions = Lists.newArrayList();
         if (leaderboardId != null) {
             individualPositions = individualPositionRepository
-                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(leaderboardId, from, from+limit);
+                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(leaderboardId, from, from+limit);
         }
         return new LeaderboardDTO(leaderboard, individualPositions);
     }
@@ -67,7 +67,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         List<TeamPosition> teamPositions = Lists.newArrayList();
         if (leaderboardId != null) {
             teamPositions = teamPositionRepository
-                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(leaderboardId, from, from+limit);
+                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(leaderboardId, from, from+limit);
         }
         return new LeaderboardDTO(leaderboard, teamPositions);
     }
@@ -153,9 +153,10 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         Date timestamp = new Date();
         Leaderboard leaderboard = new Leaderboard(timestamp);
         leaderboard.setType(Type.INDIVIDUAL);
-        leaderboard.setTotalContestants(scoreMultimap.size());
+        leaderboard.setTotalContestants(scoreMultimap.keySet().size());
         leaderboard = leaderboardRepository.insert(leaderboard);
         String id = leaderboard.getId();
+        updateQuickFinds(id, Type.INDIVIDUAL);
         logger.info("New individual leaderboard generated and inserted with " +
                 "id " + id);
         List<IndividualPosition> positions = Lists.newArrayList();
@@ -197,6 +198,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         leaderboard.setTotalContestants(teams.size());
         leaderboard = leaderboardRepository.insert(leaderboard);
         String id = leaderboard.getId();
+        updateQuickFinds(id, Type.TEAM);
         logger.info("New team leaderboard generated and inserted with " +
                 "id " + id);
         for (String team : teams.keySet()) {
@@ -287,7 +289,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     public String leadingIndividual() {
         String id = individualLeaderboardId();
         IndividualPosition individualPosition =
-                individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, 2).get(0);
+                individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, 2).get(0);
         return individualPosition.getName();
     }
 
@@ -295,20 +297,20 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     public String leadingTeam() {
         String id = teamLeaderboardId();
         TeamPosition teamPosition =
-                teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, 2).get(0);
+                teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, 2).get(0);
         return teamPosition.getTeamName();
     }
 
     @Override
     public List<TeamPosition> getTopTeams(int numberOfUniversities) {
         String id = teamLeaderboardId();
-        return teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, numberOfUniversities + 1);
+        return teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, numberOfUniversities + 1);
     }
 
     @Override
     public List<IndividualPosition> getTopIndividuals(int numberOfIndividuals) {
         String id = individualLeaderboardId();
-        return individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPositionLessThan(id, 1, numberOfIndividuals + 1);
+        return individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, numberOfIndividuals + 1);
 
     }
 
@@ -326,6 +328,24 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     public List<IndividualPosition> getTeamContestantsLatestPosition(List<String> ids) {
         String id = individualLeaderboardId();
         return individualPositionRepository.findAllByLeaderboardIdAndContestantIdIn(id, ids);
+    }
+
+    private void updateQuickFinds(String id, Type type) {
+        List<QuickFind> quickFinds = quickFindRepository.findAll();
+        QuickFind quickFind = new QuickFind();
+        if (!quickFinds.isEmpty()) {
+            quickFind = quickFinds.get(0);
+        }
+        if (type == Type.INDIVIDUAL) {
+            quickFind.setIndividualLeaderboard(id);
+        } else if (type == Type.TEAM) {
+            quickFind.setTeamLeaderboard(id);
+        }
+        if (quickFinds.isEmpty()) {
+            quickFindRepository.insert(quickFind);
+        } else {
+            quickFindRepository.save(quickFind);
+        }
     }
 
     private boolean searchPredicate(String searchTerm,
