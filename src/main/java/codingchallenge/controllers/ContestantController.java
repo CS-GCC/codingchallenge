@@ -78,8 +78,8 @@ public class ContestantController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/contestants/total", method = RequestMethod.GET)
-    public TotalMap getContestantTotals(@RequestParam("ids") List<String> ids) {
+    @RequestMapping(path = "/contestants/total", method = RequestMethod.POST)
+    public TotalMap getContestantTotals(@RequestBody List<String> ids) {
         return leaderboardService.getContestantTotals(ids);
     }
 
