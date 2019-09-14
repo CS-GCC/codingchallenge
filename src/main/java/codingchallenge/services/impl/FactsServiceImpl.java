@@ -104,7 +104,11 @@ public class FactsServiceImpl implements FactsService {
         Contestant contestant = contestantOptional.get();
         ContestantStats contestantStats = new ContestantStats(contestant,
                 serviceProperties.getRegion());
-        contestantStats.setPosition(leaderboardService.getLatestPositionForIndividual(contestant.getId()).getPosition());
+        IndividualPosition individualPosition =
+                leaderboardService.getLatestPositionForIndividual(contestant.getId());
+        contestantStats.setPosition(individualPosition.getPosition());
+        contestantStats.setScores(individualPosition.getScores());
+        contestantStats.setTotal(individualPosition.getTotal());
         contestantStats.setPositionWithinTeam(leaderboardService.positionWithinTeam(contestant.getTeamId(), contestant.getId()));
         contestantStats.setTeamPosition(leaderboardService.getLatestPositionForTeam(contestant.getTeamId()).getPosition());
         return contestantStats;

@@ -242,7 +242,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     @Override
     public int positionWithinTeam(String teamId, String contestantId) {
-        String leaderboard = teamLeaderboardId();
+        String leaderboard = individualLeaderboardId();
         List<IndividualPosition> positions =
                 individualPositionRepository.findAllByLeaderboardIdAndTeamIdOrderByTotalDesc(leaderboard, teamId);
         for (int i=0; i<positions.size(); i++) {
