@@ -6,6 +6,7 @@ import codingchallenge.domain.Answer;
 import codingchallenge.domain.TravisUUID;
 import codingchallenge.domain.subdomain.Correctness;
 import codingchallenge.services.interfaces.AnswerService;
+import codingchallenge.services.interfaces.ChallengeInBounds;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
