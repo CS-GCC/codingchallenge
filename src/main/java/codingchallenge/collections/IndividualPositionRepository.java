@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IndividualPositionRepository extends MongoRepository<IndividualPosition, String> {
-    List<IndividualPosition> findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(String leaderboardId, int position, int position2);
+    List<IndividualPosition> findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(String leaderboardId, int position, int position2);
     Optional<IndividualPosition> findByLeaderboardIdAndContestantId(String leaderboardId, String contestantId);
     List<IndividualPosition> findAllByLeaderboardId(String leaderboardId);
     List<IndividualPosition> findAllByLeaderboardIdAndTeamIdOrderByTotalDesc(String leaderboardId, String teamId);

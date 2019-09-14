@@ -55,7 +55,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         List<IndividualPosition> individualPositions = Lists.newArrayList();
         if (leaderboardId != null) {
             individualPositions = individualPositionRepository
-                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(leaderboardId, from, from+limit);
+                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboardId, from, from+limit);
         }
         return new LeaderboardDTO(leaderboard, individualPositions);
     }
@@ -67,7 +67,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         List<TeamPosition> teamPositions = Lists.newArrayList();
         if (leaderboardId != null) {
             teamPositions = teamPositionRepository
-                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(leaderboardId, from, from+limit);
+                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboardId, from, from+limit);
         }
         return new LeaderboardDTO(leaderboard, teamPositions);
     }
@@ -289,7 +289,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     public String leadingIndividual() {
         String id = individualLeaderboardId();
         IndividualPosition individualPosition =
-                individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, 2).get(0);
+                individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, 2).get(0);
         return individualPosition.getName();
     }
 
@@ -297,20 +297,20 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     public String leadingTeam() {
         String id = teamLeaderboardId();
         TeamPosition teamPosition =
-                teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, 2).get(0);
+                teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, 2).get(0);
         return teamPosition.getTeamName();
     }
 
     @Override
     public List<TeamPosition> getTopTeams(int numberOfUniversities) {
         String id = teamLeaderboardId();
-        return teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, numberOfUniversities + 1);
+        return teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, numberOfUniversities + 1);
     }
 
     @Override
     public List<IndividualPosition> getTopIndividuals(int numberOfIndividuals) {
         String id = individualLeaderboardId();
-        return individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(id, 1, numberOfIndividuals + 1);
+        return individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, numberOfIndividuals + 1);
 
     }
 

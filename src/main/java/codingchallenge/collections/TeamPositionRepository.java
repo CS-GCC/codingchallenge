@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TeamPositionRepository extends MongoRepository<TeamPosition, String> {
-    List<TeamPosition> findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThan(String leaderboardId, int position, int position2);
+    List<TeamPosition> findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(String leaderboardId, int position, int position2);
     Optional<TeamPosition> findByLeaderboardIdAndTeamId(String leaderboardId,
                                                      String teamId);
     List<TeamPosition> findAllByTeamId(String teamId);
