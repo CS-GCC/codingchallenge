@@ -195,7 +195,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                         IndividualPosition::getTeamId);
         Leaderboard leaderboard = new Leaderboard(timestamp);
         leaderboard.setType(Type.TEAM);
-        leaderboard.setTotalContestants(teams.size());
+        leaderboard.setTotalContestants(teams.keySet().size());
         leaderboard = leaderboardRepository.insert(leaderboard);
         String id = leaderboard.getId();
         updateQuickFinds(id, Type.TEAM);
