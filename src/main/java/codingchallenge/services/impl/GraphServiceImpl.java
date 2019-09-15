@@ -82,24 +82,24 @@ public class GraphServiceImpl implements GraphService {
             List<Contestant> contestants = gradYear.getValue();
             List<IndividualPosition> positions =
                     leaderboardService.getTeamContestantsLatestPosition(contestants.stream().map(Contestant::getId).collect(Collectors.toList()));
-            double q1 =
+            OptionalDouble q1 =
                     positions.stream().mapToDouble(t -> getScoreForQuestion(t,
-                            1)).sum();
-            double q2 =
+                            1)).average();
+            OptionalDouble q2 =
                     positions.stream().mapToDouble(t -> getScoreForQuestion(t,
-                            2)).sum();
-            double q3 =
+                            2)).average();
+            OptionalDouble q3 =
                     positions.stream().mapToDouble(t -> getScoreForQuestion(t,
-                            3)).sum();
-            double q4 =
+                            3)).average();
+            OptionalDouble q4 =
                     positions.stream().mapToDouble(t -> getScoreForQuestion(t,
-                            4)).sum();
-            double q5 =
+                            4)).average();
+            OptionalDouble q5 =
                     positions.stream().mapToDouble(t -> getScoreForQuestion(t,
-                            5)).sum();
-            double q6 =
+                            5)).average();
+            OptionalDouble q6 =
                     positions.stream().mapToDouble(t -> getScoreForQuestion(t,
-                            6)).sum();
+                            6)).average();
             BarData barData = new BarData(gradYear.getKey(), q1, q2, q3, q4,
                     q5, q6);
             barList.add(barData);

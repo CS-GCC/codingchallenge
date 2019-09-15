@@ -1,7 +1,9 @@
 package codingchallenge.domain.graphs;
 
 import java.text.DecimalFormat;
+import java.util.OptionalDouble;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class BarData {
 
     private int year;
@@ -18,15 +20,41 @@ public class BarData {
     private double Q6;
     private String Q6Color = "#B7E9F7";
 
-    public BarData(int year, double q1, double q2, double q3, double q4, double q5,
-                   double q6) {
+    public BarData(int year, OptionalDouble q1, OptionalDouble q2, OptionalDouble q3,
+                   OptionalDouble q4,
+                   OptionalDouble q5,
+                   OptionalDouble q6) {
         this.year = year;
-        Q1 = round(q1);
-        Q2 = round(q2);
-        Q3 = round(q3);
-        Q4 = round(q4);
-        Q5 = round(q5);
-        Q6 = round(q6);
+        if (q1.isPresent()) {
+            Q1 = round(q1.getAsDouble());
+        } else {
+            Q1 = 0.0;
+        }
+        if (q2.isPresent()) {
+            Q2 = round(q2.getAsDouble());
+        } else {
+            Q2 = 0.0;
+        }
+        if (q3.isPresent()) {
+            Q3 = round(q3.getAsDouble());
+        } else {
+            Q3 = 0.0;
+        }
+        if (q4.isPresent()) {
+            Q4 = round(q4.getAsDouble());
+        } else {
+            Q4 = 0.0;
+        }
+        if (q5.isPresent()) {
+            Q5 = round(q5.getAsDouble());
+        } else {
+            Q5 = 0.0;
+        }
+        if (q6.isPresent()) {
+            Q6 = round(q6.getAsDouble());
+        } else {
+            Q6 = 0.0;
+        }
     }
 
     public int getYear() {
