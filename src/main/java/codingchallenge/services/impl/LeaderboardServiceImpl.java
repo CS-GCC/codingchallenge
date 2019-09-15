@@ -208,11 +208,11 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                             .stream()
                             .sorted(Comparator.comparingDouble(Position::getTotal).reversed())
                             .limit(20)
-                            .filter(p -> p.getTotal() > 0)
                             .collect(Collectors.toList());
+            String teamName = contestants.get(0).getTeamName();
             TeamPosition teamPosition = new TeamPosition(
                     -1,
-                    contestants.get(0).getTeamName(),
+                    teamName,
                     team
             );
             logger.debug("Limited number of positions in team to 20");
