@@ -91,7 +91,7 @@ public class FactsServiceImpl implements FactsService {
         List<IndividualPosition> individualPositions =
                 leaderboardService.getLatestIndividualPositionsForTeam(teamId);
         teamStats.setTotalContestants(individualPositions.size());
-        teamStats.setContestants(individualPositions.stream().limit(20).collect(Collectors.toList()));
+        teamStats.setContestants(individualPositions.stream().limit(20).filter(p -> p.getTotal() > 0).collect(Collectors.toList()));
         return teamStats;
     }
 
