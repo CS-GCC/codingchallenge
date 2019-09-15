@@ -289,17 +289,23 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public String leadingIndividual() {
         String id = individualLeaderboardId();
-        IndividualPosition individualPosition =
-                individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, 2).get(0);
-        return individualPosition.getName();
+        List<IndividualPosition> individualPositions =
+                individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, 2);
+        if (individualPositions.isEmpty()) {
+            return "N/A";
+        }
+        return individualPositions.get(0).getName();
     }
 
     @Override
     public String leadingTeam() {
         String id = teamLeaderboardId();
-        TeamPosition teamPosition =
-                teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, 2).get(0);
-        return teamPosition.getTeamName();
+        List<TeamPosition> teamPositions =
+                teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, 1, 2);
+        if (teamPositions.isEmpty()) {
+            return "N/A";
+        }
+        return teamPositions.get(0).getTeamName();
     }
 
     @Override
