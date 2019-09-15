@@ -2,6 +2,7 @@ package codingchallenge.domain.subdomain;
 
 import org.springframework.data.annotation.Id;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -83,5 +84,10 @@ public class Position {
 
     public int getPos() {
         return pos;
+    }
+
+    public String getSimpleDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        return dateFormat.format(timestamp);
     }
 }

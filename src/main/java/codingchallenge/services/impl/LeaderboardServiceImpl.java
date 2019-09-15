@@ -208,6 +208,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                             .stream()
                             .sorted(Comparator.comparingDouble(Position::getTotal).reversed())
                             .limit(20)
+                            .filter(p -> p.getTotal() > 0)
                             .collect(Collectors.toList());
             TeamPosition teamPosition = new TeamPosition(
                     -1,

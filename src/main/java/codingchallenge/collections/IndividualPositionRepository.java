@@ -4,6 +4,7 @@ import codingchallenge.domain.subdomain.IndividualPosition;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,4 +16,8 @@ public interface IndividualPositionRepository extends MongoRepository<Individual
     List<IndividualPosition> findAllByLeaderboardIdAndGlobalIdIsIn(String leaderboardId, Collection<String> globalId);
     List<IndividualPosition> findAllByContestantId(String contestantId);
     List<IndividualPosition> findAllByLeaderboardIdAndContestantIdIn(String leaderboardId, Collection<String> contestantId);
+
+    void deleteAllByIdIn(List<String> individualIds);
+
+    List<IndividualPosition> findAllByTimestampBefore(Date date);
 }
