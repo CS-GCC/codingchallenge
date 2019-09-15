@@ -68,7 +68,7 @@ public class RunPositionClean {
         for (List<IndividualPosition> entries :
                 positionMap.values()) {
             Map<String, List<Position>> entryMap =
-                    entries.stream().collect(groupingBy(Position::getSimpleDate));
+                    entries.stream().collect(groupingBy(Position::createSimpleDate));
             for (List<Position> datePositions : entryMap.values()) {
                 if (datePositions.size() > 1) {
                     datePositions.remove(datePositions.stream().min(Comparator.comparingDouble(Position::getPosition)).get());
@@ -85,7 +85,7 @@ public class RunPositionClean {
         for (List<TeamPosition> entries :
                 positionMap.values()) {
             Map<String, List<Position>> entryMap =
-                    entries.stream().collect(groupingBy(Position::getSimpleDate));
+                    entries.stream().collect(groupingBy(Position::createSimpleDate));
             for (List<Position> datePositions : entryMap.values()) {
                 if (datePositions.size() > 1) {
                     datePositions.remove(datePositions.stream().min(Comparator.comparingDouble(Position::getPosition)).get());

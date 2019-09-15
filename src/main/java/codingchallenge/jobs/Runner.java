@@ -33,7 +33,7 @@ public class Runner {
         this.challengeInBounds = challengeInBounds;
     }
 
-    @Scheduled(initialDelay = 60000, fixedDelay = 600000)
+    @Scheduled(initialDelay = 60000, fixedRate = 600000)
     public void runner() throws ContestantNotFoundException {
         logger.info("Beginning new run. Current time: " + new Date());
         long startTime = System.currentTimeMillis();

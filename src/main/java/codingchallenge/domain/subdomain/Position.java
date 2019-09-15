@@ -86,7 +86,7 @@ public class Position {
         return pos;
     }
 
-    public String getSimpleDate() {
+    public String createSimpleDate() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(timestamp);
     }
