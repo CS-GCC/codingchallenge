@@ -12,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ScoreCalculationImpl implements ScoreCalculation {
@@ -38,8 +35,7 @@ public class ScoreCalculationImpl implements ScoreCalculation {
             Multimap<Correctness, Answer> answers = getAllAnswersForTest(questionNumber, i);
             Category category = getTestCategory(i);
             double highScore = category.getTestValue();
-            double speedScoreFactor = calculateSpeedScoreFactor(answers.get(Correctness.CORRECT).size(), highScore);
-            updateCorrectAnswers(scoreMap, answers.get(Correctness.CORRECT), highScore, speedScoreFactor);
+            updateCorrectAnswers(scoreMap, answers.get(Correctness.CORRECT), highScore);
             updateIncorrectAnswers(scoreMap, answers.get(Correctness.INCORRECT));
             updateTimedOutAnswers(scoreMap, answers.get(Correctness.TIMED_OUT));
             logger.info("Completed for question " + questionNumber + ", test " +
@@ -64,14 +60,29 @@ public class ScoreCalculationImpl implements ScoreCalculation {
         }
     }
 
-    private void updateCorrectAnswers(Map<String, Score> scoreMap, Collection<Answer> answers, double highScore, double speedScoreFactor) {
+    private void updateCorrectAnswers(Map<String, Score> scoreMap, Collection<Answer> answers, double highScore) {
+        Optional<Answer> ans =
+                answers.stream().min(Comparator.comparingDouble(Answer::getSpeed));
+        if (!ans.isPresent()) {
+            return;
+        }
+        double fastest = ans.get().getSpeed();
         for (Answer answer : answers) {
             String contestant = answer.getContestant();
             Score score = scoreMap.get(contestant);
             score.incrementCorrect();
-            score.increaseTotal(highScore);
-            highScore -= speedScoreFactor;
+            double scoreToAdd = getScore(highScore, fastest, answer.getSpeed());
+            score.increaseTotal(scoreToAdd);
         }
+    }
+
+    private double getScore(double highScore, double fastest, double time) {
+        double difference = time - fastest;
+        double percentage = 1 - (difference / fastest);
+        if (percentage < 0.3) {
+            percentage = 0.3;
+        }
+        return percentage * highScore;
     }
 
     private Map<String, Score> initialiseMap(List<String> contestants, int questionNumber) {
