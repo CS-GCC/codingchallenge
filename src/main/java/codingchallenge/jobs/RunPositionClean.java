@@ -1,7 +1,9 @@
 package codingchallenge.jobs;
 
 import codingchallenge.collections.IndividualPositionRepository;
+import codingchallenge.collections.LeaderboardRepository;
 import codingchallenge.collections.TeamPositionRepository;
+import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.subdomain.IndividualPosition;
 import codingchallenge.domain.subdomain.Position;
 import codingchallenge.domain.subdomain.TeamPosition;
@@ -24,14 +26,16 @@ public class RunPositionClean {
 
     private final IndividualPositionRepository individualPositionRepository;
     private final TeamPositionRepository teamPositionRepository;
+    private final LeaderboardRepository leaderboardRepository;
 
     private final Logger logger =
             LoggerFactory.getLogger(RunPositionClean.class);
 
     @Autowired
-    public RunPositionClean(IndividualPositionRepository individualPositionRepository, TeamPositionRepository teamPositionRepository) {
+    public RunPositionClean(IndividualPositionRepository individualPositionRepository, TeamPositionRepository teamPositionRepository, LeaderboardRepository leaderboardRepository) {
         this.individualPositionRepository = individualPositionRepository;
         this.teamPositionRepository = teamPositionRepository;
+        this.leaderboardRepository = leaderboardRepository;
     }
 
     @Scheduled(cron = "0 0 9 * * ?")
@@ -42,8 +46,11 @@ public class RunPositionClean {
                 getIndividualPositions(date);
         Map<String, List<TeamPosition>> teamPositions =
                 getTeamPositions(date);
-        List<String> individualIds = cleanIndividualPositions(individualPositions);
-        List<String> teamIds = cleanTeamPositions(teamPositions);
+        List<String> leaderboardIds =
+                leaderboardRepository.findAllBySaved(true).stream().map(Leaderboard::getId).collect(Collectors.toList());
+        List<String> individualIds =
+                cleanIndividualPositions(individualPositions, leaderboardIds);
+        List<String> teamIds = cleanTeamPositions(teamPositions, leaderboardIds);
         individualPositionRepository.deleteAllByIdIn(individualIds);
         teamPositionRepository.deleteAllByIdIn(teamIds);
     }
@@ -63,7 +70,8 @@ public class RunPositionClean {
     }
 
     private List<String> cleanIndividualPositions(Map<String,
-            List<IndividualPosition>> positionMap) {
+            List<IndividualPosition>> positionMap,
+                                                  List<String> leaderboardIds) {
         List<String> idsToClean = Lists.newArrayList();
         for (List<IndividualPosition> entries :
                 positionMap.values()) {
@@ -72,6 +80,8 @@ public class RunPositionClean {
             for (List<Position> datePositions : entryMap.values()) {
                 if (datePositions.size() > 1) {
                     datePositions.remove(datePositions.stream().min(Comparator.comparingDouble(Position::getPosition)).get());
+                    datePositions =
+                            datePositions.stream().filter(d -> !leaderboardIds.contains(d.getLeaderboardId())).collect(Collectors.toList());
                     idsToClean.addAll(datePositions.stream().map(Position::getId).collect(Collectors.toList()));
                 }
             }
@@ -80,7 +90,7 @@ public class RunPositionClean {
     }
 
     private List<String> cleanTeamPositions(Map<String,
-            List<TeamPosition>> positionMap) {
+            List<TeamPosition>> positionMap, List<String> leaderboardIds) {
         List<String> idsToClean = Lists.newArrayList();
         for (List<TeamPosition> entries :
                 positionMap.values()) {
@@ -89,6 +99,8 @@ public class RunPositionClean {
             for (List<Position> datePositions : entryMap.values()) {
                 if (datePositions.size() > 1) {
                     datePositions.remove(datePositions.stream().min(Comparator.comparingDouble(Position::getPosition)).get());
+                    datePositions =
+                            datePositions.stream().filter(d -> !leaderboardIds.contains(d.getLeaderboardId())).collect(Collectors.toList());
                     idsToClean.addAll(datePositions.stream().map(Position::getId).collect(Collectors.toList()));
                 }
             }
