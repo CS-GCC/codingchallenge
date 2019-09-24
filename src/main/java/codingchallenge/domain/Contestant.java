@@ -13,6 +13,10 @@ public class Contestant {
     private String name;
     private String team;
     private String teamId;
+    private boolean repoCreated;
+    private String gitAvatar;
+    private String gitRepository;
+    private String gitUsername;
 
     public Contestant() {
     }
@@ -91,5 +95,37 @@ public class Contestant {
 
     public void setGraduationYear(int graduationYear) {
         this.graduationYear = graduationYear;
+    }
+
+    public boolean isRepoCreated() {
+        return repoCreated;
+    }
+
+    public void setRepoCreated(boolean repoCreated) {
+        this.repoCreated = repoCreated;
+    }
+
+    public String getGitRepository() {
+        return gitRepository;
+    }
+
+    public void setGitRepository(String gitRepository) {
+        this.gitRepository = gitRepository;
+    }
+
+    public String getGitUsername() {
+        return gitUsername;
+    }
+
+    public void setGitUsername(String gitUsername) {
+        this.gitUsername = gitUsername;
+    }
+
+    public String getGitAvatar() {
+        return gitAvatar;
+    }
+
+    public void setGitAvatar(String gitAvatar) {
+        this.gitAvatar = gitAvatar;
     }
 }

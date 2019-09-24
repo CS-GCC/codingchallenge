@@ -44,4 +44,14 @@ public class ChallengeInBoundsImpl implements ChallengeInBounds {
         }
         return Status.NOT_STARTED;
     }
+
+    @Override
+    public boolean isStubbed() {
+        return serviceProperties.isStubbed();
+    }
+
+    @Override
+    public boolean isGitEnabled() {
+        return serviceProperties.isGitEnabled();
+    }
 }

@@ -16,7 +16,13 @@ public class ServiceProperties {
     private Region region;
     private String startDate;
     private String endDate;
+    private String global;
     private boolean stubbed;
+    private boolean gitEnabled;
+    private String gitToken;
+    private String gitUsername;
+    private String travisApiKey;
+
 
     public int getNumberOfQuestions() {
         return numberOfQuestions;
@@ -72,5 +78,45 @@ public class ServiceProperties {
 
     public void setStubbed(boolean stubbed) {
         this.stubbed = stubbed;
+    }
+
+    public boolean isGitEnabled() {
+        return gitEnabled;
+    }
+
+    public void setGitEnabled(boolean gitEnabled) {
+        this.gitEnabled = gitEnabled;
+    }
+
+    public String getGitToken() {
+        return gitToken;
+    }
+
+    public void setGitToken(String gitToken) {
+        this.gitToken = gitToken;
+    }
+
+    public String getGitUsername() {
+        return gitUsername;
+    }
+
+    public void setGitUsername(String gitUsername) {
+        this.gitUsername = gitUsername;
+    }
+
+    public String getTravisApiKey() {
+        return travisApiKey;
+    }
+
+    public void setTravisApiKey(String travisApiKey) {
+        this.travisApiKey = travisApiKey;
+    }
+
+    public String getGlobal() {
+        return global;
+    }
+
+    public void setGlobal(String global) {
+        this.global = global;
     }
 }

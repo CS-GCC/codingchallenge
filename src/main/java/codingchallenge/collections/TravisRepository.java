@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface TravisRepository extends MongoRepository<TravisUUID, String> {
     Optional<TravisUUID> findByUuid(UUID uuid);
+
+    Optional<TravisUUID> findByContestantId(String id);
 }

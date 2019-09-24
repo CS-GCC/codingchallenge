@@ -118,8 +118,4 @@ public class ScoreCalculationImpl implements ScoreCalculation {
         return answerService.getAnswersForQuestionAndTest(questionNumber, test);
     }
 
-    private double calculateSpeedScoreFactor(int numberCorrect, double highScore) {
-        return highScore / numberCorrect;
-    }
-
 }
