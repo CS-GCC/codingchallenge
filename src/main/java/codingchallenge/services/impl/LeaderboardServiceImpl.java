@@ -337,6 +337,28 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         return individualPositionRepository.findAllByLeaderboardIdAndContestantIdIn(id, ids);
     }
 
+    @Override
+    public List<LeaderboardDTO> save() {
+        QuickFind quickFind = quickFindRepository.findAll().get(0);
+        Iterable<Leaderboard> leaderboards =
+                leaderboardRepository.findAllById(Lists.newArrayList(quickFind.getIndividualLeaderboard(), quickFind.getTeamLeaderboard()));
+        List<LeaderboardDTO> leaderboardDTOS = Lists.newArrayList();
+        for (Leaderboard leaderboard : leaderboards) {
+            leaderboard.setSaved(true);
+            leaderboardRepository.save(leaderboard);
+            List<? extends Position> positions;
+            if (leaderboard.getType().equals(Type.INDIVIDUAL)) {
+                positions = individualPositionRepository
+                        .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboard.getId(), 1, 10);
+            } else {
+                positions =
+                        teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboard.getId(), 1, 10);
+            }
+            leaderboardDTOS.add(new LeaderboardDTO(leaderboard, positions));
+        }
+        return leaderboardDTOS;
+    }
+
     private void updateQuickFinds(String id, Type type) {
         List<QuickFind> quickFinds = quickFindRepository.findAll();
         QuickFind quickFind = new QuickFind();

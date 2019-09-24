@@ -63,4 +63,6 @@ public interface LeaderboardService {
     List<TeamPosition> getPositionsForTeam(String id);
 
     List<IndividualPosition> getTeamContestantsLatestPosition(List<String> ids);
+
+    List<LeaderboardDTO> save();
 }

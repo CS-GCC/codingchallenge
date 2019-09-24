@@ -12,6 +12,7 @@ public class Leaderboard {
     private Date timestamp;
     private Type type;
     private int totalContestants;
+    private boolean saved;
 
     public Leaderboard() {
         this.timestamp = new Date();
@@ -57,5 +58,13 @@ public class Leaderboard {
 
     public int getTotalContestants() {
         return totalContestants;
+    }
+
+    public boolean isSaved() {
+        return saved;
+    }
+
+    public void setSaved(boolean saved) {
+        this.saved = saved;
     }
 }

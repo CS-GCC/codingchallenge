@@ -6,6 +6,8 @@ import codingchallenge.services.interfaces.LeaderboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class LeaderboardController {
 
@@ -33,6 +35,14 @@ public class LeaderboardController {
         return leaderboardService.getFilteredIndividualLeaderboard(searchTerm
                 , from, limit);
     }
+
+    @CrossOrigin
+    @RequestMapping(path = "/leaderboard/save", method =
+            RequestMethod.GET)
+    public List<LeaderboardDTO> saveLeaderboard() {
+        return leaderboardService.save();
+    }
+
 
     @CrossOrigin
     @RequestMapping(path = "/teamleaderboard", method = RequestMethod.GET)
