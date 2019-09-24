@@ -64,5 +64,9 @@ public class TeamServiceImpl implements TeamService {
         return teamRepository.findAll().stream().filter(team -> team.getGitAvatar() == null || team.getGitAvatar().isEmpty()).map(Team::getName).collect(Collectors.toList());
     }
 
+    @Override
+    public int imagelessTeamCount() {
+        return getImagelessTeams().size();
+    }
 
 }

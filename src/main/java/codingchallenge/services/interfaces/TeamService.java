@@ -16,4 +16,6 @@ public interface TeamService {
 
     List<String> getImagelessTeams();
 
+    int imagelessTeamCount();
+
 }

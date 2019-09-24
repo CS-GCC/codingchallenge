@@ -55,9 +55,15 @@ public class TeamController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/team/images", method = RequestMethod.GET)
+    @RequestMapping(path = "/team/images/list", method = RequestMethod.GET)
     public List<String> getImagelessTeams() {
         return teamService.getImagelessTeams();
+    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/team/images/count", method = RequestMethod.GET)
+    public int getImagelessTeamCount() {
+        return teamService.imagelessTeamCount();
     }
 
 
