@@ -71,18 +71,9 @@ public class ScoreCalculationImpl implements ScoreCalculation {
             String contestant = answer.getContestant();
             Score score = scoreMap.get(contestant);
             score.incrementCorrect();
-            double scoreToAdd = getScore(highScore, fastest, answer.getSpeed());
+            double scoreToAdd = (fastest / answer.getSpeed()) * highScore;
             score.increaseTotal(scoreToAdd);
         }
-    }
-
-    private double getScore(double highScore, double fastest, double time) {
-        double difference = time - fastest;
-        double percentage = 1 - (difference / fastest);
-        if (percentage < 0.3) {
-            percentage = 0.3;
-        }
-        return percentage * highScore;
     }
 
     private Map<String, Score> initialiseMap(List<String> contestants, int questionNumber) {
