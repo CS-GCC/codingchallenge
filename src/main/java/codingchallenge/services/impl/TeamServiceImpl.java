@@ -4,6 +4,7 @@ import codingchallenge.collections.TeamRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.Team;
+import codingchallenge.domain.TeamImage;
 import codingchallenge.domain.subdomain.*;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.TeamService;
@@ -42,6 +43,19 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public List<Team> addTeams(List<Team> teams) {
         return teamRepository.insert(teams);
+    }
+
+    @Override
+    public void addImageUrl(List<TeamImage> images) {
+        for (TeamImage teamImage : images) {
+            Optional<Team> teamOptional =
+                    teamRepository.findByName(teamImage.getName());
+            if (teamOptional.isPresent()) {
+                Team team = teamOptional.get();
+                team.setGitAvatar(teamImage.getImageUrl());
+                teamRepository.save(team);
+            }
+        }
     }
 
 
