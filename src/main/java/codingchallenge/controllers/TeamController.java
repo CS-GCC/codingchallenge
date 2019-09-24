@@ -54,4 +54,11 @@ public class TeamController {
         teamService.addImageUrl(images);
     }
 
+    @CrossOrigin
+    @RequestMapping(path = "/team/images", method = RequestMethod.GET)
+    public List<String> getImagelessTeams() {
+        return teamService.getImagelessTeams();
+    }
+
+
 }

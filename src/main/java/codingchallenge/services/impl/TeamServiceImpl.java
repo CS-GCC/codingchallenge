@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TeamServiceImpl implements TeamService {
@@ -56,6 +57,11 @@ public class TeamServiceImpl implements TeamService {
                 teamRepository.save(team);
             }
         }
+    }
+
+    @Override
+    public List<String> getImagelessTeams() {
+        return teamRepository.findAll().stream().filter(team -> team.getGitAvatar() == null || team.getGitAvatar().isEmpty()).map(Team::getName).collect(Collectors.toList());
     }
 
 

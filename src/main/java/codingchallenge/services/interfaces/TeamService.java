@@ -14,4 +14,6 @@ public interface TeamService {
 
     void addImageUrl(List<TeamImage> images);
 
+    List<String> getImagelessTeams();
+
 }
