@@ -12,9 +12,9 @@ public interface TeamService {
 
     List<Team> addTeams(List<Team> teams);
 
-    void addImageUrl(List<TeamImage> images);
+    void addImageUrl(TeamImage image);
 
-    List<String> getImagelessTeams();
+    List<TeamImage> getImagelessTeams();
 
     int imagelessTeamCount();
 

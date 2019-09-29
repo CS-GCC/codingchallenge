@@ -1,20 +1,15 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.TeamRepository;
-import codingchallenge.domain.Contestant;
-import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.Team;
 import codingchallenge.domain.TeamImage;
-import codingchallenge.domain.subdomain.*;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.TeamService;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,21 +42,19 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void addImageUrl(List<TeamImage> images) {
-        for (TeamImage teamImage : images) {
-            Optional<Team> teamOptional =
-                    teamRepository.findByName(teamImage.getName());
-            if (teamOptional.isPresent()) {
-                Team team = teamOptional.get();
-                team.setGitAvatar(teamImage.getImageUrl());
-                teamRepository.save(team);
-            }
+    public void addImageUrl(TeamImage teamImage) {
+        Optional<Team> teamOptional =
+                teamRepository.findById(teamImage.getId());
+        if (teamOptional.isPresent()) {
+            Team team = teamOptional.get();
+            team.setGitAvatar(teamImage.getImageUrl());
+            teamRepository.save(team);
         }
     }
 
     @Override
-    public List<String> getImagelessTeams() {
-        return teamRepository.findAll().stream().filter(team -> team.getGitAvatar() == null || team.getGitAvatar().isEmpty()).map(Team::getName).collect(Collectors.toList());
+    public List<TeamImage> getImagelessTeams() {
+        return teamRepository.findAll().stream().filter(team -> team.getGitAvatar() == null || team.getGitAvatar().isEmpty()).map(TeamImage::new).collect(Collectors.toList());
     }
 
     @Override

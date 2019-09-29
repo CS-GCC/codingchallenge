@@ -2,6 +2,7 @@ package codingchallenge.controllers;
 
 import codingchallenge.domain.Team;
 import codingchallenge.domain.TeamImage;
+import codingchallenge.domain.TeamImageList;
 import codingchallenge.domain.TeamStats;
 import codingchallenge.domain.subdomain.Region;
 import codingchallenge.exceptions.ContestantNotFoundException;
@@ -50,14 +51,14 @@ public class TeamController {
 
     @CrossOrigin
     @RequestMapping(path = "/team/image", method = RequestMethod.POST)
-    public void addImageForTeam(@RequestBody List<TeamImage> images) {
-        teamService.addImageUrl(images);
+    public void addImageForTeam(@RequestBody TeamImage image) {
+        teamService.addImageUrl(image);
     }
 
     @CrossOrigin
     @RequestMapping(path = "/team/images/list", method = RequestMethod.GET)
-    public List<String> getImagelessTeams() {
-        return teamService.getImagelessTeams();
+    public TeamImageList getImagelessTeams() {
+        return new TeamImageList(teamService.getImagelessTeams());
     }
 
     @CrossOrigin
