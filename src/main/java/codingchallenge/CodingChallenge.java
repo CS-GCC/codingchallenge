@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.Executor;
 
 @SpringBootApplication
-//@EnableScheduling
+@EnableScheduling
 @EnableAsync
 public class CodingChallenge {
 
