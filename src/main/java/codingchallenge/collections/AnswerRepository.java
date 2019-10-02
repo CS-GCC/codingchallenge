@@ -16,4 +16,7 @@ public interface AnswerRepository extends MongoRepository<Answer, String> {
     List<Answer> findAllByContestantIn(Collection<String> contestant);
 
     void deleteAnswersByContestant(String contestant);
+
+    void deleteAnswersByContestantAndQuestionNumber(String contestant,
+                                               int questionNumber);
 }

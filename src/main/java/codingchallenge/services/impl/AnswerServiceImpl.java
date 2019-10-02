@@ -6,7 +6,6 @@ import codingchallenge.domain.Answer;
 import codingchallenge.domain.TravisUUID;
 import codingchallenge.domain.subdomain.Correctness;
 import codingchallenge.services.interfaces.AnswerService;
-import codingchallenge.services.interfaces.ChallengeInBounds;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
@@ -36,7 +35,8 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public void updateAnswersForUUID(String uuid, List<Answer> answers) {
+    public void updateAnswersForUUID(String uuid, List<Answer> answers,
+                                     int questionNumber) {
         UUID travisUUID = UUID.fromString(uuid);
         Optional<TravisUUID> contestantCode =
                 travisRepository.findByUuid(travisUUID);
@@ -45,7 +45,8 @@ public class AnswerServiceImpl implements AnswerService {
             for (Answer answer : answers) {
                 answer.setContestant(contestant);
             }
-            answerRepository.deleteAnswersByContestant(contestant);
+            answerRepository.deleteAnswersByContestantAndQuestionNumber(contestant,
+                    questionNumber);
             answerRepository.insert(answers);
             return;
         }

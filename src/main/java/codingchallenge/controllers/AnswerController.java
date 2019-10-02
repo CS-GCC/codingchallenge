@@ -26,11 +26,12 @@ public class AnswerController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/answer/contestant/{uuid}")
+    @RequestMapping(path = "/answer/contestant/{uuid}/{questionNumber}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void updateAnswersForContestant(@RequestBody List<Answer> answers,
-                                           @PathVariable String uuid) {
-        this.answerService.updateAnswersForUUID(uuid, answers);
+                                           @PathVariable String uuid,
+                                           @PathVariable int questionNumber) {
+        this.answerService.updateAnswersForUUID(uuid, answers, questionNumber);
         logger.info("Updated answers for UUID " + uuid);
     }
 

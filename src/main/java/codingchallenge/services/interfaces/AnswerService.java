@@ -9,7 +9,8 @@ import java.util.Set;
 
 public interface AnswerService {
 
-    void updateAnswersForUUID(String contestant, List<Answer> answers);
+    void updateAnswersForUUID(String contestant, List<Answer> answers,
+                              int questionNumber);
 
     Multimap<Correctness, Answer> getAnswersForQuestionAndTest(int questionNumber, int testNumber);
 
