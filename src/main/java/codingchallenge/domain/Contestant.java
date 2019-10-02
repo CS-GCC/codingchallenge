@@ -17,6 +17,7 @@ public class Contestant {
     private String gitAvatar;
     private String gitRepository;
     private String gitUsername;
+    private boolean sentForInitialisation;
 
     public Contestant() {
     }
@@ -127,5 +128,13 @@ public class Contestant {
 
     public void setGitAvatar(String gitAvatar) {
         this.gitAvatar = gitAvatar;
+    }
+
+    public boolean isSentForInitialisation() {
+        return sentForInitialisation;
+    }
+
+    public void setSentForInitialisation(boolean sentForInitialisation) {
+        this.sentForInitialisation = sentForInitialisation;
     }
 }

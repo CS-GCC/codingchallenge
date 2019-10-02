@@ -29,4 +29,6 @@ public interface ContestantService {
     long getNumberOfContestants();
 
     String getContestantIdForGlobalId(String id);
+
+    Contestant addContestant(Contestant contestant, boolean addToTeam, String travisUUID);
 }

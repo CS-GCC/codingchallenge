@@ -26,25 +26,42 @@ public class FileServiceImpl implements FileService {
             Stream<Path> paths =
                     Files.walk(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(
                             language.toString().toLowerCase())).toURI()))) {
-            return paths
+            List<FileData> results = paths
                     .filter(Files::isRegularFile)
-                    .map(this::getFileData)
+                    .map(p -> getFileData(p, language, false))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
+            Stream<Path> questionPaths =
+                    Files.walk(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(
+                            "questions")).toURI()));
+            results.addAll(questionPaths.map(p -> getFileData(p, language, true)).filter(Objects::nonNull).collect(Collectors.toList()));
+            return results;
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
         return Lists.newArrayList();
     }
 
-    private FileData getFileData(Path path) {
+    private FileData getFileData(Path path, Language language,
+                                 boolean questions) {
         try {
+            if (!questions) {
+                return new FileData(path.getFileName().toString(),
+                        getPath(path.toString(), language),
+                        IOUtils.toByteArray(path.toUri()));
+            }
             return new FileData(path.getFileName().toString(),
+                    "questions/" + path.getFileName().toString(),
                     IOUtils.toByteArray(path.toUri()));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private String getPath(String fullPath, Language language) {
+        return fullPath.substring(fullPath.indexOf(language.toString().toLowerCase())+language.toString().length()+1);
     }
 
 }

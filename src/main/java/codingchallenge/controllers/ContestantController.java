@@ -42,11 +42,13 @@ public class ContestantController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/challenge/addname", method = RequestMethod.POST)
-    public Contestant addContestant(@RequestBody Contestant contestant) {
+    @RequestMapping(path = "/challenge/addname/{travisUUID}", method =
+            RequestMethod.POST)
+    public Contestant addContestant(@RequestBody Contestant contestant,
+                                    @PathVariable String travisUUID) {
         logger.info("Adding 1 contestants");
-        return contestantService.addContestants(Lists.newArrayList(contestant),
-                true).get(0);
+        return contestantService.addContestant(contestant,
+                true, travisUUID);
     }
 
     @CrossOrigin

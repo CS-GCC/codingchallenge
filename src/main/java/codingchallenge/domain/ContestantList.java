@@ -4,13 +4,13 @@ import java.util.List;
 
 public class ContestantList {
 
-    private List<Contestant> contestants;
+    private List<GitDTO> contestants;
 
-    public List<Contestant> getContestants() {
+    public List<GitDTO> getContestants() {
         return contestants;
     }
 
-    public void setContestants(List<Contestant> contestants) {
+    public void setContestants(List<GitDTO> contestants) {
         this.contestants = contestants;
     }
 }

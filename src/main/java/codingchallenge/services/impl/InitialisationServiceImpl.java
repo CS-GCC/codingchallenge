@@ -7,22 +7,18 @@ import codingchallenge.collections.TravisRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.domain.GitRepo;
 import codingchallenge.domain.Status;
-import codingchallenge.domain.TravisUUID;
 import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ChallengeInBounds;
 import codingchallenge.services.interfaces.GitHubService;
 import codingchallenge.services.interfaces.InitialisationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -46,10 +42,10 @@ public class InitialisationServiceImpl implements InitialisationService {
     }
 
     @Async
-    public void completeInitialisation(Contestant contestant, String code) {
-        UUID uuid = UUID.randomUUID();
+    public void completeInitialisation(Contestant contestant, String travisUUID) {
         contestant.setRepoCreated(
-                createGitRepositories(contestant, uuid));
+                createGitRepositories(contestant, UUID.fromString(travisUUID)));
+        contestantRepository.save(contestant);
     }
 
     private boolean createGitRepositories(Contestant contestant, UUID uuid) {

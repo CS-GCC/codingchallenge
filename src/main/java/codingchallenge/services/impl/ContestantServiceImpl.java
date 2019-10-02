@@ -1,35 +1,40 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.ContestantRepository;
+import codingchallenge.collections.TravisRepository;
 import codingchallenge.domain.Contestant;
-import codingchallenge.domain.Leaderboard;
-import codingchallenge.domain.subdomain.IndividualPosition;
-import codingchallenge.domain.subdomain.Position;
+import codingchallenge.domain.TravisUUID;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.ContestantService;
-import codingchallenge.services.interfaces.TeamService;
+import codingchallenge.services.interfaces.InitialisationService;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class ContestantServiceImpl implements ContestantService {
 
     private final ContestantRepository contestantRepository;
+    private final TravisRepository travisRepository;
+    private final InitialisationService initialisationService;
 
     private final Logger logger =
             LoggerFactory.getLogger(ContestantServiceImpl.class);
 
     @Autowired
-    public ContestantServiceImpl(ContestantRepository contestantRepository) {
+    public ContestantServiceImpl(ContestantRepository contestantRepository,
+                                 TravisRepository travisRepository,
+                                 InitialisationService initialisationService) {
         this.contestantRepository = contestantRepository;
+        this.travisRepository = travisRepository;
+        this.initialisationService = initialisationService;
     }
 
     @Override
@@ -84,6 +89,17 @@ public class ContestantServiceImpl implements ContestantService {
         Optional<Contestant> contestantOptional =
                 contestantRepository.findContestantByGlobalId(id);
         return contestantOptional.map(Contestant::getId).orElse(null);
+    }
+
+    @Override
+    public Contestant addContestant(Contestant contestant, boolean addToTeam,
+                                    String travisUUID) {
+        contestant = contestantRepository.insert(contestant);
+        travisRepository.insert(new TravisUUID(contestant.getId(),
+                UUID.fromString(travisUUID)));
+        initialisationService.completeInitialisation(contestant,
+                travisUUID);
+        return contestant;
     }
 
 }

@@ -12,7 +12,9 @@ import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -49,7 +51,7 @@ public class GitImpl implements Git {
         for (FileData file : fileData) {
             repository
                     .createContent()
-                    .path(file.getName())
+                    .path(file.getPath())
                     .content(file.getBytes())
                     .message(file.getName())
                     .commit();

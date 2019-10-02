@@ -4,6 +4,6 @@ import codingchallenge.domain.Contestant;
 
 public interface InitialisationService {
 
-    void completeInitialisation(Contestant contestant, String code);
+    void completeInitialisation(Contestant contestant, String travisUUID);
 
 }

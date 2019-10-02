@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 @Service
 public class TravisImpl implements Travis {
 
-    private final String username = "kunalwagle";
+    private final String username;
     private final String token;
     private final ServiceProperties serviceProperties;
     private final String travis = "https://api.travis-ci.com/";
@@ -28,6 +28,7 @@ public class TravisImpl implements Travis {
         this.serviceProperties = serviceProperties;
         this.restTemplate = restTemplate;
         this.token = "token " + serviceProperties.getTravisApiKey();
+        this.username = serviceProperties.getGitUsername();
     }
 
     @Override
@@ -36,11 +37,11 @@ public class TravisImpl implements Travis {
             String url = travis + "repo/" + username + "%2F" + repo +
                     "/activate";
             travisRequest(url, createActivationEntity());
+//            setSettings(repo);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public void deactivateTravis(String repo) {
@@ -70,13 +71,35 @@ public class TravisImpl implements Travis {
         }
     }
 
+    private void setSettings(String repo) {
+        try {
+            String url = travis + "repo/" + username + "%2F" + repo +
+                    "/setting/auto_cancel_pushes";
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+            map.add("setting.value", "true");
+            HttpEntity<MultiValueMap<String, String>> entity =
+                    new HttpEntity<>(map, getHttpHeaders());
+            restTemplate.exchange(new URI(url),
+                    HttpMethod.PATCH,
+                    entity,
+                    String.class);
+            System.out.println(entity.getBody());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void travisRequest(String url,
                                HttpEntity<?> entity) throws URISyntaxException {
-        restTemplate.exchange(new URI(url),
-                HttpMethod.POST,
-                entity,
-                String.class);
-        System.out.println(entity.getBody());
+        try {
+            restTemplate.exchange(new URI(url),
+                    HttpMethod.POST,
+                    entity,
+                    String.class);
+            System.out.println(entity.getBody());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private HttpEntity<String> createActivationEntity() {
