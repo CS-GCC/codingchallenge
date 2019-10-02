@@ -23,7 +23,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FileData> getFolderContent(Language language) {
-        String resourceDirectory = language.toString().toLowerCase();
+        String resourceDirectory = "/" + language.toString().toLowerCase();
         URI uri = null;
         Path path = null;
         try {
