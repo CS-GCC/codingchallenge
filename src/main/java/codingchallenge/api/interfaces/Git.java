@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public interface Git {
 
-    void createRepository(GitRepo repo) throws IOException;
+    void createRepository(GitRepo repo) throws IOException, Exception;
     void initialCommit(GitRepo repo) throws IOException;
     void addCollaborator(GitRepo repo, String username) throws IOException;
 

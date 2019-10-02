@@ -65,7 +65,7 @@ public class InitialisationServiceImpl implements InitialisationService {
                         travis.setEnvVariable(repo.getRepoName(),
                                 uuid.toString());
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     logger.error("Creation of Git Repository didn't work", e);
                     return false;
                 }
