@@ -49,12 +49,14 @@ public class GitImpl implements Git {
                 gitHub.getRepository(serviceProperties.getGitUsername() + "/" +
                 repo.getRepoName());
         for (FileData file : fileData) {
-            repository
-                    .createContent()
-                    .path(file.getPath())
-                    .content(file.getBytes())
-                    .message(file.getName())
-                    .commit();
+            if (file.getBytes() != null) {
+                repository
+                        .createContent()
+                        .path(file.getPath())
+                        .content(file.getBytes())
+                        .message(file.getName())
+                        .commit();
+            }
         }
     }
 

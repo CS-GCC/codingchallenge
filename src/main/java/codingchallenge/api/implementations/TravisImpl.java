@@ -77,10 +77,12 @@ public class TravisImpl implements Travis {
                     "/setting/auto_cancel_pushes";
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("setting.value", "true");
+            HttpHeaders httpHeaders = getHttpHeaders();
+            httpHeaders.add("X-HTTP-Method-Override", "PATCH");
             HttpEntity<MultiValueMap<String, String>> entity =
                     new HttpEntity<>(map, getHttpHeaders());
             restTemplate.exchange(new URI(url),
-                    HttpMethod.PATCH,
+                    HttpMethod.POST,
                     entity,
                     String.class);
             System.out.println(entity.getBody());
