@@ -85,5 +85,11 @@ public class ContestantController {
         return leaderboardService.getContestantTotals(ids);
     }
 
+    @CrossOrigin
+    @RequestMapping(path = "/contestants/reset", method = RequestMethod.GET)
+    public void resetGit() {
+        contestantService.resetGit();
+    }
+
 
 }

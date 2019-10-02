@@ -5,13 +5,14 @@ import codingchallenge.domain.subdomain.Language;
 import codingchallenge.services.interfaces.FileService;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -22,10 +23,27 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FileData> getFolderContent(Language language) {
+        String resourceDirectory = language.toString().toLowerCase();
+        URI uri = null;
+        Path path = null;
+        try {
+            uri = getClass().getResource(resourceDirectory).toURI();
+
+            if (uri.getScheme().equals("jar")) {
+                FileSystem fileSystem = FileSystems.newFileSystem(uri,
+                        Collections.emptyMap());
+                path = fileSystem.getPath("/BOOT-INF/classes" + resourceDirectory);
+            } else {
+                // Not running in a jar, so just use a regular filesystem path
+                path = Paths.get(uri);
+            }
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+
         try (
-            Stream<Path> paths =
-                    Files.walk(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(
-                            language.toString().toLowerCase())).toURI()))) {
+                Stream<Path> paths =
+                        Files.walk(Paths.get(path.toUri()))) {
             List<FileData> results = paths
                     .filter(Files::isRegularFile)
                     .map(p -> getFileData(p, language, false))
@@ -34,7 +52,8 @@ public class FileServiceImpl implements FileService {
             Stream<Path> questionPaths =
                     Files.walk(Paths.get(Objects.requireNonNull(getClass().getClassLoader().getResource(
                             "questions")).toURI()));
-            results.addAll(questionPaths.map(p -> getFileData(p, language, true)).filter(Objects::nonNull).collect(Collectors.toList()));
+            results.addAll(questionPaths.map(p -> getFileData(p, language,
+                    true)).filter(Objects::nonNull).collect(Collectors.toList()));
             return results;
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
@@ -61,7 +80,7 @@ public class FileServiceImpl implements FileService {
     }
 
     private String getPath(String fullPath, Language language) {
-        return fullPath.substring(fullPath.indexOf(language.toString().toLowerCase())+language.toString().length()+1);
+        return fullPath.substring(fullPath.indexOf(language.toString().toLowerCase()) + language.toString().length() + 1);
     }
 
 }

@@ -102,4 +102,15 @@ public class ContestantServiceImpl implements ContestantService {
         return contestant;
     }
 
+    @Override
+    public void resetGit() {
+        List<Contestant> contestants = contestantRepository.findAll();
+        for (Contestant contestant : contestants) {
+            contestant.setRepoCreated(false);
+            contestant.setSentForInitialisation(false);
+            contestant.setGitRepository(null);
+            contestantRepository.save(contestant);
+        }
+    }
+
 }

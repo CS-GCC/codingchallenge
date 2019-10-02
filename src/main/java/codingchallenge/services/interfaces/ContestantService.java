@@ -31,4 +31,7 @@ public interface ContestantService {
     String getContestantIdForGlobalId(String id);
 
     Contestant addContestant(Contestant contestant, boolean addToTeam, String travisUUID);
+
+    void resetGit();
+
 }
