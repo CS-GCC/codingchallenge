@@ -31,7 +31,7 @@ public class GitHubServiceImpl implements GitHubService {
 
     @Override
     public List<GitRepo> addRepositories(String username) {
-        int count = Math.toIntExact((gitRepository.count() / 4) + 1);
+        int count = 1500 + Math.toIntExact((gitRepository.count() / 4) + 1);
         List<GitRepo> gitRepos = Lists.newArrayList();
         for (Language language : Language.values()) {
             gitRepos.add(new GitRepo(username, language, count));
