@@ -29,14 +29,15 @@ public class FileServiceImpl implements FileService {
         try {
             uri = getClass().getResource(resourceDirectory).toURI();
 
-//            if (uri.getScheme().equals("jar")) {
+            if (uri.getScheme().equals("jar")) {
 //                FileSystem fileSystem = FileSystems.newFileSystem(uri,
 //                        Collections.emptyMap());
-//                path = fileSystem.getPath("/BOOT-INF/classes" + resourceDirectory);
-//            } else {
+                path =
+                        FileSystems.getDefault().getPath("/BOOT-INF/classes" + resourceDirectory);
+            } else {
                 // Not running in a jar, so just use a regular filesystem path
                 path = Paths.get(uri);
-//            }
+            }
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
