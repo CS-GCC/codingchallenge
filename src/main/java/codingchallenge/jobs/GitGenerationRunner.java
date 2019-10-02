@@ -43,6 +43,7 @@ public class GitGenerationRunner {
         contestants =
                 contestants.stream().filter(c -> c.getGitUsername() != null && !c.getGitUsername().isEmpty() && !c.isRepoCreated() && !c.isSentForInitialisation()).collect(Collectors.toList());
         logger.info("There are currently " + contestants.size() + " left");
+        contestants = contestants.stream().limit(100).collect(Collectors.toList());
         for (Contestant contestant : contestants) {
             ResponseEntity<UUID> uuidResponseEntity =
                     restTemplate.getForEntity(serviceProperties.getGlobal() +
