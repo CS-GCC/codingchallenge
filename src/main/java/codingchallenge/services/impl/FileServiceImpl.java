@@ -33,7 +33,7 @@ public class FileServiceImpl implements FileService {
 //                FileSystem fileSystem = FileSystems.newFileSystem(uri,
 //                        Collections.emptyMap());
                 path =
-                        FileSystems.getDefault().getPath("/BOOT-INF/classes" + resourceDirectory);
+                        FileSystems.getDefault().getPath( resourceDirectory);
             } else {
                 // Not running in a jar, so just use a regular filesystem path
                 path = Paths.get(uri);
