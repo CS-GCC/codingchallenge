@@ -18,7 +18,9 @@ public class GitRepo {
 
     public GitRepo(String username, Language language, int counter) {
         this.username = username;
-        this.repoName = "GCC-" + language.toString().toLowerCase() + "-" + counter;
+        this.repoName =
+                "GlobalCodingChallenge-" + language.toString().toLowerCase() +
+                        "-" + counter;
         this.language = language;
     }
 
