@@ -29,43 +29,38 @@ public class GitGenerationRunner {
 
     @Autowired
     public GitGenerationRunner(ContestantRepository contestantRepository,
-                               RestTemplate restTemplate, InitialisationService initialisationService, ServiceProperties serviceProperties) {
+                               RestTemplate restTemplate,
+                               InitialisationService initialisationService,
+                               ServiceProperties serviceProperties) {
         this.contestantRepository = contestantRepository;
         this.restTemplate = restTemplate;
         this.initialisationService = initialisationService;
         this.serviceProperties = serviceProperties;
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 125000)
+    @Scheduled(initialDelay = 100, fixedDelay = 120000)
     public void generateRepos() {
-//        logger.info("Starting generation of repos");
-//        List<Contestant> contestants = contestantRepository.findAll();
-//        contestants =
-//                contestants.stream().filter(c -> c.getGitUsername() != null && !c.getGitUsername().isEmpty() && !c.isRepoCreated() && !c.isSentForInitialisation()).collect(Collectors.toList());
-//        logger.info("There are currently " + contestants.size() + " left");
-//        contestants = contestants.stream().limit(100).collect(Collectors.toList());
-//        for (Contestant contestant : contestants) {
-        Contestant contestant = contestantRepository.findById(
-                "5d94560249ecdbeb2790b4c1").get();
-        ResponseEntity<UUID> uuidResponseEntity =
-                restTemplate.getForEntity(serviceProperties.getGlobal() +
-                                "contestants/uuid/travis/" + contestant.getGlobalId(),
-                        UUID.class);
-        UUID uuid = uuidResponseEntity.getBody();
-//            if (uuid != null) {
-//                if (!contestant.isSentForInitialisation()) {
-//                    contestant.setSentForInitialisation(true);
-//                    contestantRepository.save(contestant);
-//                    initialisationService.completeInitialisation(contestant, uuid.toString());
-//                } else {
-//                    logger.info("Contestant already sent for initialisation. " +
-//                            "Ignoring");
-//                }
-//            }
-//        }
-//        logger.info("Completed a git generation run");
-        initialisationService.completeInitialisation(
-                contestant, uuid.toString());
+        logger.info("Starting generation of repos");
+        List<Contestant> contestants = contestantRepository.findAll();
+        contestants =
+                contestants.stream().filter(c -> c.getGitUsername() != null && !c.getGitUsername().isEmpty() && !c.isRepoCreated()).collect(Collectors.toList());
+        logger.info("There are currently " + contestants.size() + " left");
+        contestants =
+                contestants.stream().limit(100).collect(Collectors.toList());
+        for (Contestant contestant : contestants) {
+            ResponseEntity<UUID> uuidResponseEntity =
+                    restTemplate.getForEntity(serviceProperties.getGlobal() +
+                                    "contestants/uuid/travis/" + contestant.getGlobalId(),
+                            UUID.class);
+            UUID uuid = uuidResponseEntity.getBody();
+            if (uuid != null) {
+                contestantRepository.save(contestant);
+                initialisationService.completeInitialisation(contestant,
+                        uuid.toString());
+                logger.info("Sent someone to the initialisation function");
+            }
+        }
+        logger.info("Completed a git generation run");
     }
 
 }

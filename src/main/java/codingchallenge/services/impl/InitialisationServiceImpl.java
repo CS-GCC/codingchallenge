@@ -43,9 +43,11 @@ public class InitialisationServiceImpl implements InitialisationService {
 
     @Async
     public void completeInitialisation(Contestant contestant, String travisUUID) {
-        contestant.setRepoCreated(
-                createGitRepositories(contestant, UUID.fromString(travisUUID)));
-        contestantRepository.save(contestant);
+        if (!contestant.isRepoCreated()) {
+            contestant.setRepoCreated(
+                    createGitRepositories(contestant, UUID.fromString(travisUUID)));
+            contestantRepository.save(contestant);
+        }
     }
 
     private boolean createGitRepositories(Contestant contestant, UUID uuid) {
