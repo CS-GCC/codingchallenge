@@ -23,28 +23,24 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FileData> getFolderContent(Language language) {
-        String resourceDirectory = "/" + language.toString().toLowerCase();
         URI uri = null;
-        Path path = null;
+        Path myPath = null;
         try {
-            uri = getClass().getResource(resourceDirectory).toURI();
-
-            if (uri.getScheme().equals("jar")) {
-//                FileSystem fileSystem = FileSystems.newFileSystem(uri,
-//                        Collections.emptyMap());
-                path =
-                        FileSystems.getDefault().getPath( resourceDirectory);
-            } else {
-                // Not running in a jar, so just use a regular filesystem path
-                path = Paths.get(uri);
-            }
-        } catch (URISyntaxException e) {
+            uri =
+                    FileServiceImpl.class.getResource("/resources/" + language.toString().toLowerCase()).toURI();
+        if (uri.getScheme().equals("jar")) {
+            FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
+            myPath = fileSystem.getPath("/resources/" + language.toString().toLowerCase());
+        } else {
+            myPath = Paths.get(uri);
+        }
+        } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
 
         try (
                 Stream<Path> paths =
-                        Files.walk(Paths.get(path.toUri()))) {
+                        Files.walk(Paths.get(myPath.toUri()))) {
             List<FileData> results = paths
                     .filter(Files::isRegularFile)
                     .map(p -> getFileData(p, language, false))
