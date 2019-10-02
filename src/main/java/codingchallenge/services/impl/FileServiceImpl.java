@@ -27,10 +27,10 @@ public class FileServiceImpl implements FileService {
         Path myPath = null;
         try {
             uri =
-                    FileServiceImpl.class.getResource("/resources/" + language.toString().toLowerCase()).toURI();
+                    FileServiceImpl.class.getResource(language.toString().toLowerCase()).toURI();
         if (uri.getScheme().equals("jar")) {
             FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.<String, Object>emptyMap());
-            myPath = fileSystem.getPath("/resources/" + language.toString().toLowerCase());
+            myPath = fileSystem.getPath(language.toString().toLowerCase());
         } else {
             myPath = Paths.get(uri);
         }
