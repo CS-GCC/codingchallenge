@@ -34,12 +34,16 @@ public class GitImpl implements Git {
 
     @Override
     public void createRepository(GitRepo repo) throws IOException {
-        GHCreateRepositoryBuilder builder =
-                gitHub.createRepository(repo.getRepoName());
-        GHRepository repository = builder
-                .private_(true)
-                .create();
-        System.out.println(repository);
+        try {
+            GHCreateRepositoryBuilder builder =
+                    gitHub.createRepository(repo.getRepoName());
+            GHRepository repository = builder
+                    .private_(true)
+                    .create();
+            System.out.println(repository);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
