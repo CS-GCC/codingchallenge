@@ -11,6 +11,7 @@ import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ChallengeInBounds;
 import codingchallenge.services.interfaces.GitHubService;
 import codingchallenge.services.interfaces.InitialisationService;
+import org.kohsuke.github.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -71,6 +72,9 @@ public class InitialisationServiceImpl implements InitialisationService {
                         travis.setEnvVariable(repo.getRepoName(),
                                 uuid.toString());
                     }
+                } catch (HttpException e) {
+                    logger.error("Repo already exists. Setting to true", e);
+                    return true;
                 } catch (Exception e) {
                     logger.error("Creation of Git Repository didn't work", e);
                     return false;
