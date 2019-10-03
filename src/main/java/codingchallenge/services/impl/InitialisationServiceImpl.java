@@ -42,7 +42,7 @@ public class InitialisationServiceImpl implements InitialisationService {
         this.travis = travis;
     }
 
-    @Async
+//    @Async
     public void completeInitialisation(Contestant contestant, String travisUUID) {
         if (!contestant.isRepoCreated()) {
             contestant.setRepoCreated(

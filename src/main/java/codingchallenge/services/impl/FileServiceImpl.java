@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.apache.tomcat.util.codec.binary.Base64.decodeBase64;
@@ -44,6 +45,29 @@ public class FileServiceImpl implements FileService {
 //                "https://raw.githubusercontent.com/kunalwagle/" + getRepoName(language) + "/master/";
 //        String[] names = getObjectForLanguage(language);
         List<GitFile> files = fileRepository.findAllByLanguage(language);
+        for (GitFile file : files) {
+            try {
+                if (file.getData() != null) {
+                    byte[] data = decodeBase64(file.getData());
+//                GitFile file = new GitFile(language, name, dataAsString);
+//                fileRepository.insert(file);
+                    fileData.add(new FileData(file.getName(), file.getName(), data));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+//        return null;
+        return fileData;
+    }
+
+    @Override
+    public List<FileData> getPatchContent(Language language) throws IOException {
+        String[] filesToPatch = getObjectForLanguage(language);
+        List<GitFile> files =
+                fileRepository.findAllByLanguageAndNameIn(language,
+                        Arrays.asList(filesToPatch));
+        List<FileData> fileData = Lists.newArrayList();
         for (GitFile file : files) {
             try {
                 if (file.getData() != null) {

@@ -72,20 +72,20 @@ public class GitImpl implements Git {
 
     @Override
     public void patchCommit(GitRepo repo) throws IOException {
-//        List<FileData> fileData = fileService.getFolderContent(repo.getLanguage());
-//        GHRepository repository =
-//                gitHub.getRepository(serviceProperties.getGitUsername() + "/" +
-//                        repo.getRepoName());
-//        for (FileData file : fileData) {
-//            if (file.getBytes() != null) {
-//                repository
-//                        .createContent()
-//                        .path(file.getPath())
-//                        .content(file.getBytes())
-//                        .message("Test Runner Update")
-//                        .commit();
-//            }
-//        }
+        List<FileData> fileData = fileService.getFolderContent(repo.getLanguage());
+        GHRepository repository =
+                gitHub.getRepository(serviceProperties.getGitUsername() + "/" +
+                        repo.getRepoName());
+        for (FileData file : fileData) {
+            if (file.getBytes() != null) {
+                repository
+                        .createContent()
+                        .path(file.getPath())
+                        .content(file.getBytes())
+                        .message("Test Runner Update")
+                        .commit();
+            }
+        }
     }
 
 }
