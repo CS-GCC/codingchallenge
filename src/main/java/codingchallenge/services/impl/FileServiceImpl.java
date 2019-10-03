@@ -1,6 +1,8 @@
 package codingchallenge.services.impl;
 
+import codingchallenge.collections.FileRepository;
 import codingchallenge.domain.FileData;
+import codingchallenge.domain.GitFile;
 import codingchallenge.domain.subdomain.Language;
 import codingchallenge.services.interfaces.FileService;
 import com.google.common.collect.Lists;
@@ -11,6 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+
+import static org.apache.tomcat.util.codec.binary.Base64.decodeBase64;
+import static org.apache.tomcat.util.codec.binary.Base64.encodeBase64String;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -25,21 +30,33 @@ public class FileServiceImpl implements FileService {
 
     String[] javascript = {"spec.js", "package.json", "questions/Question1.js", "questions/Question2.js", "questions/Question3.js", "questions/Question4.js", "questions/Question5.js", "questions/Question6.js"};
 
+    private final FileRepository fileRepository;
+
+    public FileServiceImpl(FileRepository fileRepository) {
+        this.fileRepository = fileRepository;
+    }
+
 
     @Override
     public List<FileData> getFolderContent(Language language) {
         List<FileData> fileData = Lists.newArrayList();
-        String baseUrl =
-                "https://raw.githubusercontent.com/kunalwagle/" + getRepoName(language) + "/master/";
-        String[] names = getObjectForLanguage(language);
-        for (String name : names) {
+//        String baseUrl =
+//                "https://raw.githubusercontent.com/kunalwagle/" + getRepoName(language) + "/master/";
+//        String[] names = getObjectForLanguage(language);
+        List<GitFile> files = fileRepository.findAllByLanguage(language);
+        for (GitFile file : files) {
             try {
-                byte[] data = fetchRemoteFile(baseUrl + name);
-                fileData.add(new FileData(name, name, data));
+                if (file.getData() != null) {
+                    byte[] data = decodeBase64(file.getData());
+//                GitFile file = new GitFile(language, name, dataAsString);
+//                fileRepository.insert(file);
+                    fileData.add(new FileData(file.getName(), file.getName(), data));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+//        return null;
         return fileData;
     }
 

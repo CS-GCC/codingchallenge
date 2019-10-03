@@ -28,9 +28,9 @@ public class CodingChallenge {
     @Bean
     public Executor asyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(8);
-        executor.setMaxPoolSize(10);
-        executor.setQueueCapacity(500);
+        executor.setCorePoolSize(12);
+        executor.setMaxPoolSize(12);
+        executor.setQueueCapacity(800);
         executor.setThreadNamePrefix("CodingChallenge-");
         executor.initialize();
         return executor;

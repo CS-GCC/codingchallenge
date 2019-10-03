@@ -46,7 +46,7 @@ public class InitialisationServiceImpl implements InitialisationService {
     public void completeInitialisation(Contestant contestant, String travisUUID) {
         if (!contestant.isRepoCreated()) {
             contestant.setRepoCreated(
-                    createGitRepositories(contestant, UUID.fromString(travisUUID)));
+                    createGitRepositories(contestant, UUID.randomUUID()));
             contestantRepository.save(contestant);
         }
     }
