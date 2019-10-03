@@ -42,7 +42,7 @@ public class GitGenerationRunner {
         this.serviceProperties = serviceProperties;
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 900000)
+    @Scheduled(initialDelay = 100, fixedDelay = 300000)
     public void generateRepos() {
         logger.info("Starting generation of repos");
         List<Contestant> contestants = contestantRepository.findAll();
@@ -50,11 +50,11 @@ public class GitGenerationRunner {
                 contestants.stream().filter(c -> c.getGitUsername() != null && !c.getGitUsername().isEmpty() && !c.isRepoCreated()).collect(Collectors.toList());
         logger.info("There are currently " + contestants.size() + " left");
         contestants =
-                contestants.stream().limit(200).collect(Collectors.toList());
+                contestants.stream().limit(250).collect(Collectors.toList());
         ExecutorService es = Executors.newFixedThreadPool(5);
         List<Callable<Void>> runnables = Lists.newArrayList();
         for (int i=0; i<=4; i++) {
-            runnables.add(new Runner(contestants.stream().skip(i*40).limit(40).collect(Collectors.toList())));
+            runnables.add(new Runner(contestants.stream().skip(i*50).limit(50).collect(Collectors.toList())));
         }
         try {
             es.invokeAll(runnables);
