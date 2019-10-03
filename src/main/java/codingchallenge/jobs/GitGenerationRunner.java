@@ -4,6 +4,7 @@ import codingchallenge.collections.ContestantRepository;
 import codingchallenge.domain.Contestant;
 import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.InitialisationService;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,7 +42,7 @@ public class GitGenerationRunner {
         this.serviceProperties = serviceProperties;
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 1200000)
+    @Scheduled(initialDelay = 100, fixedDelay = 900000)
     public void generateRepos() {
         logger.info("Starting generation of repos");
         List<Contestant> contestants = contestantRepository.findAll();
@@ -47,21 +51,49 @@ public class GitGenerationRunner {
         logger.info("There are currently " + contestants.size() + " left");
         contestants =
                 contestants.stream().limit(200).collect(Collectors.toList());
-        for (Contestant contestant : contestants) {
-            ResponseEntity<UUID> uuidResponseEntity =
-                    restTemplate.getForEntity(serviceProperties.getGlobal() +
-                                    "contestants/uuid/travis/" + contestant.getGlobalId(),
-                            UUID.class);
-            UUID uuid = uuidResponseEntity.getBody();
-            if (uuid != null) {
-//                contestant.setSentForInitialisation(true);
-//                contestantRepository.save(contestant);
-                initialisationService.completeInitialisation(contestant,
-                        uuid.toString());
-                logger.info("Sent someone to the initialisation function");
-            }
+        ExecutorService es = Executors.newFixedThreadPool(5);
+        List<Callable<Void>> runnables = Lists.newArrayList();
+        for (int i=0; i<=4; i++) {
+            runnables.add(new Runner(contestants.stream().skip(i*40).limit(40).collect(Collectors.toList())));
+        }
+        try {
+            es.invokeAll(runnables);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         logger.info("Completed a git generation run");
+    }
+
+    private class Runner implements Callable<Void> {
+
+        private List<Contestant> contestants;
+
+        private Runner(List<Contestant> contestants) {
+            this.contestants = contestants;
+        }
+
+        @Override
+        public Void call() throws Exception {
+            int i=1;
+            for (Contestant contestant : contestants) {
+                logger.info("Starting " + i + " of " + contestants.size());
+                ResponseEntity<UUID> uuidResponseEntity =
+                        restTemplate.getForEntity(serviceProperties.getGlobal() +
+                                        "contestants/uuid/travis/" + contestant.getGlobalId(),
+                                UUID.class);
+                UUID uuid = uuidResponseEntity.getBody();
+                if (uuid != null) {
+//                contestant.setSentForInitialisation(true);
+//                contestantRepository.save(contestant);
+                    initialisationService.completeInitialisation(contestant,
+                            uuid.toString());
+                    logger.info("Sent someone to the initialisation function");
+                }
+                logger.info("Completed contestant " + i);
+                i++;
+            }
+            return null;
+        }
     }
 
 }
