@@ -38,7 +38,7 @@ public class GitGenerationRunner {
         this.serviceProperties = serviceProperties;
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 120000)
+    @Scheduled(initialDelay = 100, fixedDelay = 60000)
     public void generateRepos() {
         logger.info("Starting generation of repos");
         List<Contestant> contestants = contestantRepository.findAll();
@@ -54,7 +54,6 @@ public class GitGenerationRunner {
                             UUID.class);
             UUID uuid = uuidResponseEntity.getBody();
             if (uuid != null) {
-                contestantRepository.save(contestant);
                 initialisationService.completeInitialisation(contestant,
                         uuid.toString());
                 logger.info("Sent someone to the initialisation function");

@@ -52,15 +52,21 @@ public class InitialisationServiceImpl implements InitialisationService {
 
     private boolean createGitRepositories(Contestant contestant, UUID uuid) {
         if (!challengeInBounds.isStubbed() && challengeInBounds.isGitEnabled()) {
+            logger.info("Beginning git creation");
             String username = contestant.getGitUsername();
             List<GitRepo> repositories = gitHubService.addRepositories(username);
             updateContestantRepo(contestant, repositories);
+            logger.info("Added repos to service");
             for (GitRepo repo : repositories) {
                 try {
+                    logger.info("About to create repo");
                     git.createRepository(repo);
+                    logger.info("About to register initial commit");
                     git.initialCommit(repo);
+                    logger.info("Initial commit completed");
                     if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
                         git.addCollaborator(repo, username);
+                        logger.info("Collaborator added");
                         travis.activateTravis(repo.getRepoName());
                         travis.setEnvVariable(repo.getRepoName(),
                                 uuid.toString());
@@ -73,6 +79,7 @@ public class InitialisationServiceImpl implements InitialisationService {
         } else {
             return false;
         }
+        logger.info("Repos created");
         return true;
     }
 
