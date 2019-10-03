@@ -9,5 +9,6 @@ import java.util.List;
 public interface FileService {
 
     List<FileData> getFolderContent(Language language) throws IOException;
+//    List<FileData> getPatchContent(Language language) throws IOException;
 
 }

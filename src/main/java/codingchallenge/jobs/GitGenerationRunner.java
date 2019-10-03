@@ -38,12 +38,12 @@ public class GitGenerationRunner {
         this.serviceProperties = serviceProperties;
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 120000)
+    @Scheduled(initialDelay = 100, fixedDelay = 1200000)
     public void generateRepos() {
         logger.info("Starting generation of repos");
         List<Contestant> contestants = contestantRepository.findAll();
         contestants =
-                contestants.stream().filter(c -> c.getGitUsername() != null && !c.getGitUsername().isEmpty() && !c.isRepoCreated() && !c.isSentForInitialisation()).collect(Collectors.toList());
+                contestants.stream().filter(c -> c.getGitUsername() != null && !c.getGitUsername().isEmpty() && !c.isRepoCreated()).collect(Collectors.toList());
         logger.info("There are currently " + contestants.size() + " left");
         contestants =
                 contestants.stream().limit(100).collect(Collectors.toList());
@@ -54,8 +54,8 @@ public class GitGenerationRunner {
                             UUID.class);
             UUID uuid = uuidResponseEntity.getBody();
             if (uuid != null) {
-                contestant.setSentForInitialisation(true);
-                contestantRepository.save(contestant);
+//                contestant.setSentForInitialisation(true);
+//                contestantRepository.save(contestant);
                 initialisationService.completeInitialisation(contestant,
                         uuid.toString());
                 logger.info("Sent someone to the initialisation function");
