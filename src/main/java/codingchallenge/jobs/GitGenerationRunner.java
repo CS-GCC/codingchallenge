@@ -76,21 +76,26 @@ public class GitGenerationRunner {
         public Void call() throws Exception {
             int i=1;
             for (Contestant contestant : contestants) {
-                logger.info("Starting " + i + " of " + contestants.size());
-                ResponseEntity<UUID> uuidResponseEntity =
-                        restTemplate.getForEntity(serviceProperties.getGlobal() +
-                                        "contestants/uuid/travis/" + contestant.getGlobalId(),
-                                UUID.class);
-                UUID uuid = uuidResponseEntity.getBody();
-                if (uuid != null) {
+                try {
+                    logger.info("Starting " + i + " of " + contestants.size());
+                    ResponseEntity<UUID> uuidResponseEntity =
+                            restTemplate.getForEntity(serviceProperties.getGlobal() +
+                                            "contestants/uuid/travis/" + contestant.getGlobalId(),
+                                    UUID.class);
+                    UUID uuid = uuidResponseEntity.getBody();
+                    if (uuid != null) {
 //                contestant.setSentForInitialisation(true);
 //                contestantRepository.save(contestant);
-                    initialisationService.completeInitialisation(contestant,
-                            uuid.toString());
-                    logger.info("Sent someone to the initialisation function");
+                        initialisationService.completeInitialisation(contestant,
+                                uuid.toString());
+                        logger.info("Sent someone to the initialisation function");
+                    }
+                    logger.info("Completed contestant " + i);
+                    i++;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    logger.info("Not to worry. Continuing as usual");
                 }
-                logger.info("Completed contestant " + i);
-                i++;
             }
             return null;
         }
