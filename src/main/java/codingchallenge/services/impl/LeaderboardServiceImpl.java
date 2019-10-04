@@ -224,7 +224,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
                 map.put(
                         i,
                         contestants.stream().mapToDouble(pos ->
-                                pos.getScores().stream().filter(s -> s.getQuestionNumber() == index).findFirst().get().getTotal()
+                                getTotal(index, pos)
                         ).sum()
                 );
             }
@@ -239,6 +239,15 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         teamPositionRepository.insert(positions);
         logger.info("Generated team positions");
         return id;
+    }
+
+    private double getTotal(int index, IndividualPosition pos) {
+        List<Score> scores =
+                pos.getScores().stream().filter(s -> s.getQuestionNumber() == index).collect(Collectors.toList());
+        if (scores.size() > 0) {
+            return scores.get(0).getTotal();
+        }
+        return 0.0;
     }
 
     @Override
