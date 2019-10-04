@@ -60,7 +60,7 @@ public class TravisImpl implements Travis {
             String url = travis + "repo/" + username + "%2F" + repo +
                     "/env_vars";
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-            map.add("env_var.name", "travis_uuid");
+            map.add("env_var.name", "travistestidentifier");
             map.add("env_var.value", uuid);
             map.add("env_var.public", "false");
             HttpEntity<MultiValueMap<String, String>> entity =

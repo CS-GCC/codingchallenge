@@ -6,8 +6,8 @@ import codingchallenge.domain.TotalMap;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.ContestantService;
 import codingchallenge.services.interfaces.FactsService;
+import codingchallenge.services.interfaces.GitHubService;
 import codingchallenge.services.interfaces.LeaderboardService;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ public class ContestantController {
     private final ContestantService contestantService;
     private final FactsService factsService;
     private final LeaderboardService leaderboardService;
+    private final GitHubService gitHubService;
 
     private final Logger logger =
             LoggerFactory.getLogger(ContestantController.class);
@@ -28,10 +29,12 @@ public class ContestantController {
     @Autowired
     public ContestantController(ContestantService contestantService,
                                 FactsService factsService,
-                                LeaderboardService leaderboardService) {
+                                LeaderboardService leaderboardService,
+                                GitHubService gitHubService) {
         this.contestantService = contestantService;
         this.factsService = factsService;
         this.leaderboardService = leaderboardService;
+        this.gitHubService = gitHubService;
     }
 
     @CrossOrigin
@@ -90,12 +93,12 @@ public class ContestantController {
     public long withoutGit() {
         return contestantService.getContestantsWithoutGit();
     }
-//
-//    @CrossOrigin
-//    @RequestMapping(path = "/contestants/reset", method = RequestMethod.GET)
-//    public void resetGit() {
-//        contestantService.resetGit();
-//    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/updateenvs", method = RequestMethod.GET)
+    public void updateGit() {
+        gitHubService.updateTravisEnvVar();
+    }
 
 
 }

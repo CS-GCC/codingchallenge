@@ -8,5 +8,6 @@ import java.util.List;
 public interface GitHubService {
 
     List<GitRepo> addRepositories(String username);
+    void updateTravisEnvVar();
 
 }
