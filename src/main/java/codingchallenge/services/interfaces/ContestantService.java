@@ -34,4 +34,6 @@ public interface ContestantService {
 
     void resetGit();
 
+    long getContestantsWithoutGit();
+
 }

@@ -113,4 +113,9 @@ public class ContestantServiceImpl implements ContestantService {
         }
     }
 
+    @Override
+    public long getContestantsWithoutGit() {
+        return contestantRepository.countAllByRepoCreatedIsFalse();
+    }
+
 }
