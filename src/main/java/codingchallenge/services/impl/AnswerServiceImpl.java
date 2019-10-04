@@ -1,9 +1,10 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.AnswerRepository;
+import codingchallenge.collections.ContestantRepository;
 import codingchallenge.collections.TravisRepository;
 import codingchallenge.domain.Answer;
-import codingchallenge.domain.TravisUUID;
+import codingchallenge.domain.Contestant;
 import codingchallenge.domain.subdomain.Correctness;
 import codingchallenge.services.interfaces.AnswerService;
 import com.google.common.collect.ArrayListMultimap;
@@ -16,32 +17,30 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerRepository answerRepository;
-    private final TravisRepository travisRepository;
+    private final ContestantRepository contestantRepository;
 
     private final Logger logger =
             LoggerFactory.getLogger(AnswerServiceImpl.class);
 
     @Autowired
     public AnswerServiceImpl(AnswerRepository answerRepository,
-                             TravisRepository travisRepository) {
+                             ContestantRepository contestantRepository) {
         this.answerRepository = answerRepository;
-        this.travisRepository = travisRepository;
+        this.contestantRepository = contestantRepository;
     }
 
     @Override
     public void updateAnswersForUUID(String uuid, List<Answer> answers,
                                      int questionNumber) {
-        UUID travisUUID = UUID.fromString(uuid);
-        Optional<TravisUUID> contestantCode =
-                travisRepository.findByUuid(travisUUID);
-        if (contestantCode.isPresent()) {
-            String contestant = contestantCode.get().getContestantId();
+        List<Contestant> contestants =
+                contestantRepository.findAllByGitUsername(uuid);
+        if (contestants.size() > 0) {
+            String contestant = contestants.get(0).getId();
             for (Answer answer : answers) {
                 answer.setContestant(contestant);
             }

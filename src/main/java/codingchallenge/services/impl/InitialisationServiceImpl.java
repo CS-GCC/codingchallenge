@@ -70,7 +70,7 @@ public class InitialisationServiceImpl implements InitialisationService {
                         logger.info("Collaborator added");
                         travis.activateTravis(repo.getRepoName());
                         travis.setEnvVariable(repo.getRepoName(),
-                                uuid.toString());
+                                contestant.getGitUsername());
                     }
                 } catch (HttpException e) {
                     logger.error("Repo already exists. Setting to true", e);
