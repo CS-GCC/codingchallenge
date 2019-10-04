@@ -42,7 +42,7 @@ public class GitGenerationRunner {
         this.serviceProperties = serviceProperties;
     }
 
-    @Scheduled(initialDelay = 100, fixedDelay = 300000)
+    @Scheduled(initialDelay = 100, fixedRate = 300000)
     public void generateRepos() {
         logger.info("Starting generation of repos");
         List<Contestant> contestants = contestantRepository.findAll();
