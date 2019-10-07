@@ -39,7 +39,8 @@ public class AnswerServiceImpl implements AnswerService {
                                      int questionNumber) {
         List<Contestant> contestants =
                 contestantRepository.findAllByGitUsername(uuid);
-        if (contestants.size() > 0) {
+
+        if (contestants.size() > 0 && !uuid.equals("userJY")) {
             String contestant = contestants.get(0).getId();
             for (Answer answer : answers) {
                 answer.setContestant(contestant);
