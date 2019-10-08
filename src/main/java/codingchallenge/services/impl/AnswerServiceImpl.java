@@ -8,6 +8,7 @@ import codingchallenge.domain.Contestant;
 import codingchallenge.domain.subdomain.Correctness;
 import codingchallenge.services.interfaces.AnswerService;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,9 @@ public class AnswerServiceImpl implements AnswerService {
         List<Contestant> contestants =
                 contestantRepository.findAllByGitUsername(uuid);
 
-        if (contestants.size() > 0 && !uuid.equals("userJY")) {
+        List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY");
+
+        if (contestants.size() > 0 && !blacklist.contains(uuid)) {
             String contestant = contestants.get(0).getId();
             for (Answer answer : answers) {
                 answer.setContestant(contestant);
