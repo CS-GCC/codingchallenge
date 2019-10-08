@@ -41,7 +41,7 @@ public class AnswerServiceImpl implements AnswerService {
         List<Contestant> contestants =
                 contestantRepository.findAllByGitUsername(uuid);
 
-        List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY");
+        List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY", "theriley106");
 
         if (contestants.size() > 0 && !blacklist.contains(uuid)) {
             String contestant = contestants.get(0).getId();
