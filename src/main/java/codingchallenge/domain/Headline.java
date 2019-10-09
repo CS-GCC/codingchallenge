@@ -8,6 +8,9 @@ public class Headline {
     private String author;
     private String imageUrl;
 
+    public Headline() {
+    }
+
     public Headline(Article article) {
         this.id = article.getId();
         this.blurb = article.getBlurb();

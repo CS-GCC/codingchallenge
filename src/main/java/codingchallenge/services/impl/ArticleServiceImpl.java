@@ -3,6 +3,7 @@ package codingchallenge.services.impl;
 import codingchallenge.collections.ArticleRepository;
 import codingchallenge.domain.Article;
 import codingchallenge.domain.Headline;
+import codingchallenge.domain.HeadlineDTO;
 import codingchallenge.domain.NewsPiece;
 import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ArticleService;
@@ -36,14 +37,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Headline> getLatestArticles(int from, int limit) {
-        ResponseEntity<List> articlesEntity =
+        ResponseEntity<HeadlineDTO> articlesEntity =
                 restTemplate.getForEntity(serviceProperties.getGlobal() +
                         "/news/headlines/" + serviceProperties.getRegion() +
                                 "?from=" + from + "&limit=" + limit,
-                        List.class);
+                        HeadlineDTO.class);
         try {
             return
-                    (List<Headline>) articlesEntity.getBody();
+                    articlesEntity.getBody().getHeadlines();
         } catch (Exception e) {
             return Lists.newArrayList();
         }
@@ -56,7 +57,7 @@ public class ArticleServiceImpl implements ArticleService {
             Article article = articleOptional.get();
             addPrettyPrintedTimestamp(article);
             List<Headline> headlines =
-                    articleRepository.findArticlesByIdIsNotOrderByTimestamp(id)
+                    articleRepository.findArticlesByIdIsNotOrderByTimestampDesc(id)
                         .stream()
                         .limit(5)
                         .map(Headline::new)

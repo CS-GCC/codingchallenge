@@ -7,6 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 public interface ArticleRepository extends MongoRepository<Article, String> {
-    List<Article> findArticlesByTimestampBeforeOrderByTimestamp(Date timestamp);
-    List<Article> findArticlesByIdIsNotOrderByTimestamp(String id);
+    List<Article> findArticlesByTimestampBeforeOrderByTimestampDesc(Date timestamp);
+    List<Article> findArticlesByIdIsNotOrderByTimestampDesc(String id);
 }
