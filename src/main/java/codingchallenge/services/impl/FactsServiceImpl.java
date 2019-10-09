@@ -11,14 +11,18 @@ import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.*;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 public class FactsServiceImpl implements FactsService {
@@ -30,6 +34,8 @@ public class FactsServiceImpl implements FactsService {
     private final ContestantRepository contestantRepository;
     private final TeamRepository teamRepository;
     private final AnswerService answerService;
+
+    private final Logger logger = LoggerFactory.getLogger(FactsService.class);
 
     @Autowired
     public FactsServiceImpl(LeaderboardService leaderboardService,
@@ -114,6 +120,87 @@ public class FactsServiceImpl implements FactsService {
         return contestantStats;
     }
 
+    @Override
+    public LeaderboardProperties getStatsForNewsletter(String oldInd,
+                                                       String oldUni,
+                                                       String newInd,
+                                                       String newUni) {
+        logger.info("Getting old individuals");
+        Map<String, IndividualPosition> oldIndividuals =
+                leaderboardService.individualPositionsByLeaderboard(oldInd).stream().collect(Collectors.toMap(IndividualPosition::getContestantId, Function.identity()));
+        List<IndividualPosition> newIndividuals =
+                leaderboardService.individualPositionsByLeaderboard(newInd);
+        logger.info("Getting old teams");
+        Map<String, TeamPosition> oldTeams =
+                leaderboardService.teamPositionsByLeaderboard(oldUni).stream().collect(Collectors.toMap(TeamPosition::getTeamId, Function.identity()));
+        List<TeamPosition> newTeams =
+                leaderboardService.teamPositionsByLeaderboard(newUni);
+        Map<String, UniProperties> uniPropertiesMap = Maps.newHashMap();
+        List<PersonalProperties> personalPropertiesList = Lists.newArrayList();
+        for (TeamPosition team : newTeams) {
+            TeamPosition old = oldTeams.get(team.getTeamId());
+            if (old == null) {
+                old = new TeamPosition(team.getPosition(), null, null);
+            }
+            uniPropertiesMap.put(team.getTeamId(), new UniProperties(
+                    team.getTeamName(),
+                    old.getPosition() - team.getPosition(),
+                    team.getPosition()
+            ));
+        }
+        logger.info("Generated uni property map");
+        for (IndividualPosition position : newIndividuals) {
+            IndividualPosition old =
+                    oldIndividuals.get(position.getContestantId());
+            if (old == null) {
+                old = new IndividualPosition(position.getPosition(), null,
+                        null, null);
+            }
+            Contestant contestant =
+                    contestantRepository.findContestantByGlobalId(position.getGlobalId()).get();
+            PersonalProperties personalProperties = new PersonalProperties();
+            personalProperties.setContestantId(position.getContestantId());
+            personalProperties.setGitUsername(contestant.getGitUsername());
+            personalProperties.setRank(position.getPosition());
+            personalProperties.setHighestRank(leaderboardService.getPositionsForIndividual(position.getContestantId()).stream().min(Comparator.comparingInt(Position::getPosition)).get().getPosition());
+            personalProperties.setPositionsGained(old.getPosition() - position.getPosition());
+            UniProperties uniProperties =
+                    uniPropertiesMap.get(position.getTeamId());
+            personalProperties.setUniRank(uniProperties.rank);
+            personalProperties.setUniversityGained(uniProperties.gained);
+            personalProperties.setUniversity(uniProperties.name);
+            personalPropertiesList.add(personalProperties);
+        }
+        logger.info("Generated invidiual property list");
+        List<IndividualPosition> topTenInd =
+                leaderboardService.getTopTenIndividuals(newInd);
+        List<TeamPosition> topTenPos =
+                leaderboardService.getTopTenTeams(newUni);
+        Map<Integer, Integer> indChange = Maps.newHashMap();
+        for (IndividualPosition pos : topTenInd) {
+            IndividualPosition old = oldIndividuals.get(pos.getContestantId());
+            indChange.put(
+                    pos.getPosition(),
+                    old != null ? old.getPos() - pos.getPosition() : 0
+            );
+        }
+        Map<Integer, Integer> uniChange = Maps.newHashMap();
+        for (TeamPosition pos : topTenPos) {
+            TeamPosition old = oldTeams.get(pos.getTeamId());
+            uniChange.put(
+                    pos.getPosition(),
+                    old != null ? old.getPos() - pos.getPosition() : 0
+            );
+        }
+        logger.info("Generated change maps");
+        LeaderboardProperties leaderboardProperties =
+                new LeaderboardProperties(personalPropertiesList, indChange,
+                uniChange);
+        leaderboardProperties.setIndividualPositions(topTenInd);
+        leaderboardProperties.setTeamPositions(topTenPos);
+        return leaderboardProperties;
+    }
+
     private List<TeamPosition> getUniversityPositions(int numberOfUniversities) {
         return leaderboardService.getTopTeams(numberOfUniversities);
     }
@@ -139,6 +226,19 @@ public class FactsServiceImpl implements FactsService {
                 IndividualPosition::getContestantId
         ).collect(Collectors.toList());
         return contestantService.getContestantsById(contestantIds);
+    }
+
+    private class UniProperties {
+
+        String name;
+        int gained;
+        int rank;
+
+        public UniProperties(String name, int gained, int rank) {
+            this.name = name;
+            this.gained = gained;
+            this.rank = rank;
+        }
     }
 
 }

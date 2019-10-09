@@ -10,5 +10,7 @@ public interface FactsService {
     LeaderFacts getLeaderFacts();
     TeamStats getStatsForTeam(String teamId) throws ContestantNotFoundException;
     ContestantStats getStatsForContestant(String id) throws ContestantNotFoundException;
+    LeaderboardProperties getStatsForNewsletter(String oldInd, String oldUni,
+                                                String newInd, String newUni);
 
 }

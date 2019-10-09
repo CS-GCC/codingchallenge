@@ -11,6 +11,7 @@ import codingchallenge.exceptions.ContestantNotFoundException;
 import com.google.common.collect.Multimap;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by kunalwagle on 29/12/2018.
@@ -26,6 +27,14 @@ public interface LeaderboardService {
 
     LeaderboardDTO getFilteredTeamLeaderboard(String searchTerm, int from,
                                            int limit);
+
+    List<IndividualPosition> individualPositionsByLeaderboard(String leaderboardId);
+
+    List<TeamPosition> teamPositionsByLeaderboard(String leaderboardId);
+
+    List<IndividualPosition> getTopTenIndividuals(String leaderboardId);
+
+    List<TeamPosition> getTopTenTeams(String leaderboardId);
 
     String generateLeaderboard(Multimap<String, Score> scoreMultimap) throws ContestantNotFoundException;
 

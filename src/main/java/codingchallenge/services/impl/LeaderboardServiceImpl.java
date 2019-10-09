@@ -149,6 +149,26 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     }
 
     @Override
+    public List<IndividualPosition> individualPositionsByLeaderboard(String leaderboardId) {
+        return individualPositionRepository.findAllByLeaderboardId(leaderboardId);
+    }
+
+    @Override
+    public List<TeamPosition> teamPositionsByLeaderboard(String leaderboardId) {
+        return teamPositionRepository.findAllByLeaderboardId(leaderboardId);
+    }
+
+    @Override
+    public List<IndividualPosition> getTopTenIndividuals(String leaderboardId) {
+        return individualPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboardId, 1, 11);
+    }
+
+    @Override
+    public List<TeamPosition> getTopTenTeams(String leaderboardId) {
+        return teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboardId, 1, 11);
+    }
+
+    @Override
     public String generateLeaderboard(Multimap<String, Score> scoreMultimap) throws ContestantNotFoundException {
         Date timestamp = new Date();
         Leaderboard leaderboard = new Leaderboard(timestamp);
@@ -358,10 +378,10 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             List<? extends Position> positions;
             if (leaderboard.getType().equals(Type.INDIVIDUAL)) {
                 positions = individualPositionRepository
-                        .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboard.getId(), 1, 10);
+                        .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboard.getId(), 1, 11);
             } else {
                 positions =
-                        teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboard.getId(), 1, 10);
+                        teamPositionRepository.findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(leaderboard.getId(), 1, 11);
             }
             leaderboardDTOS.add(new LeaderboardDTO(leaderboard, positions));
         }

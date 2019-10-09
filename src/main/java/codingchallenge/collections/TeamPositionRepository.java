@@ -16,4 +16,6 @@ public interface TeamPositionRepository extends MongoRepository<TeamPosition, St
     void deleteAllByIdIn(List<String> teamIds);
 
     List<TeamPosition> findAllByTimestampBefore(Date date);
+
+    List<TeamPosition> findAllByLeaderboardId(String leaderboardId);
 }

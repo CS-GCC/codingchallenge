@@ -4,10 +4,14 @@ import codingchallenge.collections.ArticleRepository;
 import codingchallenge.domain.Article;
 import codingchallenge.domain.Headline;
 import codingchallenge.domain.NewsPiece;
+import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ArticleService;
+import com.google.common.collect.Lists;
 import org.ocpsoft.prettytime.PrettyTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Date;
 import java.util.List;
@@ -18,21 +22,31 @@ import java.util.stream.Collectors;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final RestTemplate restTemplate;
+    private final ServiceProperties serviceProperties;
 
     @Autowired
-    public ArticleServiceImpl(ArticleRepository articleRepository) {
+    public ArticleServiceImpl(ArticleRepository articleRepository,
+                              RestTemplate restTemplate,
+                              ServiceProperties serviceProperties) {
         this.articleRepository = articleRepository;
+        this.restTemplate = restTemplate;
+        this.serviceProperties = serviceProperties;
     }
 
     @Override
     public List<Headline> getLatestArticles(int from, int limit) {
-        return
-                articleRepository.findArticlesByTimestampBeforeOrderByTimestamp(new Date())
-                        .stream()
-                        .skip(from)
-                        .limit(limit)
-                        .map(Headline::new)
-                        .collect(Collectors.toList());
+        ResponseEntity<List> articlesEntity =
+                restTemplate.getForEntity(serviceProperties.getGlobal() +
+                        "/news/headlines/" + serviceProperties.getRegion() +
+                                "?from=" + from + "&limit=" + limit,
+                        List.class);
+        try {
+            return
+                    (List<Headline>) articlesEntity.getBody();
+        } catch (Exception e) {
+            return Lists.newArrayList();
+        }
     }
 
     @Override

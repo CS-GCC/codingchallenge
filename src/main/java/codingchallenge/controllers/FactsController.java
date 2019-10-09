@@ -1,6 +1,7 @@
 package codingchallenge.controllers;
 
 import codingchallenge.domain.LeaderFacts;
+import codingchallenge.domain.LeaderboardProperties;
 import codingchallenge.domain.QuickFacts;
 import codingchallenge.domain.RegionFacts;
 import codingchallenge.domain.subdomain.Language;
@@ -8,10 +9,7 @@ import codingchallenge.services.interfaces.FactsService;
 import codingchallenge.services.interfaces.FileService;
 import codingchallenge.services.interfaces.InitialisationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -44,6 +42,16 @@ public class FactsController {
     @RequestMapping(path = "/facts/leader", method = RequestMethod.GET)
     public LeaderFacts getLeaderFacts() {
         return factsService.getLeaderFacts();
+    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/properties/{oldInd}/{oldUni}/{newInd}/{newUni}",
+            method = RequestMethod.GET)
+    public LeaderboardProperties getLeaderboardProperties(@PathVariable String oldInd,
+                                      @PathVariable String oldUni,
+                                                          @PathVariable String newInd, @PathVariable String newUni) {
+        return factsService.getStatsForNewsletter(oldInd, oldUni, newInd,
+                newUni);
     }
 
     @CrossOrigin
