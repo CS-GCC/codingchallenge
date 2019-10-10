@@ -1,7 +1,6 @@
 package codingchallenge.services.impl;
 
 import codingchallenge.collections.ContestantRepository;
-import codingchallenge.collections.TeamPositionRepository;
 import codingchallenge.collections.TeamRepository;
 import codingchallenge.domain.*;
 import codingchallenge.domain.subdomain.IndividualPosition;
@@ -16,7 +15,9 @@ import com.google.common.collect.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.function.Function;
@@ -34,6 +35,7 @@ public class FactsServiceImpl implements FactsService {
     private final ContestantRepository contestantRepository;
     private final TeamRepository teamRepository;
     private final AnswerService answerService;
+    private final RestTemplate restTemplate;
 
     private final Logger logger = LoggerFactory.getLogger(FactsService.class);
 
@@ -41,7 +43,7 @@ public class FactsServiceImpl implements FactsService {
     public FactsServiceImpl(LeaderboardService leaderboardService,
                             ContestantService contestantService,
                             ServiceProperties serviceProperties,
-                            ArticleService articleService, ContestantRepository contestantRepository, TeamRepository teamRepository, AnswerService answerService) {
+                            ArticleService articleService, ContestantRepository contestantRepository, TeamRepository teamRepository, AnswerService answerService, RestTemplate restTemplate) {
         this.leaderboardService = leaderboardService;
         this.contestantService = contestantService;
         this.serviceProperties = serviceProperties;
@@ -49,6 +51,7 @@ public class FactsServiceImpl implements FactsService {
         this.contestantRepository = contestantRepository;
         this.teamRepository = teamRepository;
         this.answerService = answerService;
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -96,6 +99,10 @@ public class FactsServiceImpl implements FactsService {
                 serviceProperties.getRegion());
         List<IndividualPosition> individualPositions =
                 leaderboardService.getLatestIndividualPositionsForTeam(teamId);
+        ResponseEntity<Team> responseEntity =
+                restTemplate.getForEntity(serviceProperties.getGlobal() +
+                        "team/" + teamId, Team.class);
+        teamStats.setLogo(responseEntity.getBody().getGitAvatar());
         teamStats.setTotalContestants(individualPositions.size());
         teamStats.setContestants(individualPositions.stream().limit(20).filter(p -> p.getTotal() > 0).collect(Collectors.toList()));
         return teamStats;
