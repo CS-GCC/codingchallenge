@@ -4,8 +4,8 @@ import codingchallenge.domain.Team;
 import codingchallenge.domain.TeamImage;
 import codingchallenge.domain.TeamImageList;
 import codingchallenge.domain.TeamStats;
-import codingchallenge.domain.subdomain.Region;
 import codingchallenge.exceptions.ContestantNotFoundException;
+import codingchallenge.services.interfaces.AlterTeamService;
 import codingchallenge.services.interfaces.FactsService;
 import codingchallenge.services.interfaces.TeamService;
 import org.slf4j.Logger;
@@ -20,13 +20,16 @@ public class TeamController {
 
     private final TeamService teamService;
     private final FactsService factsService;
+    private final AlterTeamService alterTeamService;
 
     private Logger logger = LoggerFactory.getLogger(TeamController.class);
 
     @Autowired
-    public TeamController(TeamService teamService, FactsService factsService) {
+    public TeamController(TeamService teamService, FactsService factsService,
+                          AlterTeamService alterTeamService) {
         this.teamService = teamService;
         this.factsService = factsService;
+        this.alterTeamService = alterTeamService;
     }
 
     @CrossOrigin
@@ -67,5 +70,10 @@ public class TeamController {
         return teamService.imagelessTeamCount();
     }
 
+    @CrossOrigin
+    @RequestMapping(path = "/team/alter/{id}", method = RequestMethod.GET)
+    public Team alterTeam(@PathVariable String id, @RequestParam String name) {
+        return alterTeamService.alterTeam(id, name);
+    }
 
 }

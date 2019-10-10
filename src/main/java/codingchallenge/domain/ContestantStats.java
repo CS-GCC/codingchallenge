@@ -14,16 +14,18 @@ public class ContestantStats {
     private int position;
     private int positionWithinTeam;
     private int teamPosition;
+    private String gitAvatar;
     private List<Score> scores;
     private double total;
     private Region region;
 
     public ContestantStats(String id, String name, String team,
-                           Region region) {
+                           Region region, String gitAvatar) {
         this.id = id;
         this.name = name;
         this.team = team;
         this.region = region;
+        this.gitAvatar = gitAvatar;
     }
 
     public ContestantStats(Contestant contestant, Region region) {
@@ -31,7 +33,8 @@ public class ContestantStats {
                 contestant.getId(),
                 contestant.getName(),
                 contestant.getTeam(),
-                region
+                region,
+                contestant.getGitAvatar()
         );
     }
 
@@ -105,5 +108,13 @@ public class ContestantStats {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public String getGitAvatar() {
+        return gitAvatar;
+    }
+
+    public void setGitAvatar(String gitAvatar) {
+        this.gitAvatar = gitAvatar;
     }
 }

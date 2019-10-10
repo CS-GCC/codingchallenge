@@ -14,6 +14,7 @@ public class TeamStats {
     private double total;
     private List<IndividualPosition> contestants;
     private int totalContestants;
+    private String logo;
     private Region region;
 
     public TeamStats(TeamPosition team, Region region) {
@@ -78,5 +79,13 @@ public class TeamStats {
 
     public void setRegion(Region region) {
         this.region = region;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
     }
 }

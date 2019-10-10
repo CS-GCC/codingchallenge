@@ -20,4 +20,6 @@ public interface IndividualPositionRepository extends MongoRepository<Individual
     void deleteAllByIdIn(List<String> individualIds);
 
     List<IndividualPosition> findAllByTimestampBefore(Date date);
+
+    List<IndividualPosition> findAllByTeamId(String id);
 }
