@@ -62,9 +62,6 @@ public class InitialisationServiceImpl implements InitialisationService {
                 try {
                     logger.info("About to create repo");
                     git.createRepository(repo);
-                    logger.info("About to register initial commit");
-                    git.initialCommit(repo);
-                    logger.info("Initial commit completed");
                     if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
                         git.addCollaborator(repo, username);
                         logger.info("Collaborator added");
