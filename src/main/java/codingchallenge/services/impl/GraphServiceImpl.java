@@ -82,6 +82,8 @@ public class GraphServiceImpl implements GraphService {
             List<Contestant> contestants = gradYear.getValue();
             List<IndividualPosition> positions =
                     leaderboardService.getTeamContestantsLatestPosition(contestants.stream().map(Contestant::getId).collect(Collectors.toList()));
+            positions =
+                    positions.stream().filter(individualPosition -> individualPosition.getTotal() > 0).collect(Collectors.toList());
             OptionalDouble q1 =
                     positions.stream().mapToDouble(t -> getScoreForQuestion(t,
                             1)).average();
