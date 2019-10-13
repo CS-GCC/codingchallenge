@@ -416,6 +416,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         searchTerm = searchTerm.toLowerCase();
 
         return individualPosition.getName().toLowerCase().contains(searchTerm)
+                || individualPosition.getTeamName().toLowerCase().contains(searchTerm)
                 || individualPosition.getContestant().toLowerCase().contains(searchTerm)
                 || String.valueOf(individualPosition.getPosition()).contains(searchTerm);
 
