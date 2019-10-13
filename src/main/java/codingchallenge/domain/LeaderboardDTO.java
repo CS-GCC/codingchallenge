@@ -1,6 +1,7 @@
 package codingchallenge.domain;
 
 import codingchallenge.domain.subdomain.Position;
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.Date;
 import java.util.List;
@@ -10,12 +11,15 @@ public class LeaderboardDTO {
     private Date timestamp;
     private int totalContestants;
     private List<? extends Position> contestants;
+    private String prettyPrintedTime;
 
     public LeaderboardDTO(Leaderboard leaderboard,
                           List<? extends Position> positions) {
         this.contestants = positions;
         this.totalContestants = leaderboard.getTotalContestants();
         this.timestamp = leaderboard.getTimestamp();
+        this.prettyPrintedTime =
+                new PrettyTime().format(leaderboard.getTimestamp());
     }
 
     public Date getTimestamp() {
@@ -40,5 +44,13 @@ public class LeaderboardDTO {
 
     public void setContestants(List<Position> contestants) {
         this.contestants = contestants;
+    }
+
+    public String getPrettyPrintedTime() {
+        return prettyPrintedTime;
+    }
+
+    public void setPrettyPrintedTime(String prettyPrintedTime) {
+        this.prettyPrintedTime = prettyPrintedTime;
     }
 }
