@@ -115,37 +115,41 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public LeaderboardDTO getFilteredIndividualLeaderboard(String searchTerm,
                                                         int from, int limit) {
-//        Leaderboard leaderboard = getLatestIndividualLeaderboard(from, limit);
-//
-//        leaderboard.setContestants(
-//                leaderboard.getContestants()
-//                        .stream()
-//                        .filter(pos -> searchPredicate(searchTerm,
-//                                (IndividualPosition) pos))
-//                        .skip(from)
-//                        .limit(limit)
-//                        .collect(Collectors.toList())
-//        );
-
-        return getLatestIndividualLeaderboard(from, limit);
+        Leaderboard leaderboard = getLeaderboard();
+        List<IndividualPosition> individualPositions =
+                individualPositionRepository
+                        .findAllByLeaderboardId(leaderboard.getId())
+                        .stream()
+                        .filter(pos -> searchPredicate(searchTerm, pos))
+                        .collect(Collectors.toList());
+        int total = individualPositions.size();
+        leaderboard.setTotalContestants(total);
+        individualPositions = individualPositions
+                .stream()
+                .skip(from)
+                .limit(limit)
+                .collect(Collectors.toList());
+        return new LeaderboardDTO(leaderboard, individualPositions);
     }
 
     @Override
     public LeaderboardDTO getFilteredTeamLeaderboard(String searchTerm, int from
             , int limit) {
-//        Leaderboard leaderboard = getLatestTeamLeaderboard(from, limit);
-//
-//        leaderboard.setContestants(
-//                leaderboard.getContestants()
-//                        .stream()
-//                        .filter(pos -> teamSearchPredicate(searchTerm,
-//                                (TeamPosition) pos))
-//                        .skip(from)
-//                        .limit(limit)
-//                        .collect(Collectors.toList())
-//        );
-
-        return getLatestTeamLeaderboard(from, limit);
+        Leaderboard leaderboard = getTeamLeaderboard();
+        List<TeamPosition> teamPositions =
+                teamPositionRepository
+                        .findAllByLeaderboardId(leaderboard.getId())
+                        .stream()
+                        .filter(pos -> teamSearchPredicate(searchTerm, pos))
+                        .collect(Collectors.toList());
+        int total = teamPositions.size();
+        leaderboard.setTotalContestants(total);
+        teamPositions = teamPositions
+                .stream()
+                .skip(from)
+                .limit(limit)
+                .collect(Collectors.toList());
+        return new LeaderboardDTO(leaderboard, teamPositions);
     }
 
     @Override
