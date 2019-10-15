@@ -159,7 +159,10 @@ public class FactsServiceImpl implements FactsService {
             ));
         }
         logger.info("Generated uni property map");
+        int i = 1;
         for (IndividualPosition position : newIndividuals) {
+            logger.info("Doing position " + i + " of " + newIndividuals.size());
+            i++;
             IndividualPosition old =
                     oldIndividuals.get(position.getContestantId());
             if (old == null) {
@@ -181,7 +184,7 @@ public class FactsServiceImpl implements FactsService {
             personalProperties.setUniversity(uniProperties.name);
             personalPropertiesList.add(personalProperties);
         }
-        logger.info("Generated invidiual property list");
+        logger.info("Generated individual property list");
         List<IndividualPosition> topTenInd =
                 leaderboardService.getTopTenIndividuals(newInd);
         List<TeamPosition> topTenPos =
