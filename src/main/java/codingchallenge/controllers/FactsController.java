@@ -45,13 +45,14 @@ public class FactsController {
     }
 
     @CrossOrigin
-    @RequestMapping(path = "/properties/{oldInd}/{oldUni}/{newInd}/{newUni}",
+    @RequestMapping(path = "/properties/{oldInd}/{oldUni}/{newInd}/{newUni" +
+            "}/{email}/{id}",
             method = RequestMethod.GET)
-    public LeaderboardProperties getLeaderboardProperties(@PathVariable String oldInd,
+    public void getLeaderboardProperties(@PathVariable String oldInd,
                                       @PathVariable String oldUni,
-                                                          @PathVariable String newInd, @PathVariable String newUni) {
-        return factsService.getStatsForNewsletter(oldInd, oldUni, newInd,
-                newUni);
+                                                          @PathVariable String newInd, @PathVariable String newUni, @PathVariable String email, @PathVariable String id) {
+        factsService.getStatsForNewsletter(oldInd, oldUni, newInd,
+                newUni, email, id);
     }
 
     @CrossOrigin

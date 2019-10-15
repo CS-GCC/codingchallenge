@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -128,10 +129,12 @@ public class FactsServiceImpl implements FactsService {
     }
 
     @Override
-    public LeaderboardProperties getStatsForNewsletter(String oldInd,
+    @Async
+    public void getStatsForNewsletter(String oldInd,
                                                        String oldUni,
                                                        String newInd,
-                                                       String newUni) {
+                                                       String newUni,
+                                      String email, String newsletter) {
         logger.info("Getting old individuals");
         Map<String, IndividualPosition> oldIndividuals =
                 leaderboardService.individualPositionsByLeaderboard(oldInd).stream().collect(Collectors.toMap(IndividualPosition::getContestantId, Function.identity()));
@@ -205,7 +208,9 @@ public class FactsServiceImpl implements FactsService {
                 uniChange);
         leaderboardProperties.setIndividualPositions(topTenInd);
         leaderboardProperties.setTeamPositions(topTenPos);
-        return leaderboardProperties;
+        restTemplate.postForEntity(serviceProperties.getGlobal() +
+                "newsletter/test/" + newsletter + "/" + email,
+                leaderboardProperties, Void.class);
     }
 
     private List<TeamPosition> getUniversityPositions(int numberOfUniversities) {
