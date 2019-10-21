@@ -31,7 +31,7 @@ public class ScoreCalculationImpl implements ScoreCalculation {
                                               questionNumber) {
         Map<String, Score> scoreMap = initialiseMap(contestants, questionNumber);
         int numberOfTests = getNumberOfTestsForQuestion();
-        for (int i=1; i<=numberOfTests; i++) {
+        for (int i=0; i<=numberOfTests; i++) {
             Multimap<Correctness, Answer> answers = getAllAnswersForTest(questionNumber, i);
             Category category = getTestCategory(i);
             double highScore = category.getTestValue();
