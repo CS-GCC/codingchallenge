@@ -19,4 +19,7 @@ public interface AnswerRepository extends MongoRepository<Answer, String> {
 
     void deleteAnswersByContestantAndQuestionNumber(String contestant,
                                                int questionNumber);
+
+    void deleteAnswersByContestantAndQuestionNumberAndIdNotIn(String contestant,
+                                                           int questionNumber, Collection<String> id);
 }

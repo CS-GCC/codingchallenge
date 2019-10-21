@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
@@ -41,19 +42,33 @@ public class AnswerServiceImpl implements AnswerService {
         List<Contestant> contestants =
                 contestantRepository.findAllByGitUsername(uuid);
 
-        List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY", "theriley106");
+        List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY",
+                "theriley106", "underscoreanuj");
 
         if (contestants.size() > 0 && !blacklist.contains(uuid)) {
             String contestant = contestants.get(0).getId();
             for (Answer answer : answers) {
                 answer.setContestant(contestant);
             }
-            answerRepository.deleteAnswersByContestantAndQuestionNumber(contestant,
-                    questionNumber);
-            answerRepository.insert(answers);
+            answerRetry(answers, questionNumber, contestant, 5);
             return;
         }
         logger.info("UUID given is invalid. No action taken.");
+    }
+
+    private void answerRetry(List<Answer> answers, int questionNumber,
+                             String contestant, int retry) {
+        try {
+            answers = answerRepository.insert(answers);
+            answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, answers.stream().map(Answer::getId).collect(Collectors.toList()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("Failed on attempt. Have " + retry + " retries " +
+                    "remaining");
+            if (retry > 0) {
+                answerRetry(answers, questionNumber, contestant, retry-1);
+            }
+        }
     }
 
     @Override
