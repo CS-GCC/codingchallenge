@@ -2,11 +2,12 @@ package codingchallenge.services.impl;
 
 import codingchallenge.collections.AnswerRepository;
 import codingchallenge.collections.ContestantRepository;
-import codingchallenge.collections.TravisRepository;
 import codingchallenge.domain.Answer;
 import codingchallenge.domain.Contestant;
+import codingchallenge.domain.Status;
 import codingchallenge.domain.subdomain.Correctness;
 import codingchallenge.services.interfaces.AnswerService;
+import codingchallenge.services.interfaces.ChallengeInBounds;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -16,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,35 +25,42 @@ public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerRepository answerRepository;
     private final ContestantRepository contestantRepository;
+    private final ChallengeInBounds challengeInBounds;
 
     private final Logger logger =
             LoggerFactory.getLogger(AnswerServiceImpl.class);
 
     @Autowired
     public AnswerServiceImpl(AnswerRepository answerRepository,
-                             ContestantRepository contestantRepository) {
+                             ContestantRepository contestantRepository,
+                             ChallengeInBounds challengeInBounds) {
         this.answerRepository = answerRepository;
         this.contestantRepository = contestantRepository;
+        this.challengeInBounds = challengeInBounds;
     }
 
     @Override
     public void updateAnswersForUUID(String uuid, List<Answer> answers,
                                      int questionNumber) {
-        List<Contestant> contestants =
-                contestantRepository.findAllByGitUsername(uuid);
+        if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
+            List<Contestant> contestants =
+                    contestantRepository.findAllByGitUsername(uuid);
 
-        List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY",
-                "theriley106", "underscoreanuj");
+            List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY",
+                    "theriley106", "underscoreanuj");
 
-        if (contestants.size() > 0 && !blacklist.contains(uuid)) {
-            String contestant = contestants.get(0).getId();
-            for (Answer answer : answers) {
-                answer.setContestant(contestant);
+            if (contestants.size() > 0 && !blacklist.contains(uuid)) {
+                String contestant = contestants.get(0).getId();
+                for (Answer answer : answers) {
+                    answer.setContestant(contestant);
+                }
+                answerRetry(answers, questionNumber, contestant, 5);
+                return;
             }
-            answerRetry(answers, questionNumber, contestant, 5);
-            return;
+            logger.info("UUID given is invalid. No action taken.");
+        } else {
+            logger.info("Answers blocked as challenge not in progress");
         }
-        logger.info("UUID given is invalid. No action taken.");
     }
 
     private void answerRetry(List<Answer> answers, int questionNumber,
