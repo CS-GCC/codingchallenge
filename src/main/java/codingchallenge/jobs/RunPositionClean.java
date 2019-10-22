@@ -38,21 +38,21 @@ public class RunPositionClean {
         this.leaderboardRepository = leaderboardRepository;
     }
 
-    @Scheduled(cron = "0 0 9 * * ?")
+//    @Scheduled(cron = "0 0 9 * * ?")
     public void runClean() {
-        logger.info("Beginning clean. Current time: " + new Date());
-        Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
-        Map<String, List<IndividualPosition>> individualPositions =
-                getIndividualPositions(date);
-        Map<String, List<TeamPosition>> teamPositions =
-                getTeamPositions(date);
-        List<String> leaderboardIds =
-                leaderboardRepository.findAllBySaved(true).stream().map(Leaderboard::getId).collect(Collectors.toList());
-        List<String> individualIds =
-                cleanIndividualPositions(individualPositions, leaderboardIds);
-        List<String> teamIds = cleanTeamPositions(teamPositions, leaderboardIds);
-        individualPositionRepository.deleteAllByIdIn(individualIds);
-        teamPositionRepository.deleteAllByIdIn(teamIds);
+//        logger.info("Beginning clean. Current time: " + new Date());
+//        Date date = DateUtils.truncate(new Date(), Calendar.DAY_OF_MONTH);
+//        Map<String, List<IndividualPosition>> individualPositions =
+//                getIndividualPositions(date);
+//        Map<String, List<TeamPosition>> teamPositions =
+//                getTeamPositions(date);
+//        List<String> leaderboardIds =
+//                leaderboardRepository.findAllBySaved(true).stream().map(Leaderboard::getId).collect(Collectors.toList());
+//        List<String> individualIds =
+//                cleanIndividualPositions(individualPositions, leaderboardIds);
+//        List<String> teamIds = cleanTeamPositions(teamPositions, leaderboardIds);
+//        individualPositionRepository.deleteAllByIdIn(individualIds);
+//        teamPositionRepository.deleteAllByIdIn(teamIds);
     }
 
     private Map<String, List<IndividualPosition>> getIndividualPositions(Date date) {
