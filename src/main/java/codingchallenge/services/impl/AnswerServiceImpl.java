@@ -54,7 +54,12 @@ public class AnswerServiceImpl implements AnswerService {
                 for (Answer answer : answers) {
                     answer.setContestant(contestant);
                 }
-                answerRetry(answers, questionNumber, contestant, 5);
+                for (int i=0; i<answers.size(); i=i+10) {
+                    List<Answer> batchedAnswers =
+                            answers.stream().skip(i).limit(10).collect(Collectors.toList());
+                    logger.info("Starting batch " + (i/10) + " for " + contestant);
+                    answerRetry(batchedAnswers, questionNumber, contestant, 5);
+                }
                 return;
             }
             logger.info("UUID given is invalid. No action taken.");
