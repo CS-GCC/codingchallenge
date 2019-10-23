@@ -55,6 +55,7 @@ public class AnswerServiceImpl implements AnswerService {
 
             if (contestants.size() > 0 && !blacklist.contains(uuid)) {
                 String contestant = contestants.get(0).getId();
+                List<String> ids = Lists.newArrayList();
                 for (Answer answer : answers) {
                     answer.setContestant(contestant);
                 }
@@ -62,8 +63,10 @@ public class AnswerServiceImpl implements AnswerService {
                     List<Answer> batchedAnswers =
                             answers.stream().skip(i).limit(10).collect(Collectors.toList());
                     logger.info("Starting batch " + (i/10) + " for " + contestant);
-                    answerRetry(batchedAnswers, questionNumber, contestant, 5);
+                    ids.addAll(answerRetry(batchedAnswers, questionNumber,
+                            contestant, 5));
                 }
+                answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, ids);
                 return;
             }
             logger.info("UUID given is invalid. No action taken.");
@@ -72,7 +75,7 @@ public class AnswerServiceImpl implements AnswerService {
         }
     }
 
-    private void answerRetry(List<Answer> answers, int questionNumber,
+    private List<String> answerRetry(List<Answer> answers, int questionNumber,
                              String contestant, int retry) {
         try {
             logger.info("Trying the retry for " + contestant + ". Retry count" +
@@ -82,12 +85,13 @@ public class AnswerServiceImpl implements AnswerService {
                     answers.stream().map(Answer::getId).collect(Collectors.toList());
             logger.info("Got " + ids.size() + " for " + contestant);
             if (ids.size() > 0) {
-                answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, ids);
+                return ids;
             } else {
                 logger.info("Failed on attempt. Have " + retry + " retries " +
                         "remaining");
                 if (retry > 0) {
-                    answerRetry(answers, questionNumber, contestant, retry - 1);
+                    return answerRetry(answers, questionNumber, contestant,
+                            retry - 1);
                 }
             }
         } catch (Exception e) {
@@ -95,8 +99,10 @@ public class AnswerServiceImpl implements AnswerService {
             logger.info("Failed on attempt. Have " + retry + " retries " +
                     "remaining");
             if (retry > 0) {
-                answerRetry(answers, questionNumber, contestant, retry-1);
+                return answerRetry(answers, questionNumber, contestant,
+                        retry-1);
             }
+            return Lists.newArrayList();
         }
     }
 
