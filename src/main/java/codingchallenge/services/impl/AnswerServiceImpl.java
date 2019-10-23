@@ -77,7 +77,9 @@ public class AnswerServiceImpl implements AnswerService {
             } else {
                 logger.info("Failed on attempt. Have " + retry + " retries " +
                         "remaining");
-                answerRetry(answers, questionNumber, contestant, retry-1);
+                if (retry > 0) {
+                    answerRetry(answers, questionNumber, contestant, retry - 1);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
