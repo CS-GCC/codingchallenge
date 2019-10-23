@@ -93,6 +93,7 @@ public class AnswerServiceImpl implements AnswerService {
                     return answerRetry(answers, questionNumber, contestant,
                             retry - 1);
                 }
+                return Lists.newArrayList();
             }
         } catch (Exception e) {
             e.printStackTrace();
