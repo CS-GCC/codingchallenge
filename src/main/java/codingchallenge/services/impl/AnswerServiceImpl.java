@@ -72,8 +72,13 @@ public class AnswerServiceImpl implements AnswerService {
             List<String> ids =
                     answers.stream().map(Answer::getId).collect(Collectors.toList());
             logger.info("Got " + ids.size() + " for " + contestant);
-
-            answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, ids);
+            if (ids.size() > 0) {
+                answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, ids);
+            } else {
+                logger.info("Failed on attempt. Have " + retry + " retries " +
+                        "remaining");
+                answerRetry(answers, questionNumber, contestant, retry-1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("Failed on attempt. Have " + retry + " retries " +
