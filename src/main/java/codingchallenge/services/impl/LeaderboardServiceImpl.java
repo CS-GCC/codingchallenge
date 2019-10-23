@@ -180,7 +180,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         leaderboard.setTotalContestants(scoreMultimap.keySet().size());
         leaderboard = leaderboardRepository.insert(leaderboard);
         String id = leaderboard.getId();
-//        updateQuickFinds(id, Type.INDIVIDUAL);
+        updateQuickFinds(id, Type.INDIVIDUAL);
         logger.info("New individual leaderboard generated and inserted with " +
                 "id " + id);
         List<IndividualPosition> positions = Lists.newArrayList();
@@ -222,7 +222,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         leaderboard.setTotalContestants(teams.keySet().size());
         leaderboard = leaderboardRepository.insert(leaderboard);
         String id = leaderboard.getId();
-//        updateQuickFinds(id, Type.TEAM);
+        updateQuickFinds(id, Type.TEAM);
         logger.info("New team leaderboard generated and inserted with " +
                 "id " + id);
         for (String team : teams.keySet()) {
@@ -402,6 +402,33 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         }
         return new LeaderboardDTO(leaderboard, individualPositions);
     }
+
+    @Override
+    public List<String> findShortfall(String id) {
+        List<IndividualPosition> individualPositions =
+                individualPositionsByLeaderboard(id);
+        List<Contestant> contestants = contestantService.getAllContestants();
+        contestants = contestants.stream().filter(contestant -> {
+            IndividualPosition individualPosition =
+                    individualPositions.stream().filter(i -> i.getContestantId().equals(contestant.getId())).findFirst().get();
+            return individualPosition.getTotal() == 0;
+        }).collect(Collectors.toList());
+        logger.info("Found " + contestants.size() + " ");
+        List<String> result = Lists.newArrayList();
+        int i = 1;
+        int size = contestants.size();
+        for (Contestant contestant : contestants) {
+            logger.info("Doing " + i + " out of " + contestants.size());
+            i++;
+            List<IndividualPosition> positions =
+                    individualPositionRepository.findAllByContestantId(contestant.getId());
+            if (positions.stream().anyMatch(p -> p.getTotal() > 0)) {
+                result.add(contestant.getName());
+            }
+        }
+        return result;
+    }
+
 
     private void updateQuickFinds(String id, Type type) {
         List<QuickFind> quickFinds = quickFindRepository.findAll();

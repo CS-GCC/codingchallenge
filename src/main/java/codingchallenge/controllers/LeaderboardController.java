@@ -80,4 +80,11 @@ public class LeaderboardController {
         }
     }
 
+    @CrossOrigin
+    @RequestMapping(path = "/leaderboard/shortfall/{id}", method =
+            RequestMethod.GET)
+    public List<String> findShortfall(@PathVariable String id) throws ContestantNotFoundException {
+        return leaderboardService.findShortfall(id);
+    }
+
 }

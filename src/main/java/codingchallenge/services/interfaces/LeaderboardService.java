@@ -76,4 +76,6 @@ public interface LeaderboardService {
     List<LeaderboardDTO> save();
 
     LeaderboardDTO getLeaderboardById(String id, int from, int limit);
+
+    List<String> findShortfall(String id);
 }
