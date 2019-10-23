@@ -42,7 +42,11 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public void updateAnswersForUUID(String uuid, List<Answer> answers,
                                      int questionNumber) {
-        if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
+        if (uuid.startsWith("12345-")) {
+            logger.info("UUID is " + uuid);
+            uuid = uuid.replace("12345-", "");
+            logger.info("UUID is " + uuid);
+
             List<Contestant> contestants =
                     contestantRepository.findAllByGitUsername(uuid);
 
