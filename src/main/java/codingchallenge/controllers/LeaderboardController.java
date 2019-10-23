@@ -31,6 +31,14 @@ public class LeaderboardController {
     }
 
     @CrossOrigin
+    @RequestMapping(path = "/leaderboard/getById/{id}", method = RequestMethod.GET)
+    public LeaderboardDTO leaderboardById(@RequestParam("from") int from,
+                                          @RequestParam("limit") int limit,
+                                          @PathVariable String id) {
+        return leaderboardService.getLeaderboardById(id, from, limit);
+    }
+
+    @CrossOrigin
     @RequestMapping(path = "/leaderboard/search/{searchTerm}", method = RequestMethod.GET)
     public LeaderboardDTO filteredLeaderboard(@PathVariable String searchTerm,
                                  @RequestParam("from") int from,

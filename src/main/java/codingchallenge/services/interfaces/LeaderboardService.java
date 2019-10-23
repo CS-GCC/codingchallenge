@@ -74,4 +74,6 @@ public interface LeaderboardService {
     List<IndividualPosition> getTeamContestantsLatestPosition(List<String> ids);
 
     List<LeaderboardDTO> save();
+
+    LeaderboardDTO getLeaderboardById(String id, int from, int limit);
 }

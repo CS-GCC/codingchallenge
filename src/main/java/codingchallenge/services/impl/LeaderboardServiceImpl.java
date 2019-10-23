@@ -180,7 +180,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         leaderboard.setTotalContestants(scoreMultimap.keySet().size());
         leaderboard = leaderboardRepository.insert(leaderboard);
         String id = leaderboard.getId();
-        updateQuickFinds(id, Type.INDIVIDUAL);
+//        updateQuickFinds(id, Type.INDIVIDUAL);
         logger.info("New individual leaderboard generated and inserted with " +
                 "id " + id);
         List<IndividualPosition> positions = Lists.newArrayList();
@@ -222,7 +222,7 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         leaderboard.setTotalContestants(teams.keySet().size());
         leaderboard = leaderboardRepository.insert(leaderboard);
         String id = leaderboard.getId();
-        updateQuickFinds(id, Type.TEAM);
+//        updateQuickFinds(id, Type.TEAM);
         logger.info("New team leaderboard generated and inserted with " +
                 "id " + id);
         for (String team : teams.keySet()) {
@@ -390,6 +390,17 @@ public class LeaderboardServiceImpl implements LeaderboardService {
             leaderboardDTOS.add(new LeaderboardDTO(leaderboard, positions));
         }
         return leaderboardDTOS;
+    }
+
+    @Override
+    public LeaderboardDTO getLeaderboardById(String id, int from, int limit) {
+        Leaderboard leaderboard = leaderboardRepository.findById(id).get();
+        List<IndividualPosition> individualPositions = Lists.newArrayList();
+        if (id != null) {
+            individualPositions = individualPositionRepository
+                    .findAllByLeaderboardIdAndPositionGreaterThanEqualAndPosLessThanOrderByPosAsc(id, from, from+limit);
+        }
+        return new LeaderboardDTO(leaderboard, individualPositions);
     }
 
     private void updateQuickFinds(String id, Type type) {
