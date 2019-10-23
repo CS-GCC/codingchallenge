@@ -2,6 +2,7 @@ package codingchallenge.jobs;
 
 import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.Status;
+import codingchallenge.domain.subdomain.IndividualPosition;
 import codingchallenge.engines.interfaces.RunAll;
 import codingchallenge.exceptions.ContestantNotFoundException;
 import codingchallenge.services.interfaces.ChallengeInBounds;
@@ -11,10 +12,12 @@ import codingchallenge.services.interfaces.TeamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class Runner {
@@ -38,17 +41,26 @@ public class Runner {
         logger.info("Beginning new run. Current time: " + new Date());
         long startTime = System.currentTimeMillis();
         if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
-            String leaderboard = runAll.runAll();
-            logger.info("Generated individual leaderboard with id " + leaderboard);
-            String universityLeaderboard =
-                    leaderboardService.generateTeamLeaderboard(leaderboard, 6);
-            logger.info("Generated university leaderboard with id " + universityLeaderboard);
+            run();
         } else {
             logger.info("Run not needed. Challenge status is not in bounds");
         }
         long endTime = System.currentTimeMillis();
         logger.info("Run completed successfully in " + ((endTime - startTime)/60000.0) + " minutes.");
 
+    }
+
+    private void run() throws ContestantNotFoundException{
+        String leaderboard = runAll.runAll();
+        logger.info("Generated individual leaderboard with id " + leaderboard);
+        String universityLeaderboard =
+                leaderboardService.generateTeamLeaderboard(leaderboard, 6);
+        logger.info("Generated university leaderboard with id " + universityLeaderboard);
+    }
+
+    @Async
+    public void oneTimeRun() throws ContestantNotFoundException {
+        run();
     }
 
 }

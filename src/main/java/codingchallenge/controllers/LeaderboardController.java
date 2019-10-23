@@ -1,7 +1,8 @@
 package codingchallenge.controllers;
 
-import codingchallenge.domain.Leaderboard;
 import codingchallenge.domain.LeaderboardDTO;
+import codingchallenge.exceptions.ContestantNotFoundException;
+import codingchallenge.jobs.Runner;
 import codingchallenge.services.interfaces.LeaderboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +13,14 @@ import java.util.List;
 public class LeaderboardController {
 
     private final LeaderboardService leaderboardService;
+    private final Runner runner;
 
     @Autowired
-    public LeaderboardController(LeaderboardService leaderboardService
-                                 ) {
+    public LeaderboardController(LeaderboardService leaderboardService,
+                                 Runner runner) {
         this.leaderboardService = leaderboardService;
 //        this.git = git;
+        this.runner = runner;
     }
 
     @CrossOrigin
@@ -58,6 +61,15 @@ public class LeaderboardController {
                                                @RequestParam("limit") int limit) {
         return leaderboardService.getFilteredTeamLeaderboard(searchTerm,
                 from, limit);
+    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/leaderboard/oneTimeRun/{id}", method =
+            RequestMethod.GET)
+    public void filteredTeamLeaderboard(@PathVariable String id) throws ContestantNotFoundException {
+        if (id.equals("465298")) {
+            runner.oneTimeRun();
+        }
     }
 
 }
