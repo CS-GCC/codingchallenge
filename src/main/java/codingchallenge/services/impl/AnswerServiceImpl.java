@@ -66,8 +66,14 @@ public class AnswerServiceImpl implements AnswerService {
     private void answerRetry(List<Answer> answers, int questionNumber,
                              String contestant, int retry) {
         try {
+            logger.info("Trying the retry for " + contestant + ". Retry count" +
+                    " is at " + retry);
             answers = answerRepository.insert(answers);
-            answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, answers.stream().map(Answer::getId).collect(Collectors.toList()));
+            List<String> ids =
+                    answers.stream().map(Answer::getId).collect(Collectors.toList());
+            logger.info("Got " + ids.size() + " for " + contestant);
+
+            answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, ids);
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("Failed on attempt. Have " + retry + " retries " +
