@@ -103,18 +103,31 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     public List<IndividualPosition> getLatestIndividualPositionsForTeam(String id) {
         String leaderboardId = individualLeaderboardId();
         List<Contestant> contestants =
-                contestantService.getContestantsByTeam(id).stream().filter(Contestant::isGroupMember).collect(Collectors.toList());
+                contestantService.getContestantsByTeam(id);
         List<IndividualPosition> positions = Lists.newArrayList();
         for (Contestant contestant : contestants) {
-            Contestant group =
-                    contestantService.getGroupByName(contestant.getGroupName());
-            Optional<IndividualPosition> positionOptional =
-                    individualPositionRepository.findByLeaderboardIdAndContestantId(leaderboardId, group.getId());
-            if (positionOptional.isPresent()) {
-                positions.add(positionOptional.get());
+            if (contestant.isGroupMember()) {
+                Contestant group =
+                        contestantService.getGroupByName(contestant.getGroupName());
+                Optional<IndividualPosition> positionOptional =
+                        individualPositionRepository.findByLeaderboardIdAndContestantId(leaderboardId, group.getId());
+                if (positionOptional.isPresent()) {
+                    IndividualPosition position = positionOptional.get();
+                    position.setGlobalId(contestant.getGlobalId());
+                    position.setContestant(contestant.getId());
+                    position.setContestantId(contestant.getId());
+                    position.setName(contestant.getName());
+                    positions.add(position);
+                }
+            } else {
+                Optional<IndividualPosition> positionOptional =
+                        individualPositionRepository.findByLeaderboardIdAndContestantId(leaderboardId, contestant.getId());
+                if (positionOptional.isPresent()) {
+                    positions.add(positionOptional.get());
+                }
             }
         }
-        positions.addAll(individualPositionRepository.findAllByLeaderboardIdAndTeamIdOrderByTotalDesc(leaderboardId, id));
+        positions.sort(Comparator.comparingDouble(Position::getTotal).reversed());
         return positions;
     }
 

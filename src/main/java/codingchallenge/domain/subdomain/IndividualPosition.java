@@ -74,4 +74,16 @@ public class IndividualPosition extends Position {
     public void setGlobalId(String globalId) {
         this.globalId = globalId;
     }
+
+    public void setContestant(String contestant) {
+        this.contestant = contestant;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setContestantId(String contestantId) {
+        this.contestantId = contestantId;
+    }
 }
