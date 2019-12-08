@@ -61,8 +61,10 @@ public class InitialisationServiceImpl implements InitialisationService {
             if (!group.isRepoCreated()) {
                 group.setRepoCreated(createGitRepositories(group,
                         contestant.getGitUsername()));
-                group.setGitUsername(contestant.getGitUsername());
-                group.setGitAvatar(contestant.getGitAvatar());
+                if (group.getGitUsername() == null) {
+                    group.setGitUsername(contestant.getGitUsername());
+                    group.setGitAvatar(contestant.getGitAvatar());
+                }
             } else {
                 addCollaboratorToTeamRepos(group, contestant.getGitUsername());
             }

@@ -106,7 +106,7 @@ public class ScoreCalculationImpl implements ScoreCalculation {
     }
 
     private double calculateSpeedScoreFactor(int numberCorrect, double highScore) {
-        return highScore / numberCorrect;
+        return numberCorrect != 0 ? highScore / numberCorrect : 0;
     }
 
 }
