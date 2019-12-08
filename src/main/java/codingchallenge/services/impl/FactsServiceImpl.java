@@ -231,7 +231,15 @@ public class FactsServiceImpl implements FactsService {
         for (TeamPosition pos : teamPositions) {
             teamContestantIds.addAll(leaderboardService.getLatestIndividualPositionsForTeam(pos.getTeamId()).stream().limit(20).map(IndividualPosition::getContestantId).collect(Collectors.toList()));
         }
-        return contestantService.getContestantsById(teamContestantIds);
+        List<Contestant> contestants =
+                contestantService.getContestantsById(teamContestantIds);
+        return contestants.stream().peek(contestant -> {
+            if (contestant.isGroup()) {
+                List<Contestant> memberList =
+                        contestantService.getContestantsById(contestant.getMembers());
+                contestant.setMembers(memberList.stream().map(Contestant::getGlobalId).collect(Collectors.toList()));
+            }
+        }).collect(Collectors.toList());
     }
 
     private List<IndividualPosition> getIndividualPositions(int numberOfIndividuals) {
