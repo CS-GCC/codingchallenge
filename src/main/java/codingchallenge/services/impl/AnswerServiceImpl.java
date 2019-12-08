@@ -42,41 +42,33 @@ public class AnswerServiceImpl implements AnswerService {
     @Override
     public void updateAnswersForUUID(String uuid, List<Answer> answers,
                                      int questionNumber) {
-        if (uuid.startsWith("12345-")) {
-            logger.info("UUID is " + uuid);
-            uuid = uuid.replace("12345-", "");
-            logger.info("UUID is " + uuid);
+        List<String> blacklist = Lists.newArrayList();
 
-            List<Contestant> contestants =
-                    contestantRepository.findAllByGitUsername(uuid);
-
-            List<String> blacklist = Lists.newArrayList("mjslee0921", "userJY",
-                    "theriley106", "underscoreanuj");
-
-            if (contestants.size() > 0 && !blacklist.contains(uuid)) {
-                String contestant = contestants.get(0).getId();
-                List<String> ids = Lists.newArrayList();
-                for (Answer answer : answers) {
-                    answer.setContestant(contestant);
-                }
-                for (int i=0; i<answers.size(); i=i+10) {
-                    List<Answer> batchedAnswers =
-                            answers.stream().skip(i).limit(10).collect(Collectors.toList());
-                    logger.info("Starting batch " + (i/10) + " for " + contestant);
-                    ids.addAll(answerRetry(batchedAnswers, questionNumber,
-                            contestant, 5));
-                }
-                answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant, questionNumber, ids);
-                return;
+        List<Contestant> contestants =
+                contestantRepository.findAllByGitUsername(uuid);
+        if (contestants.size() > 0 && !blacklist.contains(uuid)) {
+            Contestant contestant = contestants.size() == 1 ?
+                    contestants.get(0) :
+                    contestants.stream().filter(Contestant::isGroup).findFirst().get();
+            List<String> ids = Lists.newArrayList();
+            for (Answer answer : answers) {
+                answer.setContestant(contestant.getId());
             }
-            logger.info("UUID given is invalid. No action taken.");
-        } else {
-            logger.info("Answers blocked as challenge not in progress");
+            for (int i = 0; i < answers.size(); i = i + 10) {
+                List<Answer> batchedAnswers =
+                        answers.stream().skip(i).limit(10).collect(Collectors.toList());
+                logger.info("Starting batch " + (i / 10) + " for " + contestant);
+                ids.addAll(answerRetry(batchedAnswers, questionNumber,
+                        contestant.getId(), 5));
+            }
+            answerRepository.deleteAnswersByContestantAndQuestionNumberAndIdNotIn(contestant.getId(), questionNumber, ids);
+            return;
         }
+        logger.info("UUID given is invalid. No action taken.");
     }
 
     private List<String> answerRetry(List<Answer> answers, int questionNumber,
-                             String contestant, int retry) {
+                                     String contestant, int retry) {
         try {
             logger.info("Trying the retry for " + contestant + ". Retry count" +
                     " is at " + retry);
@@ -101,7 +93,7 @@ public class AnswerServiceImpl implements AnswerService {
                     "remaining");
             if (retry > 0) {
                 return answerRetry(answers, questionNumber, contestant,
-                        retry-1);
+                        retry - 1);
             }
             return Lists.newArrayList();
         }
