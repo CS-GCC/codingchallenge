@@ -32,10 +32,12 @@ public class ScoreCalculationImpl implements ScoreCalculation {
         Map<String, Score> scoreMap = initialiseMap(contestants, questionNumber);
         int numberOfTests = getNumberOfTestsForQuestion();
         for (int i=0; i<=numberOfTests; i++) {
-            Multimap<Correctness, Answer> answers = getAllAnswersForTest(questionNumber, i);
+            Multimap<Correctness, Answer> answers =
+                    getAllAnswersForTest(questionNumber, i);
             Category category = getTestCategory(i);
             double highScore = category.getTestValue();
-            updateCorrectAnswers(scoreMap, answers.get(Correctness.CORRECT), highScore);
+            double speedScoreFactor = calculateSpeedScoreFactor(answers.get(Correctness.CORRECT).size(), highScore);
+            updateCorrectAnswers(scoreMap, answers.get(Correctness.CORRECT), highScore, speedScoreFactor);
             updateIncorrectAnswers(scoreMap, answers.get(Correctness.INCORRECT));
             updateTimedOutAnswers(scoreMap, answers.get(Correctness.TIMED_OUT));
             logger.info("Completed for question " + questionNumber + ", test " +
@@ -60,19 +62,13 @@ public class ScoreCalculationImpl implements ScoreCalculation {
         }
     }
 
-    private void updateCorrectAnswers(Map<String, Score> scoreMap, Collection<Answer> answers, double highScore) {
-        Optional<Answer> ans =
-                answers.stream().min(Comparator.comparingDouble(Answer::getSpeed));
-        if (!ans.isPresent()) {
-            return;
-        }
-        double fastest = ans.get().getSpeed();
+    private void updateCorrectAnswers(Map<String, Score> scoreMap, Collection<Answer> answers, double highScore, double speedScoreFactor) {
         for (Answer answer : answers) {
             String contestant = answer.getContestant();
             Score score = scoreMap.get(contestant);
             score.incrementCorrect();
-            double scoreToAdd = (fastest / answer.getSpeed()) * highScore;
-            score.increaseTotal(scoreToAdd);
+            score.increaseTotal(highScore);
+            highScore -= speedScoreFactor;
         }
     }
 
@@ -107,6 +103,10 @@ public class ScoreCalculationImpl implements ScoreCalculation {
 
     private Multimap<Correctness, Answer> getAllAnswersForTest(int questionNumber, int test) {
         return answerService.getAnswersForQuestionAndTest(questionNumber, test);
+    }
+
+    private double calculateSpeedScoreFactor(int numberCorrect, double highScore) {
+        return highScore / numberCorrect;
     }
 
 }
