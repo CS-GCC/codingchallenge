@@ -33,7 +33,7 @@ public class GitHubServiceImpl implements GitHubService {
 
     @Override
     public List<GitRepo> addRepositories(String username) {
-        int count = 15000 + Math.toIntExact((gitRepository.count() / 4) + 1);
+        int count = 25000 + Math.toIntExact((gitRepository.count() / 4) + 1);
         logger.info("Count has been set as " + count);
         List<GitRepo> gitRepos = Lists.newArrayList();
         for (Language language : Language.values()) {
@@ -54,6 +54,11 @@ public class GitHubServiceImpl implements GitHubService {
             logger.info("Completed " + i + " of " + gitRepos.size());
             i++;
         }
+    }
+
+    @Override
+    public List<GitRepo> getByUsername(String username) {
+        return gitRepository.findGitRepoByUsername(username);
     }
 
 

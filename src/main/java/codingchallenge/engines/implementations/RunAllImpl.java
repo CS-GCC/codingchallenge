@@ -51,7 +51,7 @@ public class RunAllImpl implements RunAll {
 
     @Override
     public String runAll() throws ContestantNotFoundException {
-        return runContestants(contestantService.getAllContestants());
+        return runContestants(contestantService.getContestantsAndTeams());
     }
 
     @Override

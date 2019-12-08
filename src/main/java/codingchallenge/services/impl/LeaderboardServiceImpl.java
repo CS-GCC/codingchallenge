@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+
 @SuppressWarnings("ALL")
 @Service
 public class LeaderboardServiceImpl implements LeaderboardService {
@@ -100,7 +102,20 @@ public class LeaderboardServiceImpl implements LeaderboardService {
     @Override
     public List<IndividualPosition> getLatestIndividualPositionsForTeam(String id) {
         String leaderboardId = individualLeaderboardId();
-        return individualPositionRepository.findAllByLeaderboardIdAndTeamIdOrderByTotalDesc(leaderboardId, id);
+        List<Contestant> contestants =
+                contestantService.getContestantsByTeam(id).stream().filter(Contestant::isGroupMember).collect(Collectors.toList());
+        List<IndividualPosition> positions = Lists.newArrayList();
+        for (Contestant contestant : contestants) {
+            Contestant group =
+                    contestantService.getGroupByName(contestant.getGroupName());
+            Optional<IndividualPosition> positionOptional =
+                    individualPositionRepository.findByLeaderboardIdAndContestantId(leaderboardId, group.getId());
+            if (positionOptional.isPresent()) {
+                positions.add(positionOptional.get());
+            }
+        }
+        positions.addAll(individualPositionRepository.findAllByLeaderboardIdAndTeamIdOrderByTotalDesc(leaderboardId, id));
+        return positions;
     }
 
     @Override
@@ -214,9 +229,36 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         List<IndividualPosition> individualPositions =
                 individualPositionRepository.findAllByLeaderboardId(individualLeaderboard);
         Date timestamp = new Date();
-        Multimap<String, IndividualPosition> teams =
-                Multimaps.index(individualPositions,
-                        IndividualPosition::getTeamId);
+        Map<String, List<IndividualPosition>> teams =
+                individualPositions.stream().collect(groupingBy(IndividualPosition::getTeamId));
+        List<IndividualPosition> groupPositions = teams.getOrDefault("-1",
+                Lists.newArrayList());
+        for (IndividualPosition groupPosition : groupPositions) {
+            Contestant contestant =
+                    contestantService.getContestantById(groupPosition.getContestantId());
+            for (String id : contestant.getMembers()) {
+                Contestant member = contestantService.getContestantById(id);
+                IndividualPosition position = new IndividualPosition(
+                        groupPosition.getPosition(),
+                        "-1",
+                        member.getName(),
+                        "-1"
+                );
+                position.setScores(groupPosition.getScores());
+                position.setTotal(groupPosition.getScores().stream().mapToDouble(Score::getTotal).sum());
+                position.setTeamId(member.getTeamId());
+                position.setTeamName(member.getTeam());
+                position.setTimestamp(timestamp);
+                position.setGlobalId(member.getGlobalId());
+                List<IndividualPosition> team = teams.get(member.getTeamId());
+                if (team == null) {
+                    teams.put(member.getTeamId(), Lists.newArrayList(position));
+                } else {
+                    team.add(position);
+                }
+            }
+        }
+        teams.remove("-1");
         Leaderboard leaderboard = new Leaderboard(timestamp);
         leaderboard.setType(Type.TEAM);
         leaderboard.setTotalContestants(teams.keySet().size());

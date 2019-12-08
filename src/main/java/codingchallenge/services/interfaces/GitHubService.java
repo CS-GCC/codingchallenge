@@ -9,5 +9,6 @@ public interface GitHubService {
 
     List<GitRepo> addRepositories(String username);
     void updateTravisEnvVar();
+    List<GitRepo> getByUsername(String username);
 
 }

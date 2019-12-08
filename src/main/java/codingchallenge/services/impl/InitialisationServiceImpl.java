@@ -11,6 +11,7 @@ import codingchallenge.services.ServiceProperties;
 import codingchallenge.services.interfaces.ChallengeInBounds;
 import codingchallenge.services.interfaces.GitHubService;
 import codingchallenge.services.interfaces.InitialisationService;
+import com.google.common.collect.Lists;
 import org.kohsuke.github.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,17 +45,35 @@ public class InitialisationServiceImpl implements InitialisationService {
 
 //    @Async
     public void completeInitialisation(Contestant contestant, String travisUUID) {
-        if (!contestant.isRepoCreated()) {
+        if (!contestant.isRepoCreated() && !contestant.isGroupMember() && !contestant.isGroup()) {
             contestant.setRepoCreated(
-                    createGitRepositories(contestant, UUID.randomUUID()));
+                    createGitRepositories(contestant, contestant.getGitUsername()));
             contestantRepository.save(contestant);
+        } else if (contestant.isGroupMember()) {
+            Contestant group =
+                    contestantRepository.findContestantsByGroupTrueAndName(contestant.getGroupName()).get(0);
+            List<String> members = group.getMembers();
+            if (members == null) {
+                members = Lists.newArrayList();
+                group.setMembers(members);
+            }
+            group.getMembers().add(contestant.getId());
+            if (!group.isRepoCreated()) {
+                group.setRepoCreated(createGitRepositories(group,
+                        contestant.getGitUsername()));
+                group.setGitUsername(contestant.getGitUsername());
+                group.setGitAvatar(contestant.getGitAvatar());
+            } else {
+                addCollaboratorToTeamRepos(group, contestant.getGitUsername());
+            }
+            contestantRepository.save(group);
         }
     }
 
-    private boolean createGitRepositories(Contestant contestant, UUID uuid) {
+    private boolean createGitRepositories(Contestant contestant,
+                                          String username) {
         if (!challengeInBounds.isStubbed() && challengeInBounds.isGitEnabled()) {
             logger.info("Beginning git creation");
-            String username = contestant.getGitUsername();
             List<GitRepo> repositories = gitHubService.addRepositories(username);
             updateContestantRepo(contestant, repositories);
             logger.info("Added repos to service");
@@ -62,13 +81,11 @@ public class InitialisationServiceImpl implements InitialisationService {
                 try {
                     logger.info("About to create repo");
                     git.createRepository(repo);
-                    if (challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
-                        git.addCollaborator(repo, username);
-                        logger.info("Collaborator added");
-                        travis.activateTravis(repo.getRepoName());
-                        travis.setEnvVariable(repo.getRepoName(),
-                                contestant.getGitUsername());
-                    }
+                    git.addCollaborator(repo, username);
+                    logger.info("Collaborator added");
+                    travis.activateTravis(repo.getRepoName());
+                    travis.setEnvVariable(repo.getRepoName(),
+                            contestant.getGitUsername());
                 } catch (HttpException e) {
                     logger.error("Repo already exists. Setting to true", e);
                     return true;
@@ -91,6 +108,19 @@ public class InitialisationServiceImpl implements InitialisationService {
         String repoCounter = repoParts[repoParts.length-1];
         contestant.setGitRepository(repoCounter);
         contestantRepository.save(contestant);
+    }
+
+    private void addCollaboratorToTeamRepos(Contestant group, String username) {
+        List<GitRepo> repos = gitHubService.getByUsername(group.getGitUsername());
+        for (GitRepo repo : repos) {
+            try {
+                git.addCollaborator(repo, username);
+                logger.info("Added " + username + " to " + repo.getRepoName());
+            } catch (Exception e) {
+                logger.error("Failed to add collaborator " + username);
+            }
+        }
+
     }
 
 }

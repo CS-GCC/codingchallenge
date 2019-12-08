@@ -50,6 +50,11 @@ public class ContestantServiceImpl implements ContestantService {
     }
 
     @Override
+    public List<Contestant> getContestantsAndTeams() {
+        return contestantRepository.findAllByGroupMemberFalse();
+    }
+
+    @Override
     public List<String> getAllContestantIds() {
         return contestantRepository.findAll().stream().map(Contestant::getId).collect(Collectors.toList());
     }
@@ -81,7 +86,7 @@ public class ContestantServiceImpl implements ContestantService {
 
     @Override
     public long getNumberOfContestants() {
-        return contestantRepository.count();
+        return contestantRepository.countAllByGroupMemberFalse();
     }
 
     @Override
@@ -116,6 +121,11 @@ public class ContestantServiceImpl implements ContestantService {
     @Override
     public long getContestantsWithoutGit() {
         return contestantRepository.countAllByRepoCreatedIsFalse();
+    }
+
+    @Override
+    public Contestant getGroupByName(String groupName) {
+        return contestantRepository.findContestantsByGroupTrueAndName(groupName).get(0);
     }
 
 }

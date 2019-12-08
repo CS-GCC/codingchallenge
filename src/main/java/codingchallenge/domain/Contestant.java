@@ -2,6 +2,7 @@ package codingchallenge.domain;
 
 import org.springframework.data.annotation.Id;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Contestant {
@@ -18,6 +19,10 @@ public class Contestant {
     private String gitRepository;
     private String gitUsername;
     private boolean sentForInitialisation;
+    private boolean groupMember;
+    private boolean group;
+    private String groupName;
+    private List<String> members;
 
     public Contestant() {
     }
@@ -136,5 +141,37 @@ public class Contestant {
 
     public void setSentForInitialisation(boolean sentForInitialisation) {
         this.sentForInitialisation = sentForInitialisation;
+    }
+
+    public boolean isGroup() {
+        return group;
+    }
+
+    public void setGroup(boolean group) {
+        this.group = group;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public boolean isGroupMember() {
+        return groupMember;
+    }
+
+    public void setGroupMember(boolean groupMember) {
+        this.groupMember = groupMember;
+    }
+
+    public List<String> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<String> members) {
+        this.members = members;
     }
 }

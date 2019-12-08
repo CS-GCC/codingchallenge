@@ -16,6 +16,8 @@ public interface ContestantService {
 
     List<Contestant> getAllContestants();
 
+    List<Contestant> getContestantsAndTeams();
+
     List<String> getAllContestantIds();
 
     Contestant getContestantById(String id) throws ContestantNotFoundException;
@@ -36,4 +38,5 @@ public interface ContestantService {
 
     long getContestantsWithoutGit();
 
+    Contestant getGroupByName(String groupName);
 }
