@@ -50,7 +50,9 @@ public class ScoreCalculationImpl implements ScoreCalculation {
         for (Answer answer : answers) {
             String contestant = answer.getContestant();
             Score score = scoreMap.get(contestant);
-            score.incrementTimedOut();
+            if (score != null) {
+                score.incrementTimedOut();
+            }
         }
     }
 
@@ -58,7 +60,9 @@ public class ScoreCalculationImpl implements ScoreCalculation {
         for (Answer answer : answers) {
             String contestant = answer.getContestant();
             Score score = scoreMap.get(contestant);
-            score.incrementIncorrect();
+            if (score != null) {
+                score.incrementIncorrect();
+            }
         }
     }
 
@@ -66,9 +70,11 @@ public class ScoreCalculationImpl implements ScoreCalculation {
         for (Answer answer : answers) {
             String contestant = answer.getContestant();
             Score score = scoreMap.get(contestant);
-            score.incrementCorrect();
-            score.increaseTotal(highScore);
-            highScore -= speedScoreFactor;
+            if (score != null) {
+                score.incrementCorrect();
+                score.increaseTotal(highScore);
+                highScore -= speedScoreFactor;
+            }
         }
     }
 
