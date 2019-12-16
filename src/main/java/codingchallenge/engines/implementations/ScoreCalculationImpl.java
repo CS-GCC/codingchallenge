@@ -52,6 +52,8 @@ public class ScoreCalculationImpl implements ScoreCalculation {
             Score score = scoreMap.get(contestant);
             if (score != null) {
                 score.incrementTimedOut();
+            } else {
+                logger.info("Found a null pointer exception for " + contestant);
             }
         }
     }
@@ -62,6 +64,8 @@ public class ScoreCalculationImpl implements ScoreCalculation {
             Score score = scoreMap.get(contestant);
             if (score != null) {
                 score.incrementIncorrect();
+            } else {
+                logger.info("Found a null pointer exception for " + contestant);
             }
         }
     }
@@ -74,6 +78,8 @@ public class ScoreCalculationImpl implements ScoreCalculation {
                 score.incrementCorrect();
                 score.increaseTotal(highScore);
                 highScore -= speedScoreFactor;
+            } else {
+                logger.info("Found a null pointer exception for " + contestant);
             }
         }
     }
