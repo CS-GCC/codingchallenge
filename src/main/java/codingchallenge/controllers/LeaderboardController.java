@@ -75,7 +75,7 @@ public class LeaderboardController {
     @RequestMapping(path = "/leaderboard/oneTimeRun/{id}", method =
             RequestMethod.GET)
     public void filteredTeamLeaderboard(@PathVariable String id) throws ContestantNotFoundException {
-        if (id.equals("465298")) {
+        if (id.equals("28193201")) {
             runner.oneTimeRun();
         }
     }

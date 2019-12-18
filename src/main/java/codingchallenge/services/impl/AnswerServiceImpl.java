@@ -46,7 +46,7 @@ public class AnswerServiceImpl implements AnswerService {
 
         List<Contestant> contestants =
                 contestantRepository.findAllByGitUsername(uuid);
-        if (contestants.size() > 0 && !blacklist.contains(uuid)) {
+        if (contestants.size() > 0 && !blacklist.contains(uuid) && challengeInBounds.challengeInBounds() == Status.IN_PROGRESS) {
             Contestant contestant = contestants.size() == 1 ?
                     contestants.get(0) :
                     contestants.stream().filter(Contestant::isGroup).findFirst().get();
