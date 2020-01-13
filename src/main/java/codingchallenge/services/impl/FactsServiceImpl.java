@@ -68,7 +68,7 @@ public class FactsServiceImpl implements FactsService {
 
     @Override
     public QuickFacts getQuickFacts() {
-        long numberOfContestants = contestantService.getNumberOfContestants();
+        long numberOfContestants = contestantRepository.count();
         return new QuickFacts(numberOfContestants, leaderboardService.leadingIndividual(),
                 leaderboardService.leadingTeam(), serviceProperties.getRegion());
     }
